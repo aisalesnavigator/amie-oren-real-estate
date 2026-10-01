@@ -1,0 +1,1594 @@
+Amie Website Build Prompt
+
+You are working inside the GitHub repository:
+
+amie-oren-real-estate
+
+Your assignment is to build the first production-quality implementation of the website for Amie Oren Real Estate Professional.
+
+Take ownership of the complete implementation: architecture, design system, pages, responsive behavior, copy, components, content collections, forms, accessibility, technical SEO/AEO foundations, testing and documentation.
+
+This is a one-shot execution.
+
+Do not stop after scaffolding.
+Do not merely give me a plan.
+Do not ask routine implementation questions.
+
+Inspect the repository first, understand what exists, preserve useful work, and then execute the complete build.
+
+Only stop for a genuine blocker that makes implementation impossible.
+
+==================================================
+1. APPROVED CONCEPT DIRECTION
+==================================================
+
+A working concept website has already been reviewed positively by Amie.
+
+Preserve and improve this overall direction rather than radically reinterpreting the brand.
+
+The approved direction is:
+
+- warm quiet luxury
+- elegant but approachable
+- editorial rather than templated
+- substantial whitespace
+- warm ivory / limestone / sand / muted lake colors
+- refined typography
+- understated West Michigan / lake influence
+- approximately 50/50 balance between Amie and place/property
+- premium without pretension
+- personal without looking like a lifestyle influencer
+- established rather than trendy
+- sophisticated without becoming cold
+
+Avoid generic Realtor-site aesthetics.
+
+The central approved headline is:
+
+“Real estate guidance for the moments that matter.”
+
+Supporting positioning:
+
+“Amie Oren brings experience, local knowledge, attention to detail, and highly personal service to buyers and sellers navigating important moves throughout West Michigan.”
+
+Preserve this positioning unless a minor copy edit materially improves readability.
+
+The website should cause a prospective client to think:
+
+“She is experienced, established, attentive, and someone I would trust with an important move.”
+
+==================================================
+2. BUSINESS
+==================================================
+
+Brand:
+
+Amie Oren Real Estate Professional
+
+Brokerage affiliation:
+
+Five Star Real Estate
+
+Do not invent additional brokerage details.
+
+Primary geography:
+
+- Rockford
+- Ada
+- East Grand Rapids
+- Cascade
+- Forest Hills
+- greater Grand Rapids / West Michigan
+
+Priority audiences:
+
+1. Higher-end home sellers
+2. Waterfront / lake-property buyers and sellers
+3. Move-up families
+4. Downsizers and clients navigating meaningful life transitions
+5. Higher-end buyers generally
+
+The website is not intended primarily to compete with Zillow or major brokerages as a property-search portal.
+
+Its primary purposes are:
+
+- establish trust
+- articulate Amie’s differentiated value
+- generate conversations
+- earn organic SEO/AEO discovery
+- support past-client referrals
+- capture genuine client reviews
+- build durable local authority
+- eventually publish useful West Michigan real-estate information at scale
+
+==================================================
+3. BRAND POSITION
+==================================================
+
+A real-estate transaction is frequently part of a larger life moment.
+
+Examples include:
+
+- moving up
+- downsizing
+- relocation
+- changing family needs
+- waterfront ownership
+- selling a longtime family home
+- changing lifestyle
+- simplifying
+- making a significant financial decision
+
+Amie should not be positioned merely as someone who executes a transaction.
+
+She helps clients navigate the entire move.
+
+Important attributes:
+
+- experience
+- attention to detail
+- local knowledge
+- careful preparation
+- communication
+- judgment
+- responsiveness
+- coordination
+- relationships
+- personal service
+
+Do NOT use the phrase:
+
+“white-glove service”
+
+Do not communicate quality through clichés.
+
+Communicate it through what Amie actually does.
+
+==================================================
+4. COPY VOICE
+==================================================
+
+Voice:
+
+- concise
+- warm
+- intelligent
+- experienced
+- calm
+- confident
+- highly personal
+- thoughtful
+- practical
+
+Avoid:
+
+- “Find Your Dream Home”
+- “Your Local Real Estate Expert”
+- “Unlock Your Home’s Potential”
+- “Luxury Living Starts Here”
+- “Making Dreams Come True”
+- “unparalleled”
+- “elite”
+- “world-class”
+- “premier Realtor”
+- “top producer”
+
+unless later supported by factual evidence.
+
+Do not invent:
+
+- sales volume
+- rankings
+- awards
+- years of experience
+- transaction counts
+- certifications
+- market-share claims
+- client names
+- actual listings
+- property prices
+- current market statistics
+
+==================================================
+5. TECHNOLOGY
+==================================================
+
+Use the current stable version of:
+
+Astro + TypeScript
+
+Favor static HTML generation.
+
+Use React or client-side JavaScript only where actual interactivity warrants it.
+
+Do not build this as a SPA.
+
+Do not require a server simply to render content.
+
+The built output should remain portable across static hosting platforms including:
+
+- Netlify
+- Cloudflare Pages
+- GitHub Pages
+- Vercel
+- another normal static host
+
+No hosting provider should own the site's architecture.
+
+Do not configure a live deployment unless the repository already clearly contains one.
+
+Provide a normal:
+
+npm run dev
+npm run build
+npm run preview
+
+workflow.
+
+Use minimal dependencies.
+
+Do not use a giant UI library.
+
+Do not default to generic Bootstrap/SaaS styling.
+
+==================================================
+6. EXISTING AMIE PHOTOGRAPHY
+==================================================
+
+The repository should contain:
+
+public/images/amie/amie-headshot.png
+public/images/amie/amie-portrait.png
+public/images/amie/amie-lifestyle-wide.png
+
+Verify whether these files exist before implementation.
+
+Use them intelligently.
+
+Suggested purposes:
+
+amie-headshot.png
+- Contact
+- article author cards
+- compact About modules
+
+amie-portrait.png
+- About
+- Selling / personal-service editorial sections
+
+amie-lifestyle-wide.png
+- homepage hero
+- wide editorial / lake-inspired sections
+
+Do not repeat the same image excessively.
+
+Do not distort images.
+
+Use responsive image handling, explicit sizing and sensible lazy loading.
+
+Do not download random copyrighted real-estate imagery.
+
+Where future property/community photography would materially improve the design, create elegant image slots/placeholders that can later be replaced with owned/licensed photography.
+
+==================================================
+7. DESIGN SYSTEM
+==================================================
+
+Create a deliberate design system using CSS variables/tokens.
+
+Include:
+
+- colors
+- spacing
+- typography
+- containers
+- radii
+- borders
+- shadows
+- responsive breakpoints
+- transition timings
+
+Visual direction:
+
+warm ivory
+soft limestone
+sand
+warm taupe
+muted charcoal
+restrained lake blue / blue-gray
+possibly subtle natural green
+
+Avoid black-and-gold Realtor luxury styling.
+
+Use a refined editorial serif for important headings where appropriate.
+
+Use a highly readable sans serif for body text and UI.
+
+Prioritize typography, composition and whitespace over excessive cards.
+
+Luxury should come from restraint.
+
+==================================================
+8. SITE CONFIGURATION
+==================================================
+
+Create one central configuration file, e.g.:
+
+src/config/site.ts
+
+Include configurable values such as:
+
+name
+professionalTitle
+brokerage
+contactEmail
+siteUrl
+phone
+office
+license
+socialProfiles
+serviceAreas
+reviewLinks
+
+Set:
+
+contactEmail = "Amieoren@yahoo.com"
+
+Use:
+
+PUBLIC_SITE_URL
+
+for the canonical site URL.
+
+Expected future domain:
+
+https://amieorenrealestate.com
+
+But do not require that domain to exist yet.
+
+Unknown values should remain optional.
+
+Do not invent them.
+
+==================================================
+9. PRIMARY NAVIGATION
+==================================================
+
+Primary navigation should include:
+
+Home
+Selling
+Buying
+Communities
+Waterfront
+Insights
+About
+Client Experiences
+
+Primary CTA:
+
+Start a Conversation
+
+Secondary/footer navigation can include:
+
+Properties
+Refer Someone
+Leave a Review
+Privacy
+
+Keep navigation restrained.
+
+Mobile navigation must be excellent.
+
+==================================================
+10. HOMEPAGE
+==================================================
+
+Build a visually excellent homepage.
+
+Preferred structure:
+
+Header
+
+Hero
+
+Local service-area strip
+
+Experience / positioning section
+
+Selling / Buying / Communities pathways
+
+Community discovery
+
+Amie editorial/personal section
+
+Life-moment positioning
+
+Waterfront feature
+
+Insights preview
+
+Client Experiences
+
+Referral invitation
+
+Conversation CTA
+
+Footer
+
+The exact rhythm can improve if the design benefits.
+
+Hero:
+
+Headline:
+
+Real estate guidance for the moments that matter.
+
+Supporting copy:
+
+Amie Oren brings experience, local knowledge, attention to detail, and highly personal service to buyers and sellers navigating important moves throughout West Michigan.
+
+Primary CTA:
+
+Start a Conversation
+
+Secondary CTA:
+
+Explore West Michigan
+
+Use amie-lifestyle-wide.png thoughtfully.
+
+==================================================
+11. SELLING WITH AMIE
+==================================================
+
+Create:
+
+/selling/
+
+This is one of the most important commercial pages.
+
+Suggested leading concept:
+
+“Selling a home deserves more than putting it on the market.”
+
+The page must articulate concrete value rather than repeatedly saying Amie provides great service.
+
+Include concepts such as:
+
+1. Understand the move
+
+Learn what the sale needs to accomplish, the timing, next steps and constraints.
+
+2. See the property through a buyer’s eyes
+
+Identify strengths, presentation concerns and details likely to affect buyer confidence.
+
+3. Prepare selectively
+
+Help distinguish preparation that matters from unnecessary work.
+
+4. Position intentionally
+
+Coordinate pricing, photography, presentation, launch strategy and property story.
+
+5. Manage communication and momentum
+
+Keep clients informed without requiring them to chase for updates.
+
+6. Negotiate the whole offer
+
+Evaluate price together with contingencies, timing, certainty and client priorities.
+
+7. Carry the details through closing
+
+Remain attentive through inspections, appraisal, title, repair conversations, schedules and handoffs.
+
+Themes:
+
+- preparation
+- judgment
+- coordination
+- communication
+- negotiation
+- attention to detail
+- anticipation
+- managing the transition around the sale
+
+Do not use “white glove.”
+
+CTA:
+
+Talk with Amie About Selling
+
+==================================================
+12. BUYING
+==================================================
+
+Create:
+
+/buying/
+
+Concept:
+
+“Find the right home — and understand what you’re choosing.”
+
+Explain that strong buyer representation means more than unlocking doors.
+
+Include:
+
+- defining true priorities
+- comparing communities
+- evaluating property condition
+- considering setting and lifestyle
+- identifying tradeoffs
+- market context
+- offer strategy
+- negotiation
+- inspection / due diligence
+- closing and transition
+
+CTA:
+
+Start a Buying Conversation
+
+==================================================
+13. COMMUNITIES
+==================================================
+
+Create:
+
+/communities/
+
+and individual pages:
+
+/communities/rockford/
+/communities/ada/
+/communities/east-grand-rapids/
+/communities/cascade/
+/communities/forest-hills/
+
+Create a reusable community template.
+
+These should be structured as future decision resources, not keyword-stuffed neighborhood pages.
+
+Potential sections:
+
+- overview
+- housing character
+- lifestyle / setting
+- questions buyers should consider
+- questions sellers should consider
+- property considerations
+- related communities
+- relevant insights
+- talk with Amie
+
+Do not fabricate:
+
+- school rankings
+- home prices
+- taxes
+- demographics
+- crime statistics
+- commute times
+- current market data
+
+When specific facts are not yet supplied, keep the page useful through durable qualitative guidance.
+
+==================================================
+14. WATERFRONT
+==================================================
+
+Create:
+
+/waterfront/
+
+Primary concept:
+
+“Buy the water as carefully as you buy the home.”
+
+Discuss:
+
+- shoreline
+- water access
+- orientation
+- view
+- privacy
+- elevation
+- dock considerations
+- intended use
+- seasonal versus year-round use
+- maintenance
+- inspections
+- due diligence
+- future resale considerations
+
+Do not provide legal/environmental advice.
+
+Where regulations may matter, direct the visitor to the appropriate qualified professional or governmental authority.
+
+==================================================
+15. ABOUT
+==================================================
+
+Create:
+
+/about/
+
+This should be a story, not a résumé dump.
+
+Core idea:
+
+“Real estate is rarely only about real estate.”
+
+Communicate that Amie approaches the work by understanding what the move means to the client.
+
+Themes:
+
+- listening
+- preparation
+- experience
+- local perspective
+- responsiveness
+- relationships
+- attention to detail
+- helping manage the complete move
+
+Use the portrait imagery prominently.
+
+Create clearly defined placeholders for factual:
+
+- career history
+- designations
+- community involvement
+- credentials
+
+Do not invent any of those.
+
+==================================================
+16. CLIENT EXPERIENCES / APPROVED REVIEWS
+==================================================
+
+Create:
+
+/client-experiences/
+
+and/or:
+
+/reviews/
+
+Use a reusable review content collection:
+
+src/content/reviews/
+
+Define a schema supporting at least:
+
+clientName
+displayName
+community
+experienceType
+reviewText
+source
+submittedDate
+publishedDate
+verified
+permissionToPublish
+featured
+draft
+
+Only real reviews with:
+
+verified = true
+permissionToPublish = true
+draft = false
+
+should appear in production rendering.
+
+For local development only, create several clearly marked illustrative sample reviews so the design can be evaluated.
+
+These must NEVER silently appear as real reviews.
+
+Implement a central development setting or draft mechanism so sample reviews cannot accidentally masquerade as real testimonials on a public production build.
+
+Example themes may include:
+
+- higher-end seller
+- move-up buyer
+- downsizing seller
+- waterfront buyer
+- referral client
+
+Every example must visibly say something like:
+
+“Illustrative draft — replace with verified client review.”
+
+==================================================
+17. LEAVE A REVIEW
+==================================================
+
+Create:
+
+/review/
+
+This page is intended to be sent directly to previous clients.
+
+Keep it personal, simple and low-friction.
+
+Suggested headline:
+
+“Would you share your experience?”
+
+Explain briefly that client feedback helps other people understand what working with Amie is actually like.
+
+Fields:
+
+Name
+Email
+Community (optional)
+Type of experience:
+- Seller
+- Buyer
+- Waterfront
+- Move-up
+- Downsizing / transition
+- Other
+
+Review
+
+How may we display your name?
+- Full name
+- First name and last initial
+- First names only
+- Anonymous
+
+Required checkbox:
+
+“I give Amie Oren permission to publish this review on her website.”
+
+Include appropriate explanatory copy.
+
+Do NOT automatically publish a submitted review.
+
+All reviews must remain moderated.
+
+Use a standard HTML POST form.
+
+Preferred endpoint:
+
+PUBLIC_REVIEW_FORM_ENDPOINT
+
+If configured:
+
+POST the form to that endpoint.
+
+The intended provider is currently Formspree, but DO NOT couple the entire site architecture to Formspree.
+
+If no review endpoint is configured, provide a graceful fallback explaining that reviews can currently be emailed directly to:
+
+Amieoren@yahoo.com
+
+Include a honeypot field or comparable simple anti-spam measure where appropriate.
+
+Create a thank-you experience/page.
+
+==================================================
+18. REVIEW WORKFLOW DOCUMENTATION
+==================================================
+
+Create:
+
+docs/REVIEW_WORKFLOW.md
+
+Explain:
+
+1. Amie sends a client to /review/
+2. Client submits feedback
+3. Amie receives notification from the form provider
+4. Review remains unpublished
+5. Review is verified and permission confirmed
+6. Approved review is added to src/content/reviews/
+7. Site rebuild publishes it
+
+Also explain how to add a review manually.
+
+Create:
+
+docs/REVIEW_REQUEST_TEMPLATES.md
+
+Include concise sample:
+
+SMS request
+email request
+follow-up request
+
+Use language consistent with Amie’s brand.
+
+Do not make the messages salesy.
+
+==================================================
+19. REFERRALS
+==================================================
+
+Create:
+
+/refer/
+
+Concept:
+
+“Know someone making a move?”
+
+Past clients should be able to make an introduction easily.
+
+Fields:
+
+Your name
+Person you are introducing
+Their email optional
+Their phone optional
+Anything Amie should know
+Permission/consent acknowledgement
+
+Do not over-collect information.
+
+For v1, this can use the same contact endpoint unless a separate endpoint is later configured.
+
+Referral copy should emphasize:
+
+simple
+personal
+low-pressure
+
+==================================================
+20. CONTACT
+==================================================
+
+Create:
+
+/contact/
+
+Primary concept:
+
+“Start a conversation.”
+
+Avoid “Book a Consultation.”
+
+Fields:
+
+Name
+Email
+Phone optional
+I’m interested in:
+- Selling
+- Buying
+- Waterfront
+- Moving within West Michigan
+- Downsizing / transition
+- Referral
+- Other
+
+Message
+
+Use a standard HTML form.
+
+Preferred configuration:
+
+PUBLIC_FORM_ENDPOINT
+
+If this variable exists, POST the form to it.
+
+The current expected form provider is Formspree, but keep implementation generic.
+
+If PUBLIC_FORM_ENDPOINT is absent, provide a working fallback:
+
+Email Amie
+
+mailto:
+
+Amieoren@yahoo.com
+
+The site must never present a visually functional form that silently discards messages.
+
+Implement clear success/error/fallback states.
+
+Use sensible spam prevention.
+
+Do not build a CRM.
+
+==================================================
+21. FORM CONFIGURATION
+==================================================
+
+==================================================
+21. FORM CONFIGURATION — CURRENT LIVE ENDPOINT
+==================================================
+
+A Formspree account and form already exist.
+
+Use this endpoint:
+
+https://formspree.io/f/mnpnylyj
+
+This is the current submission endpoint for:
+
+- Contact
+- Client Review
+- Referral
+
+Use standard HTML POST forms rather than React/Ajax unless there is a compelling accessibility or UX reason otherwise.
+
+Each form must submit a hidden identifier:
+
+Contact:
+form_type = contact
+
+Review:
+form_type = client_review
+
+Referral:
+form_type = referral
+
+The configured Formspree account will handle email notification.
+
+Centralize the endpoint rather than repeating it throughout components.
+
+Preferred approach:
+
+src/config/site.ts
+
+or a public environment variable such as:
+
+PUBLIC_FORM_ENDPOINT=https://formspree.io/f/mnpnylyj
+
+Because a Formspree submission URL is inherently exposed in the browser, do not treat it as a secret.
+
+Still create:
+
+.env.example
+
+with:
+
+PUBLIC_SITE_URL=
+PUBLIC_FORM_ENDPOINT=https://formspree.io/f/mnpnylyj
+
+If using an environment variable, ensure local development works without unnecessary setup.
+
+The site must never display a form that silently discards submissions.
+
+Implement:
+
+- required field validation
+- honeypot/spam protection where compatible
+- meaningful submit button states
+- accessible error handling
+- clear success/thank-you experience
+
+Contact form submissions should identify themselves as contact inquiries.
+
+Review submissions should identify themselves as client reviews.
+
+Referral submissions should identify themselves as referrals.
+
+Do not build React merely to submit these forms.
+
+==================================================
+
+
+
+==================================================
+22. INSIGHTS / FUTURE PRESS FOUNDATION
+==================================================
+
+Create:
+
+/insights/
+
+Use Astro Content Collections.
+
+Create:
+
+src/content/insights/
+
+Schema should support:
+
+title
+description
+slug
+publishedDate
+updatedDate
+author
+reviewedBy
+community
+topics
+intent
+heroImage
+summary
+sources
+faq
+relatedContent
+noindex
+draft
+
+Create reusable:
+
+- article layout
+- article cards
+- answer block
+- sources
+- reviewer/author block
+- breadcrumbs
+- related content
+- CTA
+
+Create approximately three high-quality demonstration articles:
+
+1. What should sellers consider before listing a home in West Michigan?
+
+2. How should buyers compare West Michigan communities?
+
+3. What makes waterfront property different from a typical home purchase?
+
+Do not fabricate current statistics.
+
+The purpose is to demonstrate architecture and voice.
+
+==================================================
+23. AEO APPROACH
+==================================================
+
+Important informational pages should:
+
+- answer the main question early
+- use semantic heading hierarchy
+- use concise answer blocks where appropriate
+- favor useful explanations over marketing prose
+- include clear internal linking
+- expose relevant author/reviewer information
+- display reviewed/updated date where appropriate
+- support source citations
+- use semantic HTML
+
+Do not keyword-stuff.
+
+Do not generate dozens of thin geo pages.
+
+==================================================
+24. PROPERTIES
+==================================================
+
+Create:
+
+/properties/
+
+Do not build an MLS integration.
+
+Do not invent listings.
+
+Create an elegant intentional framework for possible future:
+
+- featured properties
+- active listings
+- selected recently sold work if appropriate and permitted
+- external property search
+
+For now state clearly:
+
+“Property search and featured listings coming soon.”
+
+The page should still look finished.
+
+==================================================
+25. TECHNICAL SEO
+==================================================
+
+Implement:
+
+unique titles
+unique meta descriptions
+canonical URLs
+Open Graph
+social cards
+robots.txt
+sitemap
+semantic headings
+clean URLs
+breadcrumbs
+responsive images
+meaningful alt text
+internal linking
+404 page
+favicon placeholders
+RSS for Insights if straightforward
+
+Use PUBLIC_SITE_URL as the canonical base.
+
+Do not hard-code conflicting site URLs.
+
+==================================================
+26. STRUCTURED DATA
+==================================================
+
+Implement truthful JSON-LD where appropriate.
+
+Potential types:
+
+WebSite
+Person
+RealEstateAgent where semantically valid
+Article
+BreadcrumbList
+
+FAQPage only where the page genuinely contains the displayed FAQ and use is appropriate.
+
+Never invent:
+
+ratings
+reviewCount
+priceRange
+awards
+credentials
+address
+license information
+
+Do not output aggregate review schema until legitimate review information exists.
+
+==================================================
+27. BROKERAGE / LEGAL PLACEHOLDERS
+==================================================
+
+Five Star Real Estate is the stated brokerage affiliation.
+
+Do not invent:
+
+office address
+broker information
+license
+required logos
+fair-housing language
+state-required disclosures
+
+Create footer/configuration slots.
+
+Add all unresolved items to:
+
+docs/LAUNCH_CHECKLIST.md
+
+Clearly identify what must be verified before public launch.
+
+==================================================
+28. PRIVACY
+==================================================
+
+Create:
+
+/privacy/
+
+Keep it readable.
+
+Describe only what the implementation actually does.
+
+If the site currently uses only form submission to an external form provider, say so accurately.
+
+Do not fabricate analytics or advertising tracking.
+
+No cookie banner is needed if the site does not currently use technology requiring one.
+
+==================================================
+29. NO ANALYTICS REQUIREMENT
+==================================================
+
+Do NOT install:
+
+GA4
+GTM
+Clarity
+Search Console code
+Bing code
+advertising pixels
+call tracking
+CRM integrations
+
+They are not part of the current build.
+
+The website does not need these to be considered complete.
+
+Do not add speculative infrastructure for them beyond clean semantic markup.
+
+==================================================
+30. ACCESSIBILITY
+==================================================
+
+Target WCAG 2.2 AA where practical.
+
+Include:
+
+keyboard accessibility
+visible focus
+contrast
+semantic landmarks
+skip-to-content
+proper labels
+accessible mobile menu
+reduced-motion handling
+useful link wording
+proper heading hierarchy
+
+Do not sacrifice accessibility for visual styling.
+
+==================================================
+31. PERFORMANCE
+==================================================
+
+Optimize for:
+
+static rendering
+minimal JavaScript
+responsive images
+excellent typography without excessive font payload
+lazy loading below the fold
+no unnecessary animation framework
+no heavy UI library
+
+Aim for excellent Lighthouse performance.
+
+==================================================
+32. RESPONSIVE QUALITY
+==================================================
+
+Design specifically for:
+
+mobile
+iPad/tablet
+desktop
+wide desktop
+
+The prior concept had an iPad navigation issue because its prototype navigation relied too heavily on client-side behavior.
+
+Do not repeat that mistake.
+
+Core navigation and content discovery must work reliably on iPad/tablet.
+
+The production site may use accessible JavaScript for mobile navigation where appropriate, but normal links must remain true navigable links and the experience must degrade gracefully.
+
+Test tablet layouts deliberately.
+
+==================================================
+33. REUSABLE COMPONENTS
+==================================================
+
+Create a coherent component library such as:
+
+SiteHeader
+MobileNav
+SiteFooter
+Container
+Section
+Eyebrow
+Button
+Hero
+PageHero
+AmieProfile
+ServicePathCard
+CommunityCard
+CommunityGrid
+Testimonial
+ReferralCTA
+ConversationCTA
+InsightCard
+InsightArticle
+Breadcrumbs
+FAQ
+SourceList
+ReviewerBlock
+ContactForm
+ReviewForm
+ReferralForm
+SEO
+JsonLd
+
+Names can change if a cleaner architecture results.
+
+Avoid duplicate markup.
+
+==================================================
+34. CONTENT / FILE STRUCTURE
+==================================================
+
+Use a clean repository organization approximately like:
+
+src/
+  components/
+  config/
+  content/
+    insights/
+    reviews/
+  layouts/
+  pages/
+    communities/
+  styles/
+  utils/
+
+public/
+  images/
+    amie/
+
+docs/
+
+Keep it understandable.
+
+==================================================
+35. TESTING
+==================================================
+
+At minimum verify:
+
+production build succeeds
+TypeScript succeeds
+linting succeeds
+all internal routes resolve
+homepage renders
+selling renders
+buying renders
+all community pages render
+waterfront renders
+about renders
+insights renders
+insight article renders
+contact form renders
+review form renders
+referral form renders
+tablet/mobile navigation works
+no obvious horizontal overflow
+
+Use Playwright for a small number of high-value browser tests if appropriate.
+
+Do not create a giant brittle suite.
+
+==================================================
+36. DOCUMENTATION
+==================================================
+
+Create:
+
+README.md
+
+Include:
+
+local development
+build
+preview
+static deployment concepts
+image locations
+changing business information
+adding communities
+adding Insights
+adding approved reviews
+configuring forms
+changing domain
+content architecture
+
+Create:
+
+docs/CONTENT_GUIDE.md
+
+Explain brand voice, AEO structure, factual discipline and source discipline.
+
+Create:
+
+docs/REVIEW_WORKFLOW.md
+
+Create:
+
+docs/REVIEW_REQUEST_TEMPLATES.md
+
+Create:
+
+docs/LAUNCH_CHECKLIST.md
+
+==================================================
+37. LAUNCH CHECKLIST
+==================================================
+
+Include unresolved real-world items such as:
+
+final domain ownership
+PUBLIC_SITE_URL
+phone
+final preferred contact presentation
+brokerage-required wording
+license information
+office information
+fair-housing requirements
+social profiles if desired
+real client reviews
+Formspree/contact endpoint
+review endpoint
+community photography
+additional Amie photography
+favicon/logo
+property integration decision
+privacy review
+
+Do not include analytics/CRM/MLS as “required” if the site can launch successfully without them.
+
+==================================================
+38. VISUAL QUALITY STANDARD
+==================================================
+
+This site must feel professionally art-directed.
+
+Do not make it look like:
+
+Bootstrap
+a default Tailwind demo
+a SaaS landing page
+generic AI website output
+a broker template
+a mass-market Realtor theme
+
+The strongest design tools should be:
+
+typography
+spacing
+imagery
+composition
+restraint
+alignment
+editorial pacing
+
+Avoid unnecessary decorative effects.
+
+==================================================
+39. DEVELOPMENT REVIEW MODE
+==================================================
+
+The site will initially be reviewed locally before publication.
+
+It is acceptable to include realistic illustrative copy needed to experience the full website.
+
+However:
+
+- invented reviews must be explicitly marked as examples
+- invented listings are prohibited
+- invented market statistics are prohibited
+- invented credentials are prohibited
+
+Where sample review/testimonial content is used for design review, architect it so it cannot accidentally be represented as authentic production content.
+
+==================================================
+40. EXECUTION
+==================================================
+
+==================================================
+40. EXECUTION
+==================================================
+
+Claude Code has terminal access.
+
+Before implementation:
+
+1. inspect repository contents
+2. inspect Git state
+3. verify the three expected Amie images
+4. run:
+
+node --version
+npm --version
+git --version
+
+5. determine whether project scaffolding already exists
+
+If Node/npm/git are available, proceed without asking me anything.
+
+If Node itself is unavailable or incompatible and requires a system-level installation, stop and report the exact requirement rather than attempting an uncontrolled system installation.
+
+If the repository is empty or nearly empty, initialize the Astro + TypeScript project directly in the current repository without creating an unnecessary nested directory.
+
+Then install dependencies and execute the complete build.
+
+At completion run all applicable:
+
+npm run typecheck
+npm run lint
+npm test
+npm run build
+
+If package-script names differ because of the chosen Astro tooling, run the equivalent commands.
+
+Fix implementation errors before concluding.
+Before editing:
+
+1. inspect repository contents
+2. verify Git state
+3. verify the three expected Amie images
+4. determine whether project scaffolding already exists
+5. preserve anything useful
+
+Then implement end-to-end.
+
+Install dependencies.
+
+Run:
+
+typecheck
+lint
+tests
+production build
+
+Fix errors before concluding.
+
+Do not stop after creating wireframes.
+
+Every visible CTA should work.
+
+Every internal link should resolve.
+
+No route should be an empty shell unless specifically described as a future placeholder.
+
+==================================================
+41. FINAL REPORT
+==================================================
+
+When finished, respond with a concise implementation report containing:
+
+BUILT
+Major pages and features.
+
+DESIGN
+Key visual/design decisions.
+
+COPY
+Important positioning/copy choices.
+
+FORMS
+Exactly how Contact, Review and Referral currently work and what configuration is needed.
+
+REVIEWS
+How the moderated review workflow works.
+
+SEO/AEO
+What was implemented.
+
+IMAGES
+Which Amie assets are used and where.
+
+VERIFICATION
+Exact commands run and results.
+
+LOCAL PREVIEW
+Exact command and URL to open the site.
+
+BEFORE PUBLICATION
+Only genuine remaining items requiring human input.
+
+Do not conclude until the site is locally runnable and the production build succeeds.
+
+==================================================
+42. DEFINITION OF DONE
+==================================================
+
+The build is complete when:
+
+- the homepage feels professionally designed
+- the approved visual direction is preserved
+- mobile and iPad are excellent
+- selling articulates meaningful value
+- buying communicates judgment and guidance
+- five community pages exist
+- waterfront exists
+- About tells a compelling but truthful story
+- Insights architecture works
+- Contact can use an external endpoint and has a working email fallback
+- Leave a Review exists
+- review submissions are moderated, not automatically published
+- approved reviews have a real content model
+- referral experience exists
+- SEO/AEO foundations are implemented
+- schema is truthful
+- no unsupported factual claims are made
+- all routes work
+- build passes
+- documentation is complete
+- the project remains hosting-provider independent
+
+The objective is a polished working first version, not another plan.
