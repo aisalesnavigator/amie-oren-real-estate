@@ -1,0 +1,82 @@
+---
+/**
+ * Elegant placeholder for future owned / licensed photography (community, property, waterfront).
+ * Replace by swapping this component for <Image /> once real photography exists.
+ */
+interface Props {
+  caption?: string;
+  ratio?: string;
+  tone?: 'sand' | 'lake' | 'moss';
+  /** Show the small "photography to come" label. */
+  label?: boolean;
+}
+const { caption, ratio = '4 / 3', tone = 'sand', label = true } = Astro.props;
+---
+
+<figure class={`slot slot--${tone}`} style={`aspect-ratio: ${ratio};`} data-image-slot role="img" aria-label={caption ? `Photography placeholder: ${caption}` : 'Photography placeholder'}>
+  <svg class="slot__lines" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="1">
+      <path d="M-20 210 C 60 180, 120 240, 200 205 S 340 170, 430 215" />
+      <path d="M-20 232 C 70 205, 130 260, 205 228 S 345 195, 430 238" />
+      <path d="M-20 254 C 80 228, 140 280, 210 251 S 350 220, 430 261" />
+      <path d="M-20 276 C 90 252, 150 300, 215 274 S 355 245, 430 284" />
+      <circle cx="300" cy="82" r="26" />
+    </g>
+  </svg>
+  {
+    (caption || label) && (
+      <figcaption>
+        {caption && <span class="slot__caption">{caption}</span>}
+        {label && <span class="slot__label">Photography to come</span>}
+      </figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .slot {
+    position: relative;
+    margin: 0;
+    width: 100%;
+    overflow: hidden;
+    border-radius: var(--radius-m);
+    display: flex;
+    align-items: flex-end;
+    color: rgb(255 255 255 / 0.55);
+  }
+  .slot--sand {
+    background: linear-gradient(160deg, #eadfcb 0%, #dccfb8 55%, #cfc1a8 100%);
+    color: rgb(255 255 255 / 0.6);
+  }
+  .slot--lake {
+    background: linear-gradient(160deg, #c9d9df 0%, #a9c0ca 55%, #8fa9b6 100%);
+  }
+  .slot--moss {
+    background: linear-gradient(160deg, #d9ddcb 0%, #c0c8ae 55%, #a8b393 100%);
+  }
+  .slot__lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  figcaption {
+    position: relative;
+    display: grid;
+    gap: 0.15rem;
+    padding: var(--space-s) var(--space-m);
+    color: var(--c-charcoal);
+    font-size: var(--step--1);
+  }
+  .slot__caption {
+    font-family: var(--font-serif);
+    font-size: var(--step-1);
+    line-height: 1.2;
+  }
+  .slot__label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--c-taupe);
+  }
+</style>

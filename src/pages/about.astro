@@ -1,0 +1,194 @@
+---
+import { getImage } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import AmieProfile from '../components/AmieProfile.astro';
+import ConversationCTA from '../components/ConversationCTA.astro';
+import { site } from '../config/site';
+import { personSchema } from '../utils/schema';
+import { absoluteUrl } from '../utils/url';
+import portrait from '../assets/amie/amie-portrait.png';
+
+const portraitUrl = absoluteUrl((await getImage({ src: portrait, width: 900, format: 'jpg' })).src);
+
+const principles = [
+  {
+    title: 'Listening first',
+    text: 'The best plan starts with understanding what the move means to you: what you’re leaving, what you’re hoping for, and what you’re worried about.',
+  },
+  {
+    title: 'Preparation',
+    text: 'Good outcomes are usually prepared for. Amie works to anticipate what is coming, from buyer reactions to inspection findings, so there are fewer surprises.',
+  },
+  {
+    title: 'Local perspective',
+    text: 'West Michigan communities each have their own rhythm. Understanding that difference helps clients choose, and helps sellers present, with confidence.',
+  },
+  {
+    title: 'Responsiveness and communication',
+    text: 'You should not have to chase for updates. Questions are answered, and information is shared before you have to ask.',
+  },
+  {
+    title: 'Relationships',
+    text: 'Real estate is a small world of lenders, inspectors, attorneys, and other agents. Courteous, trusted relationships make transactions smoother for everyone.',
+  },
+  {
+    title: 'Attention to detail',
+    text: 'Dates, documents, conditions, and small requests matter. Carrying them through carefully is much of what clients value.',
+  },
+];
+
+const placeholders = [
+  { label: 'Career history', hint: 'Professional background and path into real estate.' },
+  { label: 'Designations and credentials', hint: 'Only verified designations and certifications.' },
+  { label: 'Community involvement', hint: 'Organizations, causes, and local roots.' },
+  { label: 'Education and training', hint: 'Relevant education or continuing training, if desired.' },
+];
+---
+
+<BaseLayout
+  title="About Amie Oren"
+  description="Real estate is rarely only about real estate. Meet Amie Oren, a West Michigan real estate professional with Five Star Real Estate who helps clients navigate the whole move."
+  path="/about/"
+  jsonLd={[personSchema(portraitUrl)]}
+>
+  <section class="about-hero">
+    <div class="container about-hero__grid">
+      <div class="about-hero__copy">
+        <Breadcrumbs items={[{ name: 'About' }]} />
+        <span class="eyebrow">About Amie</span>
+        <h1>Real estate is rarely only about real estate.</h1>
+        <p class="lede">
+          It’s about a family that has outgrown a house, a home that holds decades of memories, a change in pace,
+          a lake that has become part of a life. Amie’s work begins with understanding what the move means to you.
+        </p>
+      </div>
+      <div class="about-hero__media">
+        <AmieProfile variant="feature" eager />
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container container--narrow stack prose">
+      <h2>Helping people through the whole move.</h2>
+      <p>
+        Amie Oren is a {site.professionalTitle.toLowerCase()} with {site.brokerage}, working with buyers and sellers across
+        Rockford, Ada, East Grand Rapids, Cascade, Forest Hills, and the greater Grand Rapids and West Michigan
+        area.
+      </p>
+      <p>
+        Her approach is simple to describe and demanding to do well: pay close attention, prepare carefully, and
+        stay with the details until the move is complete. Clients navigating a sale, a purchase, a waterfront
+        property, or a major life transition should feel that someone steady is looking out for them.
+      </p>
+      <blockquote>Understand what the move means. Then do the work to make it go well.</blockquote>
+    </div>
+  </section>
+
+  <section class="section section--limestone" aria-labelledby="principles-heading">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">How Amie works</span>
+        <h2 id="principles-heading">What clients can expect.</h2>
+      </div>
+      <div class="principles">
+        {
+          principles.map((p) => (
+            <div class="principle">
+              <h3>{p.title}</h3>
+              <p>{p.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="background-heading">
+    <div class="container container--narrow">
+      <h2 id="background-heading">Background</h2>
+      <p class="muted">
+        More of Amie’s professional background will be shared here. The sections below are reserved for verified
+        details only.
+      </p>
+      <ul class="slots">
+        {
+          placeholders.map((p) => (
+            <li data-about-placeholder>
+              <h3>{p.label}</h3>
+              <p class="muted small">{p.hint} <em>(To be added.)</em></p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <ConversationCTA
+    title="Let’s talk about your move."
+    text="Tell Amie what you’re thinking about. She’ll listen first."
+  />
+</BaseLayout>
+
+<style>
+  .about-hero {
+    padding-block: var(--space-xl) var(--space-3xl);
+  }
+  .about-hero__grid {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: center;
+  }
+  .about-hero h1 {
+    font-size: var(--step-5);
+  }
+  .about-hero__media {
+    max-width: 30rem;
+  }
+  @media (min-width: 64em) {
+    .about-hero__grid {
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: var(--space-2xl);
+    }
+    .about-hero__media {
+      justify-self: end;
+      width: 100%;
+    }
+  }
+  .principles {
+    display: grid;
+    gap: var(--space-xl);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  }
+  .principle {
+    border-top: 1px solid var(--c-sand-deep);
+    padding-top: var(--space-m);
+  }
+  .principle h3 {
+    font-size: var(--step-2);
+  }
+  .principle p {
+    margin: 0;
+  }
+  .slots {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-l) 0 0;
+    display: grid;
+    gap: var(--space-s);
+  }
+  .slots li {
+    margin: 0;
+    padding: var(--space-m);
+    border: 1px dashed var(--c-sand-deep);
+    border-radius: var(--radius-m);
+  }
+  .slots h3 {
+    font-size: var(--step-1);
+    margin-bottom: 0.15rem;
+  }
+  .slots p {
+    margin: 0;
+  }
+</style>

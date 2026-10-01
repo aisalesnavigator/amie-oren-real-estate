@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import ReviewForm from '../components/ReviewForm.astro';
+import AmieProfile from '../components/AmieProfile.astro';
+import { site } from '../config/site';
+---
+
+<BaseLayout
+  title="Leave a Review for Amie Oren"
+  description="Worked with Amie Oren? Share your experience to help others understand what working with her is really like."
+  path="/review/"
+  noindex
+>
+  <section class="section" style="padding-block-start: var(--space-xl)">
+    <div class="container review__grid">
+      <div>
+        <Breadcrumbs items={[{ name: 'Leave a Review' }]} />
+        <span class="eyebrow">Client experiences</span>
+        <h1>Would you share your experience?</h1>
+        <p class="lede">
+          Your feedback helps other people understand what working with Amie is actually like. A few honest
+          sentences is all it takes, and it’s deeply appreciated.
+        </p>
+        <p class="muted">
+          Every review is read and verified before it is published, and nothing appears on the site
+          automatically. You choose how your name is shown.
+        </p>
+        <ReviewForm />
+        {
+          !site.forms.review && (
+            <p class="small muted">
+              If this form doesn’t work for you, you’re welcome to email your review to
+              <a href={`mailto:${site.contactEmail}`}> {site.contactEmail}</a>.
+            </p>
+          )
+        }
+      </div>
+      <aside class="review__aside" aria-label="About Amie">
+        <AmieProfile variant="compact" />
+        <p class="small muted">
+          Thank you for trusting Amie with an important move.
+        </p>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  h1 {
+    font-size: var(--step-5);
+  }
+  .review__grid {
+    display: grid;
+    gap: var(--space-xl);
+  }
+  .review__grid .muted {
+    margin-bottom: var(--space-xl);
+  }
+  @media (min-width: 64em) {
+    .review__grid {
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.7fr);
+      gap: var(--space-3xl);
+      align-items: start;
+    }
+    .review__aside {
+      padding-top: var(--space-3xl);
+    }
+  }
+</style>

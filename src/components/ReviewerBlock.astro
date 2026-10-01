@@ -1,0 +1,79 @@
+---
+import AmieProfile from './AmieProfile.astro';
+import { formatDate } from '../utils/insights';
+
+interface Props {
+  author: string;
+  reviewedBy?: string;
+  reviewedDate?: Date;
+  publishedDate: Date;
+  updatedDate?: Date;
+}
+const { author, reviewedBy, reviewedDate, publishedDate, updatedDate } = Astro.props;
+---
+
+<div class="reviewer">
+  <AmieProfile variant="compact" />
+  <dl class="reviewer__meta">
+    <div>
+      <dt>Written by</dt>
+      <dd>{author}</dd>
+    </div>
+    <div>
+      <dt>Published</dt>
+      <dd><time datetime={publishedDate.toISOString()}>{formatDate(publishedDate)}</time></dd>
+    </div>
+    {
+      updatedDate && (
+        <div>
+          <dt>Updated</dt>
+          <dd><time datetime={updatedDate.toISOString()}>{formatDate(updatedDate)}</time></dd>
+        </div>
+      )
+    }
+    <div>
+      <dt>Review status</dt>
+      <dd>
+        {
+          reviewedBy
+            ? `Reviewed by ${reviewedBy}${reviewedDate ? `, ${formatDate(reviewedDate)}` : ''}`
+            : 'Draft awaiting review before publication'
+        }
+      </dd>
+    </div>
+  </dl>
+</div>
+
+<style>
+  .reviewer {
+    display: grid;
+    gap: var(--space-m);
+    padding-block: var(--space-m);
+    border-block: 1px solid var(--c-line);
+    max-width: var(--container-narrow);
+  }
+  .reviewer__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-s) var(--space-l);
+    margin: 0;
+    font-size: var(--step--1);
+  }
+  dt {
+    color: var(--c-taupe);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.6875rem;
+  }
+  dd {
+    margin: 0;
+    color: var(--c-charcoal);
+  }
+  @media (min-width: 48em) {
+    .reviewer {
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: var(--space-xl);
+    }
+  }
+</style>

@@ -1,0 +1,49 @@
+---
+import FormShell from './FormShell.astro';
+import Field from './Field.astro';
+import { site } from '../config/site';
+---
+
+<FormShell
+  id="referral-form"
+  formType="referral"
+  endpoint={site.forms.referral}
+  subject="New referral — someone is making a move"
+  thanksKey="referral"
+  submitLabel="Send Introduction"
+>
+  <Field id="ref-name" name="name" label="Your name" required autocomplete="name" />
+  <Field
+    id="ref-email"
+    name="email"
+    type="email"
+    label="Your email"
+    optional
+    autocomplete="email"
+    inputmode="email"
+    hint="So Amie can thank you and let you know she has connected."
+  />
+  <Field id="ref-person" name="referred_person" label="Person you are introducing" required />
+  <Field id="ref-person-email" name="referred_email" type="email" label="Their email" optional inputmode="email" />
+  <Field id="ref-person-phone" name="referred_phone" type="tel" label="Their phone" optional inputmode="tel" />
+  <Field
+    id="ref-notes"
+    name="notes"
+    as="textarea"
+    rows={5}
+    label="Anything Amie should know"
+    optional
+    hint="For example what they are considering, timing, or how they prefer to be contacted."
+  />
+
+  <div class="field" data-field>
+    <label class="choice choice--consent" for="ref-consent">
+      <input type="checkbox" id="ref-consent" name="referral_consent" value="Yes" required />
+      <span>
+        I’ve let this person know I’m introducing them, and I’m comfortable sharing their contact details with Amie.
+        <span class="field__req" aria-hidden="true"> *</span>
+      </span>
+    </label>
+    <p class="field__error" data-error hidden></p>
+  </div>
+</FormShell>

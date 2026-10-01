@@ -1,0 +1,143 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ProcessList from '../components/ProcessList.astro';
+import FAQ from '../components/FAQ.astro';
+import ImageSlot from '../components/ImageSlot.astro';
+import ConversationCTA from '../components/ConversationCTA.astro';
+import { getInsights, insightHref } from '../utils/insights';
+import { breadcrumbSchema } from '../utils/schema';
+
+const steps = [
+  {
+    title: 'Define your true priorities',
+    text: 'Before touring, it helps to separate what you need, what you want, and what you only think you want. That clarity makes every later decision easier.',
+  },
+  {
+    title: 'Compare communities',
+    text: 'The right house in the wrong setting rarely works. Amie helps you weigh the character, rhythm, and practical realities of different communities.',
+  },
+  {
+    title: 'Evaluate condition and setting',
+    text: 'A home is its structure, its systems, its lot, and its surroundings. You’ll look at each, including how the property fits the way you actually live.',
+  },
+  {
+    title: 'Understand the tradeoffs',
+    text: 'Almost every property asks for a compromise somewhere. The goal is to make those tradeoffs visible and deliberate, not to discover them after closing.',
+  },
+  {
+    title: 'Read the market context',
+    text: 'Amie puts a property in context: how comparable homes are being treated, how long a home has been available, and what that may mean for your approach.',
+  },
+  {
+    title: 'Build the right offer strategy',
+    text: 'Price is one part of an offer. Terms, timing, contingencies, and the seller’s priorities all matter, and together they shape a strategy suited to the home and the moment.',
+  },
+  {
+    title: 'Negotiate with care',
+    text: 'Negotiation is calm, informed, and focused on your goals, with an eye on the relationships and details that carry the transaction to the finish.',
+  },
+  {
+    title: 'Inspections and due diligence',
+    text: 'Inspections and other due diligence are where a house becomes understood. Amie helps you decide what to investigate and how to weigh what you learn.',
+  },
+  {
+    title: 'Closing and transition',
+    text: 'Scheduling, final walk-through, paperwork, and the move itself are coordinated so you arrive at the new home prepared rather than scrambling.',
+  },
+];
+
+const faq = [
+  {
+    question: 'Should I get a lender conversation started before I look?',
+    answer:
+      'It is usually wise to understand your financing options early so you can act confidently. Amie can suggest questions to ask and lenders you may wish to speak with, and the financing decision itself is always yours.',
+  },
+  {
+    question: 'How many homes should I expect to see?',
+    answer:
+      'There is no right number. Some buyers know quickly; others need to see a range to understand their priorities. Amie adapts to how you decide.',
+  },
+  {
+    question: 'Can you help me compare different communities?',
+    answer:
+      'Yes. Comparing communities is often the most useful early step. Start with the community guides on this site, then talk it through with Amie.',
+  },
+];
+
+const articles = (await getInsights()).filter((e) => e.data.intent === 'buy').slice(0, 1);
+---
+
+<BaseLayout
+  title="Buying a Home in West Michigan"
+  description="Find the right home and understand what you’re choosing. Amie Oren guides buyers through priorities, communities, condition, tradeoffs, offers, and closing across West Michigan."
+  path="/buying/"
+  jsonLd={[breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Buying' }])]}
+>
+  <PageHero
+    eyebrow="Buying with Amie"
+    title="Find the right home, and understand what you’re choosing."
+    lede="Strong buyer representation is more than unlocking doors. It is helping you see clearly, weigh honestly, and decide with confidence."
+    breadcrumbs={[{ name: 'Buying' }]}
+  >
+    <a class="btn btn--primary" href="/contact/?interest=buying">Start a Buying Conversation</a>
+  </PageHero>
+
+  <section class="section section--tight">
+    <div class="container split split--wide-left">
+      <div class="stack">
+        <h2>More than a showing schedule.</h2>
+        <p class="lede">
+          Buying a home well means understanding the property, the place, and the choice you’re making, not just
+          finding something that meets a checklist.
+        </p>
+        <p>
+          Amie brings local knowledge and careful preparation to each step so you can make an important decision
+          with clarity. She will tell you what she sees, including the things that give her pause, and then help
+          you decide what matters to you.
+        </p>
+      </div>
+      <ImageSlot ratio="4 / 3" tone="moss" caption="Setting, light, and lifestyle" />
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">How Amie helps buyers</span>
+        <h2>From priorities to the keys in your hand.</h2>
+      </div>
+      <ProcessList steps={steps} />
+    </div>
+  </section>
+
+  <section class="section section--limestone" aria-label="Buying questions">
+    <div class="container">
+      <FAQ items={faq} heading="Questions buyers often ask" schema={false} />
+      <p class="more">
+        {
+          articles.length > 0 ? (
+            <>
+              Related reading: <a class="text-link" href={insightHref(articles[0])}>{articles[0].data.title}</a>
+            </>
+          ) : (
+            <a class="text-link" href="/communities/">Explore West Michigan communities</a>
+          )
+        }
+      </p>
+    </div>
+  </section>
+
+  <ConversationCTA
+    title="Beginning to look?"
+    text="Whether you’re just starting or already touring, Amie is glad to talk through what you’re hoping to find."
+    label="Start a Buying Conversation"
+    href="/contact/?interest=buying"
+  />
+</BaseLayout>
+
+<style>
+  .more {
+    margin-top: var(--space-xl);
+  }
+</style>

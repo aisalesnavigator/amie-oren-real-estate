@@ -1,0 +1,66 @@
+---
+import ImageSlot from './ImageSlot.astro';
+import { Image } from 'astro:assets';
+import { insightHref, formatDate, type Insight } from '../utils/insights';
+
+interface Props {
+  entry: Insight;
+  tone?: 'sand' | 'lake' | 'moss';
+}
+const { entry, tone = 'sand' } = Astro.props;
+const d = entry.data;
+---
+
+<article class="insight-card">
+  <a href={insightHref(entry)} class="insight-card__link">
+    {
+      d.heroImage ? (
+        <Image src={d.heroImage} alt={d.heroImageAlt ?? ''} width={640} height={420} class="insight-card__img" loading="lazy" />
+      ) : (
+        <ImageSlot ratio="16 / 10" tone={tone} label={false} />
+      )
+    }
+    <div class="insight-card__body">
+      {d.topics[0] && <span class="eyebrow">{d.topics[0]}</span>}
+      <h3>{d.title}</h3>
+      <p>{d.description}</p>
+      <span class="small muted">
+        <time datetime={d.publishedDate.toISOString()}>{formatDate(d.publishedDate)}</time>
+      </span>
+    </div>
+  </a>
+</article>
+
+<style>
+  .insight-card__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+  .insight-card__img {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: var(--radius-m);
+  }
+  .insight-card__body {
+    padding-top: var(--space-s);
+  }
+  .insight-card .eyebrow {
+    margin-bottom: var(--space-2xs);
+  }
+  h3 {
+    font-size: var(--step-2);
+    margin-bottom: var(--space-2xs);
+  }
+  p {
+    color: var(--c-ink);
+    margin-bottom: var(--space-xs);
+  }
+  .insight-card__link:hover h3 {
+    color: var(--c-lake-deep);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.15em;
+  }
+</style>

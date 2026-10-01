@@ -1,0 +1,144 @@
+---
+import { primaryNav, footerNav } from '../config/nav';
+import { site } from '../config/site';
+
+const year = new Date().getFullYear();
+const office = site.office;
+const officeLines: string[] = office
+  ? [office.street, [office.city, office.region, office.postalCode].filter(Boolean).join(' ')].filter(
+      (l): l is string => Boolean(l),
+    )
+  : [];
+const externalLinks = [...site.socialProfiles, ...site.reviewLinks];
+---
+
+<footer class="site-footer">
+  <div class="container site-footer__grid">
+    <div class="site-footer__brand">
+      <p class="site-footer__name">{site.brand}</p>
+      <p class="small">Affiliated with {site.brokerage}.</p>
+      <p class="small">
+        <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>
+        {site.phone && <><br /><a href={`tel:${site.phone}`}>{site.phone}</a></>}
+      </p>
+      {
+        officeLines.length > 0 && (
+          <p class="small">
+            {officeLines.map((l) => (
+              <span>
+                {l}
+                <br />
+              </span>
+            ))}
+          </p>
+        )
+      }
+      {site.license && <p class="small">License: {site.license}</p>}
+    </div>
+
+    <nav aria-label="Explore" class="site-footer__col">
+      <h2 class="site-footer__h">Explore</h2>
+      <ul>
+        {primaryNav.filter((i) => i.href !== '/').map((i) => <li><a href={i.href}>{i.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <nav aria-label="More" class="site-footer__col">
+      <h2 class="site-footer__h">More</h2>
+      <ul>
+        {footerNav.map((i) => <li><a href={i.href}>{i.label}</a></li>)}
+        <li><a href="/contact/">Start a Conversation</a></li>
+        <li><a href="/rss.xml">Insights RSS</a></li>
+      </ul>
+      {
+        externalLinks.length > 0 && (
+          <ul class="site-footer__ext">
+            {externalLinks.map((l) => (
+              <li>
+                <a href={l.url} rel="noopener">{l.label}</a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </nav>
+
+    <div class="site-footer__col">
+      <h2 class="site-footer__h">Serving</h2>
+      <ul>
+        {site.serviceAreas.map((a) => <li><a href={a.href}>{a.name}</a></li>)}
+      </ul>
+    </div>
+  </div>
+
+  <div class="container site-footer__legal">
+    {site.legalNotice && <p class="small">{site.legalNotice}</p>}
+    <p class="small">&copy; {year} {site.brand}. {site.brokerage}.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--c-charcoal);
+    color: #d9d3c8;
+    padding-top: var(--space-2xl);
+  }
+  .site-footer a {
+    color: #f1ece2;
+    text-decoration-color: rgb(241 236 226 / 0.35);
+  }
+  .site-footer a:hover {
+    color: #fff;
+  }
+  .site-footer__grid {
+    display: grid;
+    gap: var(--space-xl);
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  }
+  .site-footer__brand {
+    grid-column: 1 / -1;
+  }
+  @media (min-width: 64em) {
+    .site-footer__grid {
+      grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    }
+    .site-footer__brand {
+      grid-column: auto;
+    }
+  }
+  .site-footer__name {
+    font-family: var(--font-serif);
+    font-size: var(--step-2);
+    color: #fff;
+    margin-bottom: var(--space-xs);
+  }
+  .site-footer__h {
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #bdb5a6;
+    margin-bottom: var(--space-s);
+  }
+  .site-footer ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .site-footer li {
+    margin-bottom: 0.4rem;
+  }
+  .site-footer__ext {
+    margin-top: var(--space-m);
+  }
+  .site-footer__legal {
+    margin-top: var(--space-2xl);
+    padding-block: var(--space-m) var(--space-l);
+    border-top: 1px solid rgb(255 255 255 / 0.12);
+    color: #bdb5a6;
+  }
+  .site-footer__legal p {
+    margin-bottom: var(--space-2xs);
+  }
+</style>

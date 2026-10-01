@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ImageSlot from '../components/ImageSlot.astro';
+import ConversationCTA from '../components/ConversationCTA.astro';
+import { breadcrumbSchema } from '../utils/schema';
+
+const frames = [
+  { title: 'Featured properties', text: 'Selected homes Amie is representing, presented with the care they deserve.', tone: 'sand' },
+  { title: 'Active listings', text: 'A current view of available homes, once a listing integration is chosen.', tone: 'lake' },
+  { title: 'Selected recent work', text: 'Recently completed sales, shared only where appropriate and permitted.', tone: 'moss' },
+] as const;
+---
+
+<BaseLayout
+  title="Properties"
+  description="Property search and featured listings from Amie Oren are coming soon. In the meantime, start a conversation about what you’re looking for."
+  path="/properties/"
+  jsonLd={[breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Properties' }])]}
+>
+  <PageHero
+    eyebrow="Properties"
+    title="Property search and featured listings coming soon."
+    lede="This is where featured homes and available listings will live. Until then, the most direct route is a conversation: tell Amie what you’re looking for and she’ll help you find it."
+    breadcrumbs={[{ name: 'Properties' }]}
+  >
+    <div class="btn-row">
+      <a class="btn btn--primary" href="/contact/?interest=buying">Start a Buying Conversation</a>
+      <a class="btn btn--secondary" href="/communities/">Explore Communities</a>
+    </div>
+  </PageHero>
+
+  <section class="section" style="padding-top:0" aria-label="Planned property features">
+    <div class="container">
+      <div class="grid grid--3">
+        {
+          frames.map((f) => (
+            <div>
+              <ImageSlot ratio="4 / 3" tone={f.tone} label={false} caption="Coming soon" />
+              <h2 class="frame-title">{f.title}</h2>
+              <p class="muted">{f.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <ConversationCTA tone="limestone" />
+</BaseLayout>
+
+<style>
+  .frame-title {
+    font-size: var(--step-2);
+    margin: var(--space-s) 0 var(--space-2xs);
+  }
+</style>

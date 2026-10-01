@@ -1,0 +1,83 @@
+---
+import { Image } from 'astro:assets';
+import headshot from '../assets/amie/amie-headshot.png';
+import portrait from '../assets/amie/amie-portrait.png';
+import { site } from '../config/site';
+
+interface Props {
+  /** "compact" = headshot + name card; "feature" = large portrait editorial block. */
+  variant?: 'compact' | 'feature';
+  /** Lazy-load (default) vs eager for above-the-fold use. */
+  eager?: boolean;
+}
+const { variant = 'feature', eager = false } = Astro.props;
+---
+
+{
+  variant === 'compact' ? (
+    <div class="profile-compact">
+      <Image
+        src={headshot}
+        alt="Portrait of Amie Oren"
+        width={160}
+        height={200}
+        densities={[1, 2]}
+        format="webp"
+        loading={eager ? 'eager' : 'lazy'}
+        class="profile-compact__img"
+      />
+      <div>
+        <p class="profile-compact__name">{site.name}</p>
+        <p class="small muted">
+          {site.professionalTitle}, {site.brokerage}
+        </p>
+        <a class="text-link small" href="/about/">About Amie</a>
+      </div>
+    </div>
+  ) : (
+    <div class="profile-feature">
+      <Image
+        src={portrait}
+        alt="Amie Oren standing beside a stone wall with a lake behind her"
+        widths={[420, 640, 900]}
+        sizes="(min-width: 64em) 40vw, 90vw"
+        format="webp"
+        loading={eager ? 'eager' : 'lazy'}
+        class="profile-feature__img"
+      />
+    </div>
+  )
+}
+
+<style>
+  .profile-compact {
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+  }
+  .profile-compact__img {
+    width: 5rem;
+    height: 6.25rem;
+    object-fit: cover;
+    object-position: 50% 22%;
+    border-radius: var(--radius-m);
+  }
+  .profile-compact__name {
+    font-family: var(--font-serif);
+    font-size: var(--step-2);
+    color: var(--c-charcoal);
+    margin: 0;
+    line-height: 1.1;
+  }
+  .profile-compact p {
+    margin-bottom: 0.15rem;
+  }
+  .profile-feature__img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: 50% 20%;
+    border-radius: var(--radius-l);
+    box-shadow: var(--shadow-l);
+  }
+</style>

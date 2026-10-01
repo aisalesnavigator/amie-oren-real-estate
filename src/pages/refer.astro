@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import ReferralForm from '../components/ReferralForm.astro';
+import AmieProfile from '../components/AmieProfile.astro';
+import { breadcrumbSchema } from '../utils/schema';
+---
+
+<BaseLayout
+  title="Refer Someone to Amie Oren"
+  description="Know someone making a move? Introduce them to Amie Oren simply and personally, with no pressure."
+  path="/refer/"
+  jsonLd={[breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Refer Someone' }])]}
+>
+  <section class="section" style="padding-block-start: var(--space-xl)">
+    <div class="container refer__grid">
+      <div>
+        <Breadcrumbs items={[{ name: 'Refer Someone' }]} />
+        <span class="eyebrow">Referrals</span>
+        <h1>Know someone making a move?</h1>
+        <p class="lede">
+          An introduction is the kindest thing a past client can do. It’s simple, it’s personal, and it’s
+          always low-pressure.
+        </p>
+        <ul class="refer__points">
+          <li><strong>Simple.</strong> A name and anything helpful you’d like to share.</li>
+          <li><strong>Personal.</strong> Amie reaches out thoughtfully, and only in the way you suggest.</li>
+          <li><strong>Low-pressure.</strong> No sales pitch, and no obligation for anyone.</li>
+        </ul>
+        <ReferralForm />
+      </div>
+      <aside class="refer__aside" aria-label="About Amie">
+        <AmieProfile variant="compact" />
+        <p class="small muted">Thank you. Your confidence means a great deal.</p>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  h1 {
+    font-size: var(--step-5);
+  }
+  .refer__grid {
+    display: grid;
+    gap: var(--space-xl);
+  }
+  .refer__points {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-l) 0 var(--space-xl);
+    display: grid;
+    gap: var(--space-xs);
+  }
+  .refer__points li {
+    margin: 0;
+    padding-top: var(--space-xs);
+    border-top: 1px solid var(--c-sand-deep);
+  }
+  @media (min-width: 64em) {
+    .refer__grid {
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.7fr);
+      gap: var(--space-3xl);
+      align-items: start;
+    }
+    .refer__aside {
+      padding-top: var(--space-3xl);
+    }
+  }
+</style>

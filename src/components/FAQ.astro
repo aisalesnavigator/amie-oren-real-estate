@@ -1,0 +1,73 @@
+---
+import JsonLd from './JsonLd.astro';
+import { faqSchema } from '../utils/schema';
+
+interface Props {
+  items: { question: string; answer: string }[];
+  heading?: string;
+  /** Emit FAQPage JSON-LD (only valid when every Q&A is visibly displayed, as here). */
+  schema?: boolean;
+}
+const { items, heading = 'Frequently asked questions', schema = true } = Astro.props;
+---
+
+{
+  items.length > 0 && (
+    <section class="faq" aria-labelledby="faq-heading">
+      <h2 id="faq-heading">{heading}</h2>
+      <div class="faq__list">
+        {items.map((f) => (
+          <details>
+            <summary>{f.question}</summary>
+            <p>{f.answer}</p>
+          </details>
+        ))}
+      </div>
+      {schema && <JsonLd data={faqSchema(items)} />}
+    </section>
+  )
+}
+
+<style>
+  .faq {
+    max-width: var(--container-narrow);
+  }
+  h2 {
+    font-size: var(--step-3);
+  }
+  details {
+    border-top: 1px solid var(--c-line);
+    padding-block: var(--space-s);
+  }
+  details:last-child {
+    border-bottom: 1px solid var(--c-line);
+  }
+  summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-m);
+    font-family: var(--font-serif);
+    font-size: var(--step-2);
+    line-height: 1.25;
+    color: var(--c-charcoal);
+    padding-block: var(--space-2xs);
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary::after {
+    content: '+';
+    font-family: var(--font-sans);
+    color: var(--c-lake);
+    transition: transform var(--t-med) var(--ease);
+  }
+  details[open] summary::after {
+    content: '–';
+  }
+  details p {
+    margin: var(--space-xs) 0 0;
+    font-size: var(--step-1);
+  }
+</style>

@@ -1,0 +1,51 @@
+---
+interface Source {
+  title: string;
+  url: string;
+  publisher?: string;
+  note?: string;
+}
+interface Props {
+  sources: Source[];
+}
+const { sources } = Astro.props;
+---
+
+<section class="sources" aria-labelledby="sources-heading">
+  <h2 id="sources-heading">Sources and further reading</h2>
+  {
+    sources.length > 0 ? (
+      <ul>
+        {sources.map((s) => (
+          <li>
+            <a href={s.url} rel="noopener">{s.title}</a>
+            {s.publisher && <span class="muted"> — {s.publisher}</span>}
+            {s.note && <span class="small muted block">{s.note}</span>}
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="muted">
+        This article offers general guidance and cites no statistics. Where figures are used in future
+        articles, their sources will be listed here.
+      </p>
+    )
+  }
+</section>
+
+<style>
+  .sources {
+    max-width: var(--container-narrow);
+    padding-top: var(--space-l);
+    border-top: 1px solid var(--c-line);
+  }
+  h2 {
+    font-size: var(--step-2);
+  }
+  ul {
+    padding-left: 1.1rem;
+  }
+  .block {
+    display: block;
+  }
+</style>

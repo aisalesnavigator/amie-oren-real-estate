@@ -1,0 +1,86 @@
+---
+import { Image } from 'astro:assets';
+import lifestyle from '../assets/amie/amie-lifestyle-wide.png';
+import { site } from '../config/site';
+---
+
+<section class="hero">
+  <div class="container hero__grid">
+    <div class="hero__copy">
+      <span class="eyebrow">{site.professionalTitle} · West Michigan</span>
+      <h1>Real estate guidance for the <em>moments that matter.</em></h1>
+      <p class="lede">{site.description}</p>
+      <div class="btn-row">
+        <a class="btn btn--primary" href="/contact/">Start a Conversation</a>
+        <a class="btn btn--secondary" href="/communities/">Explore West Michigan</a>
+      </div>
+    </div>
+    <div class="hero__media">
+      <Image
+        src={lifestyle}
+        alt="Amie Oren smiling in a bright living room with a lake view behind her"
+        widths={[480, 800, 1200, 1672]}
+        sizes="(min-width: 64em) 1200px, 150vw"
+        loading="eager"
+        fetchpriority="high"
+        format="webp"
+        quality={82}
+        class="hero__img"
+      />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: var(--space-l) var(--space-3xl);
+  }
+  .hero__grid {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: center;
+  }
+  .hero h1 {
+    font-size: clamp(2.5rem, 1.7rem + 4vw, 5.25rem);
+    line-height: 1.04;
+    margin-bottom: var(--space-m);
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--c-lake-deep);
+  }
+  .hero__copy .lede {
+    margin-bottom: var(--space-l);
+  }
+  .hero__media {
+    position: relative;
+  }
+  .hero__img {
+    width: 100%;
+    aspect-ratio: 4 / 3.3;
+    object-fit: cover;
+    object-position: 72% 30%;
+    border-radius: var(--radius-l);
+    box-shadow: var(--shadow-l);
+  }
+  @media (min-width: 64em) {
+    .hero {
+      padding-block: var(--space-xl) var(--space-3xl);
+    }
+    .hero__grid {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: var(--space-2xl);
+    }
+    .hero__img {
+      aspect-ratio: 5 / 5.4;
+      object-position: 76% 28%;
+      border-radius: 200px 20px 20px 20px;
+    }
+  }
+  @media (min-width: 90em) {
+    .hero__img {
+      aspect-ratio: 1 / 1;
+    }
+  }
+</style>

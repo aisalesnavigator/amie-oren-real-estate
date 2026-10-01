@@ -1,0 +1,30 @@
+---
+interface Props {
+  label?: string;
+}
+const { label = 'The short answer' } = Astro.props;
+---
+
+<aside class="answer" aria-label={label}>
+  <span class="eyebrow">{label}</span>
+  <p><slot /></p>
+</aside>
+
+<style>
+  .answer {
+    background: var(--c-limestone);
+    border-left: 3px solid var(--c-lake);
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    padding: var(--space-m) var(--space-l);
+    max-width: var(--container-narrow);
+  }
+  .answer .eyebrow {
+    margin-bottom: var(--space-2xs);
+  }
+  p {
+    margin: 0;
+    font-size: var(--step-1);
+    line-height: 1.6;
+    color: var(--c-charcoal);
+  }
+</style>

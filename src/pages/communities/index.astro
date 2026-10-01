@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import CommunityGrid from '../../components/CommunityGrid.astro';
+import ConversationCTA from '../../components/ConversationCTA.astro';
+import { breadcrumbSchema } from '../../utils/schema';
+---
+
+<BaseLayout
+  title="West Michigan Communities: Rockford, Ada, East Grand Rapids, Cascade & Forest Hills"
+  description="Practical guides to Rockford, Ada, East Grand Rapids, Cascade, and Forest Hills, with the questions buyers and sellers should consider in each."
+  path="/communities/"
+  jsonLd={[breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Communities' }])]}
+>
+  <PageHero
+    eyebrow="Communities"
+    title="Know the place before you choose the house."
+    lede="Each community has its own character, its own kinds of homes, and its own questions worth asking. These guides are meant to help you decide, not to sell you on a location."
+    breadcrumbs={[{ name: 'Communities' }]}
+  />
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <CommunityGrid />
+    </div>
+  </section>
+
+  <section class="section section--limestone">
+    <div class="container container--narrow stack">
+      <h2>Beyond these five.</h2>
+      <p class="lede">
+        Amie also works throughout greater Grand Rapids and West Michigan. If your move involves a community not
+        listed here, she is glad to talk it through.
+      </p>
+      <a class="text-link" href="/contact/">Start a conversation</a>
+    </div>
+  </section>
+
+  <ConversationCTA />
+</BaseLayout>

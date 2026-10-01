@@ -1,0 +1,146 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ProcessList from '../components/ProcessList.astro';
+import AmieProfile from '../components/AmieProfile.astro';
+import FAQ from '../components/FAQ.astro';
+import ConversationCTA from '../components/ConversationCTA.astro';
+import { getInsights, insightHref } from '../utils/insights';
+import { breadcrumbSchema } from '../utils/schema';
+
+const steps = [
+  {
+    title: 'Understand the move',
+    text: 'Every sale starts with what it needs to accomplish: your timing, your next step, the numbers that matter, and the constraints you’re working within. The plan is built around that, not around a template.',
+  },
+  {
+    title: 'See the property through a buyer’s eyes',
+    text: 'A candid walk-through of strengths, presentation concerns, and the details likely to affect buyer confidence, including the things owners stop noticing after years of living in a home.',
+  },
+  {
+    title: 'Prepare selectively',
+    text: 'Not every project is worth doing before a sale. Amie helps you separate the preparation that matters from work that would be unnecessary, so time and money go where they count.',
+  },
+  {
+    title: 'Position intentionally',
+    text: 'Pricing, photography, presentation, launch strategy, and the story of the property are coordinated as one plan, so the home meets the market clearly and with purpose.',
+  },
+  {
+    title: 'Manage communication and momentum',
+    text: 'You’re kept informed without having to ask. Feedback, showings, and next steps are shared clearly, and decisions are brought to you with context and a recommendation.',
+  },
+  {
+    title: 'Negotiate the whole offer',
+    text: 'Price matters, and so do contingencies, timing, certainty, and your priorities. Offers are weighed together, so you can choose the one that best fits what the sale needs to do.',
+  },
+  {
+    title: 'Carry the details through closing',
+    text: 'Inspections, appraisal, title, repair conversations, schedules, and handoffs all stay on Amie’s radar until the keys are exchanged, and the transition around the sale is handled with the same care.',
+  },
+];
+
+const faq = [
+  {
+    question: 'How do I know whether now is the right time to sell?',
+    answer:
+      'It depends on your plans as much as on the market. Amie starts by understanding your timeline, your next home, and your financial picture, then talks through the tradeoffs of selling sooner or later.',
+  },
+  {
+    question: 'Do I need to renovate or repair before listing?',
+    answer:
+      'Not necessarily. Some work meaningfully improves buyer confidence, and some does not. A property walk-through helps identify which items are worth addressing and which can be left alone.',
+  },
+  {
+    question: 'What if I’m buying my next home at the same time?',
+    answer:
+      'Coordinating a sale and a purchase is one of the most common challenges in a move. Amie plans both together so timing, contingencies, and logistics work in your favor.',
+  },
+  {
+    question: 'What does Amie’s communication look like during a sale?',
+    answer:
+      'You’ll hear from Amie proactively, with clear updates and next steps, so you are never left wondering where things stand.',
+  },
+];
+
+const articles = (await getInsights()).filter((e) => e.data.intent === 'sell').slice(0, 1);
+---
+
+<BaseLayout
+  title="Selling a Home in West Michigan"
+  description="Selling a home deserves more than putting it on the market. See how Amie Oren approaches preparation, positioning, communication, negotiation, and the details through closing."
+  path="/selling/"
+  jsonLd={[breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Selling' }])]}
+>
+  <PageHero
+    eyebrow="Selling with Amie"
+    title="Selling a home deserves more than putting it on the market."
+    lede="A thoughtful sale is built on preparation, judgment, coordination, and steady communication. Here is what that looks like in practice."
+    breadcrumbs={[{ name: 'Selling' }]}
+  >
+    <a class="btn btn--primary" href="/contact/?interest=selling">Talk with Amie About Selling</a>
+  </PageHero>
+
+  <section class="section section--tight" aria-labelledby="value-heading">
+    <div class="container container--narrow">
+      <h2 id="value-heading">What a thoughtful sale involves.</h2>
+      <p class="lede">
+        Great service is easy to promise and hard to picture. So instead of adjectives, here are the seven things
+        Amie actually does when she helps someone sell.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight" style="padding-top:0">
+    <div class="container">
+      <ProcessList steps={steps} />
+    </div>
+  </section>
+
+  <section class="section section--limestone" aria-labelledby="transition-heading">
+    <div class="container split split--wide-left">
+      <div class="stack">
+        <span class="eyebrow">The transition around the sale</span>
+        <h2 id="transition-heading">The sale is only part of the move.</h2>
+        <p class="lede">
+          Selling often means leaving a home that has meant a great deal, deciding what comes along, and lining up
+          what comes next.
+        </p>
+        <p>
+          Amie keeps the larger picture in view: the timing of your next home, the logistics of the transition,
+          and the conversations that make a major change feel manageable. If there are family members, advisors, or
+          other professionals involved, she works alongside them.
+        </p>
+      </div>
+      <div class="amie-card"><AmieProfile variant="feature" /></div>
+    </div>
+  </section>
+
+  <section class="section" aria-label="Selling questions">
+    <div class="container">
+      <FAQ items={faq} heading="Questions sellers often ask" schema={false} />
+      {
+        articles.length > 0 && (
+          <p class="more">
+            Related reading: <a class="text-link" href={insightHref(articles[0])}>{articles[0].data.title}</a>
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  <ConversationCTA
+    title="Considering a sale?"
+    text="A conversation costs nothing. Tell Amie about the home and the move, and she’ll tell you honestly what she would do."
+    label="Talk with Amie About Selling"
+    href="/contact/?interest=selling"
+  />
+</BaseLayout>
+
+<style>
+  .amie-card {
+    max-width: 24rem;
+  }
+  .more {
+    margin-top: var(--space-xl);
+  }
+</style>

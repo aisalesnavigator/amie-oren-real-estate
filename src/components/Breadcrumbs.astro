@@ -1,0 +1,54 @@
+---
+import JsonLd from './JsonLd.astro';
+import { breadcrumbSchema, type Crumb } from '../utils/schema';
+
+interface Props {
+  /** Trail after Home. The last item is the current page (no href). */
+  items: Crumb[];
+}
+const { items } = Astro.props;
+const trail: Crumb[] = [{ name: 'Home', href: '/' }, ...items];
+---
+
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    {
+      trail.map((c, i) => (
+        <li>
+          {c.href && i < trail.length - 1 ? <a href={c.href}>{c.name}</a> : <span aria-current="page">{c.name}</span>}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+<JsonLd data={breadcrumbSchema(trail)} />
+
+<style>
+  .breadcrumbs {
+    font-size: var(--step--1);
+    color: var(--c-taupe);
+    margin-bottom: var(--space-l);
+  }
+  ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  li {
+    margin: 0;
+  }
+  li + li::before {
+    content: '/';
+    margin-right: 0.5rem;
+    color: var(--c-taupe-soft);
+  }
+  a {
+    color: var(--c-taupe);
+  }
+  a:hover {
+    color: var(--c-charcoal);
+  }
+</style>

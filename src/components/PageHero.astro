@@ -1,0 +1,62 @@
+---
+import Breadcrumbs from './Breadcrumbs.astro';
+import type { Crumb } from '../utils/schema';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lede?: string;
+  breadcrumbs?: Crumb[];
+  /** Tint of the hero background. */
+  tone?: 'ivory' | 'limestone' | 'lake';
+}
+const { eyebrow, title, lede, breadcrumbs, tone = 'ivory' } = Astro.props;
+---
+
+<section class={`page-hero page-hero--${tone}`}>
+  <div class="container">
+    {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
+    <div class="page-hero__body">
+      {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+      <h1>{title}</h1>
+      {lede && <p class="lede">{lede}</p>}
+      <div class="page-hero__extra"><slot /></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    padding-block: var(--space-xl) var(--space-3xl);
+  }
+  .page-hero--limestone {
+    background: var(--c-limestone);
+  }
+  .page-hero--lake {
+    background: var(--c-lake-deep);
+    color: #e8eef0;
+  }
+  .page-hero--lake h1 {
+    color: #fff;
+  }
+  .page-hero--lake .lede {
+    color: #e8eef0;
+  }
+  .page-hero--lake .eyebrow {
+    color: #c9d8de;
+  }
+  .page-hero--lake :global(.breadcrumbs),
+  .page-hero--lake :global(.breadcrumbs a) {
+    color: #c9d8de;
+  }
+  .page-hero__body {
+    max-width: 52rem;
+  }
+  h1 {
+    font-size: var(--step-5);
+    margin-bottom: var(--space-m);
+  }
+  .page-hero__extra:not(:empty) {
+    margin-top: var(--space-l);
+  }
+</style>

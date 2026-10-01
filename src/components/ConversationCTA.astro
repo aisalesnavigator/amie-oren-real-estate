@@ -1,0 +1,61 @@
+---
+interface Props {
+  title?: string;
+  text?: string;
+  label?: string;
+  href?: string;
+  tone?: 'lake' | 'limestone';
+}
+const {
+  title = 'Thinking about a move? Let’s talk it through.',
+  text = 'No pressure and no obligation. Tell Amie a little about what you’re considering, and she will reply personally.',
+  label = 'Start a Conversation',
+  href = '/contact/',
+  tone = 'lake',
+} = Astro.props;
+---
+
+<section class={`cta-band cta-band--${tone}`} aria-labelledby="cta-heading">
+  <div class="container cta-band__inner">
+    <div class="cta-band__copy">
+      <h2 id="cta-heading">{title}</h2>
+      <p>{text}</p>
+    </div>
+    <a class={`btn ${tone === 'lake' ? 'btn--light' : 'btn--primary'}`} href={href}>{label}</a>
+  </div>
+</section>
+
+<style>
+  .cta-band {
+    padding-block: var(--space-2xl);
+  }
+  .cta-band--lake {
+    background: var(--c-lake-deep);
+    color: #e8eef0;
+  }
+  .cta-band--lake h2 {
+    color: #fff;
+  }
+  .cta-band--limestone {
+    background: var(--c-limestone);
+  }
+  .cta-band__inner {
+    display: grid;
+    gap: var(--space-l);
+    align-items: center;
+  }
+  .cta-band h2 {
+    font-size: var(--step-4);
+    margin-bottom: var(--space-xs);
+  }
+  .cta-band p {
+    margin: 0;
+    max-width: 38rem;
+  }
+  @media (min-width: 48em) {
+    .cta-band__inner {
+      grid-template-columns: 1fr auto;
+      gap: var(--space-2xl);
+    }
+  }
+</style>

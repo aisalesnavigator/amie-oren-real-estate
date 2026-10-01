@@ -1,0 +1,109 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import AnswerBlock from '../components/AnswerBlock.astro';
+import ReviewerBlock from '../components/ReviewerBlock.astro';
+import FAQ from '../components/FAQ.astro';
+import SourceList from '../components/SourceList.astro';
+import RelatedContent from '../components/RelatedContent.astro';
+import ConversationCTA from '../components/ConversationCTA.astro';
+import { insightHref, type Insight } from '../utils/insights';
+import { absoluteUrl } from '../utils/url';
+import { site } from '../config/site';
+
+interface Props {
+  entry: Insight;
+}
+const { entry } = Astro.props;
+const d = entry.data;
+const path = insightHref(entry);
+
+const article = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: d.title,
+  description: d.description,
+  datePublished: d.publishedDate.toISOString(),
+  ...(d.updatedDate ? { dateModified: d.updatedDate.toISOString() } : {}),
+  author: { '@type': 'Person', name: d.author, url: absoluteUrl('/about/') },
+  publisher: { '@type': 'Organization', name: site.brand, url: absoluteUrl('/') },
+  mainEntityOfPage: absoluteUrl(path),
+};
+---
+
+<BaseLayout
+  title={d.title}
+  description={d.description}
+  path={path}
+  ogType="article"
+  noindex={d.noindex}
+  publishedTime={d.publishedDate}
+  modifiedTime={d.updatedDate}
+  jsonLd={[article]}
+>
+  <article class="insight">
+    <header class="insight__head">
+      <div class="container container--narrow">
+        <Breadcrumbs items={[{ name: 'Insights', href: '/insights/' }, { name: d.title }]} />
+        {d.topics[0] && <span class="eyebrow">{d.topics.join(' · ')}</span>}
+        <h1>{d.title}</h1>
+        <ReviewerBlock
+          author={d.author}
+          reviewedBy={d.reviewedBy}
+          reviewedDate={d.reviewedDate}
+          publishedDate={d.publishedDate}
+          updatedDate={d.updatedDate}
+        />
+      </div>
+    </header>
+
+    {
+      d.heroImage && (
+        <div class="container insight__hero">
+          <Image src={d.heroImage} alt={d.heroImageAlt ?? ''} widths={[640, 960, 1280]} sizes="(min-width: 64em) 70rem, 100vw" loading="eager" />
+        </div>
+      )
+    }
+
+    <div class="container container--narrow insight__body">
+      <AnswerBlock>{d.summary}</AnswerBlock>
+      <div class="prose"><slot /></div>
+      <FAQ items={d.faq} />
+      <SourceList sources={d.sources} />
+      <RelatedContent items={d.relatedContent} />
+    </div>
+  </article>
+
+  <ConversationCTA
+    title="Have a question about your own situation?"
+    text="General guidance only goes so far. Tell Amie what you’re weighing and she’ll reply personally."
+  />
+</BaseLayout>
+
+<style>
+  .insight__head {
+    padding-block: var(--space-xl) var(--space-l);
+  }
+  .insight__head h1 {
+    font-size: var(--step-4);
+    margin-bottom: var(--space-l);
+  }
+  .insight__hero {
+    margin-bottom: var(--space-xl);
+  }
+  .insight__hero :global(img) {
+    width: 100%;
+    max-height: 32rem;
+    object-fit: cover;
+    border-radius: var(--radius-l);
+  }
+  .insight__body {
+    display: grid;
+    gap: var(--space-2xl);
+    padding-bottom: var(--space-3xl);
+  }
+  .insight__body :global(.prose h2:first-child) {
+    margin-top: 0;
+  }
+</style>

@@ -1,0 +1,157 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ImageSlot from '../../components/ImageSlot.astro';
+import CommunityGrid from '../../components/CommunityGrid.astro';
+import RelatedContent from '../../components/RelatedContent.astro';
+import ConversationCTA from '../../components/ConversationCTA.astro';
+import { communities, getCommunity, type Community } from '../../data/communities';
+import { getInsights, insightHref } from '../../utils/insights';
+import { breadcrumbSchema } from '../../utils/schema';
+
+export const getStaticPaths = (() =>
+  communities.map((community) => ({ params: { slug: community.slug }, props: { community } }))) satisfies GetStaticPaths;
+
+interface Props {
+  community: Community;
+}
+const { community } = Astro.props;
+
+const related = community.related.map((s) => getCommunity(s)).filter((c): c is Community => Boolean(c));
+const insights = (await getInsights()).filter((e) => e.data.community === community.slug);
+const path = `/communities/${community.slug}/`;
+---
+
+<BaseLayout
+  title={`${community.name}, Michigan: A Buyer & Seller Guide`}
+  description={`${community.blurb} Questions buyers and sellers should consider in ${community.name}, with guidance from Amie Oren.`}
+  path={path}
+  jsonLd={[
+    breadcrumbSchema([
+      { name: 'Home', href: '/' },
+      { name: 'Communities', href: '/communities/' },
+      { name: community.name },
+    ]),
+  ]}
+>
+  <PageHero
+    eyebrow="Community guide"
+    title={community.headline}
+    breadcrumbs={[{ name: 'Communities', href: '/communities/' }, { name: community.name }]}
+    tone="limestone"
+  />
+
+  <section class="section" aria-labelledby="overview-heading">
+    <div class="container split split--wide-left">
+      <div class="stack">
+        <h2 id="overview-heading">Overview</h2>
+        {community.overview.map((p, i) => <p class={i === 0 ? 'lede' : undefined}>{p}</p>)}
+      </div>
+      <ImageSlot ratio="4 / 3" tone="sand" caption={community.setting} />
+    </div>
+  </section>
+
+  <section class="section section--tight" aria-labelledby="character-heading">
+    <div class="container">
+      <div class="duo">
+        <div class="stack">
+          <h2 id="character-heading">Housing character</h2>
+          {community.housingCharacter.map((p) => <p>{p}</p>)}
+        </div>
+        <div class="stack">
+          <h2>Lifestyle and setting</h2>
+          {community.lifestyle.map((p) => <p>{p}</p>)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--limestone" aria-labelledby="questions-heading">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Questions worth asking</span>
+        <h2 id="questions-heading">Think it through before you decide.</h2>
+      </div>
+      <div class="duo">
+        <div>
+          <h3>If you’re buying in {community.name}</h3>
+          <ul class="questions">
+            {community.buyerQuestions.map((q) => <li>{q}</li>)}
+          </ul>
+        </div>
+        <div>
+          <h3>If you’re selling in {community.name}</h3>
+          <ul class="questions">
+            {community.sellerQuestions.map((q) => <li>{q}</li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="considerations-heading">
+    <div class="container container--narrow">
+      <h2 id="considerations-heading">Property considerations</h2>
+      <p class="lede">Things that commonly deserve a closer look on properties here:</p>
+      <ul class="prose">
+        {community.propertyConsiderations.map((c) => <li>{c}</li>)}
+      </ul>
+      <p class="muted small">
+        This guide is general and intentionally avoids prices, statistics, and market claims. For current
+        conditions or specifics about any property, talk with Amie and consult the relevant professionals and
+        public agencies.
+      </p>
+    </div>
+  </section>
+
+  {
+    insights.length > 0 && (
+      <section class="section section--tight">
+        <div class="container">
+          <RelatedContent
+            heading={`Insights for ${community.name}`}
+            items={insights.map((e) => ({ label: e.data.title, href: insightHref(e) }))}
+          />
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section section--limestone" aria-labelledby="related-communities-heading">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="related-communities-heading">Related communities</h2>
+      </div>
+      <CommunityGrid items={related} />
+    </div>
+  </section>
+
+  <ConversationCTA
+    title={`Thinking about a move in ${community.name}?`}
+    text="Share what you’re considering and Amie will reply personally, with no pressure."
+  />
+</BaseLayout>
+
+<style>
+  .duo {
+    display: grid;
+    gap: var(--space-xl);
+  }
+  @media (min-width: 48em) {
+    .duo {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-2xl);
+    }
+  }
+  .questions {
+    padding-left: 1.2rem;
+  }
+  .questions li {
+    margin-bottom: var(--space-s);
+    font-size: var(--step-1);
+    font-family: var(--font-serif);
+    line-height: 1.35;
+    color: var(--c-charcoal);
+  }
+</style>

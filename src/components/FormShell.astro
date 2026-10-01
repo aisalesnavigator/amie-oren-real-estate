@@ -1,0 +1,149 @@
+---
+import { site, mailtoHref } from '../config/site';
+import { absoluteUrl } from '../utils/url';
+
+interface Props {
+  id: string;
+  /** Hidden identifier submitted with the form: contact | client_review | referral */
+  formType: 'contact' | 'client_review' | 'referral';
+  /** Endpoint for this form. When undefined, the form falls back to email (mailto). */
+  endpoint: string | undefined;
+  /** Subject line for notification email / mailto fallback. */
+  subject: string;
+  thanksKey: 'contact' | 'review' | 'referral';
+  submitLabel: string;
+  busyLabel?: string;
+}
+const { id, formType, endpoint, subject, thanksKey, submitLabel, busyLabel = 'Sending…' } = Astro.props;
+const mode = endpoint ? 'endpoint' : 'mailto';
+const thanksPath = `/thank-you/?form=${thanksKey}`;
+---
+
+<form
+  id={id}
+  class="form"
+  method="post"
+  action={endpoint ?? `mailto:${site.contactEmail}`}
+  enctype={endpoint ? undefined : 'text/plain'}
+  data-enhanced-form
+  data-mode={mode}
+  data-mailto={site.contactEmail}
+  data-subject={subject}
+  data-thanks={thanksPath}
+  aria-describedby={`${id}-note`}
+>
+  {
+    mode === 'mailto' && (
+      <p class="form__notice" role="note">
+        Online submission isn’t switched on for this form yet. Submitting will open your email app with your
+        message ready to send to <a href={mailtoHref(subject)}>{site.contactEmail}</a>.
+      </p>
+    )
+  }
+
+  <div class="form__summary" data-error-summary role="alert" tabindex="-1" hidden>
+    <p><strong>Please check the following:</strong></p>
+    <ul></ul>
+  </div>
+
+  <input type="hidden" name="form_type" value={formType} />
+  <input type="hidden" name="_subject" value={subject} />
+  {endpoint && <input type="hidden" name="_next" value={absoluteUrl(thanksPath)} />}
+
+  <!-- Honeypot: hidden from people and assistive tech. Bots tend to fill it. -->
+  <div class="form__trap" aria-hidden="true">
+    <label>Leave this field empty <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" /></label>
+  </div>
+
+  <div class="form__fields">
+    <slot />
+  </div>
+
+  <div class="form__status" data-form-status role="status" tabindex="-1" hidden></div>
+
+  <div class="form__actions">
+    <button class="btn btn--primary" type="submit" data-submit data-busy-label={busyLabel}>{submitLabel}</button>
+    <p class="small muted" id={`${id}-note`}>
+      Fields marked <span aria-hidden="true">*</span><span class="visually-hidden">with an asterisk</span> are required.
+      {
+        mode === 'endpoint'
+          ? ' Your message goes directly to Amie.'
+          : ''
+      }
+    </p>
+  </div>
+</form>
+
+<script>
+  import '../scripts/forms';
+</script>
+
+<style>
+  .form {
+    display: grid;
+    gap: var(--space-m);
+    max-width: 40rem;
+  }
+  .form__fields {
+    display: grid;
+    gap: var(--space-m);
+  }
+  .form__trap {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .form__notice {
+    margin: 0;
+    padding: var(--space-s) var(--space-m);
+    border-left: 3px solid var(--c-lake);
+    background: var(--c-lake-mist);
+    border-radius: 0 var(--radius-m) var(--radius-m) 0;
+    font-size: var(--step--1);
+  }
+  .form__summary {
+    border: 1px solid var(--c-danger);
+    background: #fff;
+    border-radius: var(--radius-m);
+    padding: var(--space-s) var(--space-m);
+    color: var(--c-danger);
+  }
+  .form__summary p {
+    margin-bottom: var(--space-2xs);
+  }
+  .form__summary ul {
+    margin: 0;
+  }
+  .form__summary a {
+    color: var(--c-danger);
+  }
+  .form__status {
+    padding: var(--space-s) var(--space-m);
+    border-radius: var(--radius-m);
+    border: 1px solid var(--c-line);
+    background: #fff;
+  }
+  .form__status[data-kind='error'] {
+    border-color: var(--c-danger);
+    color: var(--c-danger);
+  }
+  .form__status[data-kind='error'] a {
+    color: var(--c-danger);
+  }
+  .form__status[data-kind='info'] {
+    border-color: var(--c-lake);
+  }
+  .form__actions {
+    display: grid;
+    gap: var(--space-s);
+    justify-items: start;
+  }
+  .form__actions p {
+    margin: 0;
+  }
+  [data-submit][disabled] {
+    cursor: progress;
+  }
+</style>

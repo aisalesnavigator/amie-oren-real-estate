@@ -1,0 +1,68 @@
+---
+import type { Review } from '../utils/reviews';
+import { experienceLabels } from '../utils/reviews';
+
+interface Props {
+  review: Review;
+  large?: boolean;
+}
+const { review, large = false } = Astro.props;
+const d = review.data;
+const isSample = d.sample;
+---
+
+<figure class={`testimonial ${large ? 'testimonial--large' : ''}`} data-sample={isSample ? 'true' : undefined}>
+  {isSample && <p class="testimonial__flag" role="note">Illustrative draft — replace with verified client review.</p>}
+  <blockquote>
+    <p>{d.reviewText}</p>
+  </blockquote>
+  <figcaption>
+    <span class="testimonial__name">{d.displayName}</span>
+    <span class="testimonial__meta">
+      {experienceLabels[d.experienceType]}{d.community ? ` · ${d.community}` : ''}
+    </span>
+  </figcaption>
+</figure>
+
+<style>
+  .testimonial {
+    margin: 0;
+    padding: var(--space-l) 0 0;
+    border-top: 1px solid var(--c-sand-deep);
+  }
+  blockquote {
+    margin: 0 0 var(--space-m);
+  }
+  blockquote p {
+    font-family: var(--font-serif);
+    font-size: var(--step-2);
+    line-height: 1.3;
+    color: var(--c-charcoal);
+  }
+  .testimonial--large blockquote p {
+    font-size: var(--step-3);
+  }
+  figcaption {
+    display: grid;
+    font-size: var(--step--1);
+  }
+  .testimonial__name {
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--c-charcoal);
+  }
+  .testimonial__meta {
+    color: var(--c-taupe);
+  }
+  .testimonial__flag {
+    display: inline-block;
+    margin: 0 0 var(--space-s);
+    padding: 0.3rem 0.7rem;
+    border: 1px dashed var(--c-danger);
+    color: var(--c-danger);
+    background: #fff;
+    font-size: var(--step--1);
+    font-weight: 500;
+    border-radius: var(--radius-s);
+  }
+</style>

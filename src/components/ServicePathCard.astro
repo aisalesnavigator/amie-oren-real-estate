@@ -1,0 +1,44 @@
+---
+interface Props {
+  number?: string;
+  title: string;
+  text: string;
+  href: string;
+  linkLabel: string;
+}
+const { number, title, text, href, linkLabel } = Astro.props;
+---
+
+<article class="path">
+  {number && <span class="path__num" aria-hidden="true">{number}</span>}
+  <h3>{title}</h3>
+  <p>{text}</p>
+  <a class="text-link path__link" href={href}>{linkLabel}</a>
+</article>
+
+<style>
+  .path {
+    position: relative;
+    padding: var(--space-l) 0 0;
+    border-top: 1px solid var(--c-sand-deep);
+  }
+  .path__num {
+    display: block;
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--c-lake);
+    font-size: var(--step-1);
+    margin-bottom: var(--space-xs);
+  }
+  .path h3 {
+    font-size: var(--step-3);
+  }
+  .path p {
+    color: var(--c-ink);
+    max-width: 28rem;
+  }
+  .path__link {
+    display: inline-block;
+    margin-top: var(--space-xs);
+  }
+</style>

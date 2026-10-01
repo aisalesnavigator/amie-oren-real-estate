@@ -1,0 +1,128 @@
+---
+interface Option {
+  value: string;
+  label: string;
+}
+interface Props {
+  id: string;
+  name: string;
+  label: string;
+  as?: 'input' | 'textarea' | 'select';
+  type?: 'text' | 'email' | 'tel' | 'url';
+  required?: boolean;
+  optional?: boolean;
+  hint?: string;
+  autocomplete?: string;
+  options?: Option[];
+  rows?: number;
+  placeholder?: string;
+  inputmode?: 'text' | 'tel' | 'email' | 'numeric';
+}
+const {
+  id,
+  name,
+  label,
+  as = 'input',
+  type = 'text',
+  required = false,
+  optional = false,
+  hint,
+  autocomplete,
+  options = [],
+  rows = 6,
+  placeholder,
+  inputmode,
+} = Astro.props;
+const hintId = hint ? `${id}-hint` : undefined;
+---
+
+<div class="field" data-field>
+  <label for={id}>
+    {label}
+    {required && <span class="field__req" aria-hidden="true"> *</span>}
+    {optional && <span class="field__opt"> (optional)</span>}
+  </label>
+  {hint && <p class="field__hint" id={hintId}>{hint}</p>}
+  {
+    as === 'textarea' ? (
+      <textarea id={id} name={name} rows={rows} required={required} aria-describedby={hintId} placeholder={placeholder} />
+    ) : as === 'select' ? (
+      <select id={id} name={name} required={required} aria-describedby={hintId}>
+        <option value="" selected disabled>Select one…</option>
+        {options.map((o) => (
+          <option value={o.value}>{o.label}</option>
+        ))}
+      </select>
+    ) : (
+      <input
+        id={id}
+        name={name}
+        type={type}
+        required={required}
+        autocomplete={autocomplete}
+        inputmode={inputmode}
+        aria-describedby={hintId}
+        placeholder={placeholder}
+      />
+    )
+  }
+  <p class="field__error" data-error hidden></p>
+</div>
+
+<style is:global>
+  .field {
+    display: grid;
+    gap: 0.35rem;
+  }
+  .field label,
+  .fieldset legend {
+    font-weight: 500;
+    color: var(--c-charcoal);
+    font-size: var(--step-0);
+  }
+  .field__req {
+    color: var(--c-danger);
+  }
+  .field__opt {
+    font-weight: 400;
+    color: var(--c-taupe);
+  }
+  .field__hint {
+    margin: 0;
+    font-size: var(--step--1);
+    color: var(--c-taupe);
+  }
+  .field input,
+  .field textarea,
+  .field select {
+    width: 100%;
+    font: inherit;
+    color: var(--c-ink);
+    background: var(--c-paper);
+    border: 1px solid var(--c-taupe-soft);
+    border-radius: var(--radius-m);
+    padding: 0.75rem 0.9rem;
+    min-height: 3rem;
+    transition: border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+  }
+  .field textarea {
+    resize: vertical;
+    min-height: 9rem;
+  }
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus {
+    border-color: var(--c-lake-deep);
+    outline: 3px solid var(--c-focus);
+    outline-offset: 1px;
+  }
+  .field [aria-invalid='true'] {
+    border-color: var(--c-danger);
+  }
+  .field__error {
+    margin: 0;
+    color: var(--c-danger);
+    font-size: var(--step--1);
+    font-weight: 500;
+  }
+</style>

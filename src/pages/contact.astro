@@ -1,0 +1,100 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import ContactForm from '../components/ContactForm.astro';
+import AmieProfile from '../components/AmieProfile.astro';
+import { site, mailtoHref } from '../config/site';
+import { breadcrumbSchema } from '../utils/schema';
+---
+
+<BaseLayout
+  title="Contact Amie Oren: Start a Conversation"
+  description="Start a conversation with Amie Oren about selling, buying, waterfront property, or a move within West Michigan. She replies personally."
+  path="/contact/"
+  jsonLd={[breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Contact' }])]}
+>
+  <section class="section" style="padding-block-start: var(--space-xl)">
+    <div class="container contact__grid">
+      <div class="contact__form">
+        <Breadcrumbs items={[{ name: 'Contact' }]} />
+        <span class="eyebrow">Contact</span>
+        <h1>Start a conversation.</h1>
+        <p class="lede">
+          Tell Amie a little about what you’re considering. There’s no obligation and no sales pitch, just a
+          thoughtful reply from her.
+        </p>
+        <ContactForm />
+      </div>
+
+      <aside class="contact__aside" aria-label="Other ways to reach Amie">
+        <AmieProfile variant="compact" />
+        <hr />
+        <h2>Prefer email?</h2>
+        <p>
+          <a href={mailtoHref('Hello from the website')}>{site.contactEmail}</a>
+        </p>
+        {
+          site.phone && (
+            <>
+              <h2>Phone</h2>
+              <p><a href={`tel:${site.phone}`}>{site.phone}</a></p>
+            </>
+          )
+        }
+        <h2>Serving</h2>
+        <p class="muted">
+          {site.serviceAreas.map((a) => a.name).join(', ')}, and greater West Michigan.
+        </p>
+        <p class="small muted">{site.professionalTitle}, {site.brokerage}.</p>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // Preselect the "I'm interested in" field from links such as /contact/?interest=selling
+  const interest = new URLSearchParams(window.location.search).get('interest');
+  const map: Record<string, string> = {
+    selling: 'Selling',
+    buying: 'Buying',
+    waterfront: 'Waterfront',
+    transition: 'Downsizing / transition',
+    referral: 'Referral',
+  };
+  const select = document.querySelector<HTMLSelectElement>('#contact-interest');
+  if (interest && select && map[interest]) select.value = map[interest];
+</script>
+
+<style>
+  h1 {
+    font-size: var(--step-5);
+  }
+  .contact__grid {
+    display: grid;
+    gap: var(--space-2xl);
+  }
+  .contact__form .lede {
+    margin-bottom: var(--space-xl);
+  }
+  .contact__aside h2 {
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--c-lake);
+    font-weight: 500;
+    margin-bottom: var(--space-2xs);
+  }
+  @media (min-width: 64em) {
+    .contact__grid {
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.8fr);
+      gap: var(--space-3xl);
+      align-items: start;
+    }
+    .contact__aside {
+      position: sticky;
+      top: calc(var(--header-h) + var(--space-l));
+      padding-top: var(--space-3xl);
+    }
+  }
+</style>

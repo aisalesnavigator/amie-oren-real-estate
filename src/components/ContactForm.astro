@@ -1,0 +1,37 @@
+---
+import FormShell from './FormShell.astro';
+import Field from './Field.astro';
+import { site } from '../config/site';
+
+const interests = [
+  { value: 'Selling', label: 'Selling' },
+  { value: 'Buying', label: 'Buying' },
+  { value: 'Waterfront', label: 'Waterfront' },
+  { value: 'Moving within West Michigan', label: 'Moving within West Michigan' },
+  { value: 'Downsizing / transition', label: 'Downsizing / transition' },
+  { value: 'Referral', label: 'Referral' },
+  { value: 'Other', label: 'Other' },
+];
+---
+
+<FormShell
+  id="contact-form"
+  formType="contact"
+  endpoint={site.forms.contact}
+  subject="New website inquiry — Start a Conversation"
+  thanksKey="contact"
+  submitLabel="Send Message"
+>
+  <Field id="contact-name" name="name" label="Name" required autocomplete="name" />
+  <Field id="contact-email" name="email" type="email" label="Email" required autocomplete="email" inputmode="email" />
+  <Field id="contact-phone" name="phone" type="tel" label="Phone" optional autocomplete="tel" inputmode="tel" />
+  <Field id="contact-interest" name="interest" as="select" label="I’m interested in" required options={interests} />
+  <Field
+    id="contact-message"
+    name="message"
+    as="textarea"
+    label="Message"
+    required
+    hint="A few sentences about what you’re considering is plenty. There is no need to have it all figured out."
+  />
+</FormShell>

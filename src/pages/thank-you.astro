@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const variants = {
+  contact: {
+    title: 'Thank you. Your message is on its way to Amie.',
+    text: 'She will reply personally, usually as soon as she can. If your question is time-sensitive, you’re also welcome to email her directly.',
+  },
+  review: {
+    title: 'Thank you for sharing your experience.',
+    text: 'Your review has been received. It will be read and verified before anything is published, and Amie may reach out if she has a question.',
+  },
+  referral: {
+    title: 'Thank you for the introduction.',
+    text: 'Amie has your referral and will reach out thoughtfully. She is grateful for your trust.',
+  },
+} as const;
+const generic = {
+  title: 'Thank you. Your message has been received.',
+  text: 'Amie will be in touch personally. If your question is time-sensitive, you’re also welcome to email her directly.',
+};
+---
+
+<BaseLayout title="Thank You" description="Thank you for getting in touch with Amie Oren." path="/thank-you/" noindex>
+  <section class="section">
+    <div class="container container--narrow center stack thanks">
+      <span class="eyebrow">Received</span>
+      <h1 data-thanks-title>{generic.title}</h1>
+      <p class="lede center" data-thanks-text>{generic.text}</p>
+      <div class="btn-row" style="justify-content:center">
+        <a class="btn btn--primary" href="/">Return Home</a>
+        <a class="btn btn--secondary" href="/communities/">Explore West Michigan</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script define:vars={{ variants }}>
+  const form = new URLSearchParams(window.location.search).get('form');
+  const v = form && Object.hasOwn(variants, form) ? variants[form] : null;
+  if (v) {
+    document.querySelector('[data-thanks-title]').textContent = v.title;
+    document.querySelector('[data-thanks-text]').textContent = v.text;
+  }
+</script>
+
+<style>
+  h1 {
+    font-size: var(--step-4);
+  }
+  .thanks {
+    padding-block: var(--space-xl);
+  }
+</style>

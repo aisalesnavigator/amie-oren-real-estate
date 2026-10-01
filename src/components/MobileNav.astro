@@ -1,0 +1,158 @@
+---
+import { primaryNav, primaryCta } from '../config/nav';
+import { site } from '../config/site';
+
+interface Props {
+  currentPath: string;
+}
+const { currentPath } = Astro.props;
+const isCurrent = (href: string) => (href === '/' ? currentPath === '/' : currentPath.startsWith(href));
+---
+
+<!-- Native <details>: works with no JavaScript. The script below only adds Escape / outside-click / link-click closing. -->
+<details class="mobile-nav" data-mobile-nav>
+  <summary class="mobile-nav__toggle" aria-label="Menu">
+    <span class="mobile-nav__label">Menu</span>
+    <span class="mobile-nav__icon" aria-hidden="true"><span></span><span></span></span>
+  </summary>
+  <nav class="mobile-nav__panel" aria-label="Primary (mobile)">
+    <ul class="mobile-nav__list">
+      {
+        primaryNav.map((item) => (
+          <li>
+            <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="mobile-nav__foot">
+      <a class="btn btn--primary" href={primaryCta.href}>{primaryCta.label}</a>
+      <p class="small muted">
+        <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>
+        {site.phone && <span> · <a href={`tel:${site.phone}`}>{site.phone}</a></span>}
+      </p>
+    </div>
+  </nav>
+</details>
+
+<style>
+  .mobile-nav {
+    display: block;
+  }
+  @media (min-width: 75em) {
+    .mobile-nav {
+      display: none;
+    }
+  }
+  .mobile-nav__toggle {
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 2.75rem;
+    padding: 0 0.25rem 0 0.5rem;
+    cursor: pointer;
+    font-size: var(--step--1);
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-charcoal);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mobile-nav__toggle::-webkit-details-marker {
+    display: none;
+  }
+  .mobile-nav__icon {
+    position: relative;
+    width: 1.5rem;
+    height: 1rem;
+  }
+  .mobile-nav__icon span {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1.5px;
+    background: currentColor;
+    transition:
+      transform var(--t-med) var(--ease),
+      top var(--t-med) var(--ease);
+  }
+  .mobile-nav__icon span:first-child {
+    top: 0.25rem;
+  }
+  .mobile-nav__icon span:last-child {
+    top: 0.7rem;
+  }
+  .mobile-nav[open] .mobile-nav__icon span:first-child {
+    top: 0.5rem;
+    transform: rotate(45deg);
+  }
+  .mobile-nav[open] .mobile-nav__icon span:last-child {
+    top: 0.5rem;
+    transform: rotate(-45deg);
+  }
+  .mobile-nav__panel {
+    position: fixed;
+    inset: var(--header-h) 0 0 0;
+    z-index: 40;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--c-ivory);
+    padding: var(--space-l) var(--gutter) var(--space-2xl);
+    border-top: var(--border);
+  }
+  .mobile-nav__list {
+    list-style: none;
+    margin: 0 0 var(--space-xl);
+    padding: 0;
+    max-width: 34rem;
+  }
+  .mobile-nav__list li {
+    margin: 0;
+    border-bottom: var(--border);
+  }
+  .mobile-nav__list a {
+    display: block;
+    padding: 0.85rem 0;
+    font-family: var(--font-serif);
+    font-size: var(--step-3);
+    line-height: 1.2;
+    color: var(--c-charcoal);
+    text-decoration: none;
+  }
+  .mobile-nav__list a[aria-current='page'] {
+    color: var(--c-lake);
+    font-style: italic;
+  }
+  .mobile-nav__foot {
+    display: grid;
+    gap: var(--space-m);
+    max-width: 34rem;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLDetailsElement>('[data-mobile-nav]').forEach((nav) => {
+    const close = (returnFocus = false) => {
+      if (!nav.open) return;
+      nav.open = false;
+      if (returnFocus) nav.querySelector<HTMLElement>('summary')?.focus();
+    };
+    nav.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') close(true);
+    });
+    nav.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => close()));
+    document.addEventListener('click', (e) => {
+      const target = e.target as Element;
+      if (nav.open && !nav.contains(target) && !target.closest('.site-header')) close();
+    });
+    // Close if the viewport grows into the desktop navigation layout.
+    window.matchMedia('(min-width: 75em)').addEventListener('change', (m) => m.matches && close());
+    // Prevent background scroll while the menu is open.
+    nav.addEventListener('toggle', () => {
+      document.documentElement.style.overflow = nav.open ? 'hidden' : '';
+    });
+  });
+</script>

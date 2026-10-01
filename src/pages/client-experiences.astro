@@ -1,0 +1,78 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Testimonial from '../components/Testimonial.astro';
+import ConversationCTA from '../components/ConversationCTA.astro';
+import { getVisibleReviews } from '../utils/reviews';
+import { breadcrumbSchema } from '../utils/schema';
+import { site } from '../config/site';
+
+// Only verified, permitted, non-draft reviews appear in production.
+// Illustrative samples appear only in dev / explicit design-review builds (see docs/REVIEW_WORKFLOW.md).
+const reviews = await getVisibleReviews();
+---
+
+<BaseLayout
+  title="Client Experiences"
+  description="What it’s like to work with Amie Oren, in clients’ own words. Every review shown is verified and published with permission."
+  path="/client-experiences/"
+  jsonLd={[breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Client Experiences' }])]}
+>
+  <PageHero
+    eyebrow="Client experiences"
+    title="In clients’ own words."
+    lede="Every review on this page has been verified and is published with the client’s permission."
+    breadcrumbs={[{ name: 'Client Experiences' }]}
+  />
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      {
+        reviews.length > 0 ? (
+          <div class="grid grid--2">
+            {reviews.map((r, i) => <Testimonial review={r} large={i === 0} />)}
+          </div>
+        ) : (
+          <div class="empty">
+            <p class="empty__text">
+              Client experiences will appear here as they are shared and approved.
+            </p>
+            <p class="muted">
+              Amie publishes only genuine, verified reviews that clients have given permission to share. If
+              you’ve worked with her, she would be grateful to hear from you.
+            </p>
+            <a class="btn btn--primary" href="/review/">Leave a Review</a>
+          </div>
+        )
+      }
+      {
+        site.reviewLinks.length > 0 && (
+          <ul class="ext">
+            {site.reviewLinks.map((l) => <li><a class="text-link" href={l.url} rel="noopener">{l.label}</a></li>)}
+          </ul>
+        )
+      }
+    </div>
+  </section>
+
+  <ConversationCTA tone="limestone" />
+</BaseLayout>
+
+<style>
+  .empty {
+    max-width: 40rem;
+    padding-top: var(--space-l);
+    border-top: 1px solid var(--c-sand-deep);
+  }
+  .empty__text {
+    font-family: var(--font-serif);
+    font-size: var(--step-3);
+    line-height: 1.2;
+    color: var(--c-charcoal);
+  }
+  .ext {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-xl);
+  }
+</style>

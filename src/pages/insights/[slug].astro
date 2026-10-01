@@ -1,0 +1,21 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import InsightArticle from '../../layouts/InsightArticle.astro';
+import { getInsights, insightSlug, type Insight } from '../../utils/insights';
+
+export const getStaticPaths = (async () => {
+  const entries = await getInsights();
+  return entries.map((entry) => ({ params: { slug: insightSlug(entry) }, props: { entry } }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  entry: Insight;
+}
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<InsightArticle entry={entry}>
+  <Content />
+</InsightArticle>

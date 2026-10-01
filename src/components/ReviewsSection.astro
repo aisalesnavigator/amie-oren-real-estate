@@ -1,0 +1,65 @@
+---
+import Testimonial from './Testimonial.astro';
+import { getVisibleReviews } from '../utils/reviews';
+
+interface Props {
+  /** Maximum number of reviews to show. */
+  limit?: number;
+  heading?: string;
+  eyebrow?: string;
+  intro?: string;
+  /** Show the review-invitation panel when there are no approved reviews (default true). */
+  showEmpty?: boolean;
+}
+const {
+  limit = 3,
+  heading = 'Client experiences',
+  eyebrow = 'In their words',
+  intro,
+  showEmpty = true,
+} = Astro.props;
+const reviews = (await getVisibleReviews()).slice(0, limit);
+---
+
+<section class="section section--limestone" aria-labelledby="reviews-heading">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">{eyebrow}</span>
+      <h2 id="reviews-heading">{heading}</h2>
+      {intro && <p class="lede">{intro}</p>}
+    </div>
+
+    {
+      reviews.length > 0 ? (
+        <div class="grid grid--3">
+          {reviews.map((r) => <Testimonial review={r} />)}
+        </div>
+      ) : (
+        showEmpty && (
+          <div class="reviews-empty" data-reviews-empty>
+            <p class="reviews-empty__text">
+              Amie’s client experiences will be shared here, in clients’ own words, once they have been
+              verified and approved for publication.
+            </p>
+            <p class="muted">Worked with Amie? You’re welcome to share your experience.</p>
+            <a class="btn btn--secondary" href="/review/">Leave a Review</a>
+          </div>
+        )
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .reviews-empty {
+    max-width: 40rem;
+    padding-top: var(--space-m);
+    border-top: 1px solid var(--c-sand-deep);
+  }
+  .reviews-empty__text {
+    font-family: var(--font-serif);
+    font-size: var(--step-2);
+    line-height: 1.3;
+    color: var(--c-charcoal);
+  }
+</style>

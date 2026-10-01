@@ -1,0 +1,137 @@
+---
+import { primaryNav, primaryCta } from '../config/nav';
+import { site } from '../config/site';
+import MobileNav from './MobileNav.astro';
+
+const currentPath = Astro.url.pathname;
+const isCurrent = (href: string) => (href === '/' ? currentPath === '/' : currentPath.startsWith(href));
+---
+
+<header class="site-header">
+  <div class="site-header__inner container">
+    <a class="brand" href="/" aria-label={`${site.brand} — home`}>
+      <span class="brand__name">{site.name}</span>
+      <span class="brand__sub">{site.professionalTitle}</span>
+    </a>
+
+    <nav class="primary-nav" aria-label="Primary">
+      <ul>
+        {
+          primaryNav.map((item) => (
+            <li>
+              <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="site-header__actions">
+      <a class="btn btn--primary header-cta" href={primaryCta.href}>{primaryCta.label}</a>
+      <MobileNav currentPath={currentPath} />
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: var(--header-h);
+    background: rgb(250 247 241 / 0.94);
+    backdrop-filter: saturate(1.2) blur(10px);
+    border-bottom: 1px solid var(--c-line);
+  }
+  .site-header__inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m);
+  }
+  .brand {
+    display: inline-flex;
+    flex-direction: column;
+    line-height: 1.05;
+    text-decoration: none;
+    color: var(--c-charcoal);
+  }
+  .brand__name {
+    font-family: var(--font-serif);
+    font-size: 1.75rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  .brand__sub {
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--c-taupe);
+    margin-top: 0.2rem;
+  }
+  .primary-nav {
+    display: none;
+  }
+  .site-header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+  }
+  .header-cta {
+    display: none;
+    min-height: 2.75rem;
+    padding: 0.55rem 1.25rem;
+    font-size: var(--step--1);
+  }
+  @media (min-width: 36em) {
+    .header-cta {
+      display: inline-flex;
+    }
+  }
+  @media (min-width: 75em) {
+    .primary-nav {
+      display: block;
+    }
+    .primary-nav ul {
+      display: flex;
+      gap: clamp(0.9rem, 1.4vw, 1.75rem);
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .primary-nav li {
+      margin: 0;
+    }
+    .primary-nav a {
+      position: relative;
+      display: inline-block;
+      padding: 0.5rem 0;
+      font-size: 0.9375rem;
+      color: var(--c-ink);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .primary-nav a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0.15rem;
+      height: 1px;
+      background: var(--c-lake);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform var(--t-med) var(--ease);
+    }
+    .primary-nav a:hover::after,
+    .primary-nav a[aria-current='page']::after {
+      transform: scaleX(1);
+    }
+    .primary-nav a[aria-current='page'] {
+      color: var(--c-lake-deep);
+    }
+  }
+</style>

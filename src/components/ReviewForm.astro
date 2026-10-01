@@ -1,0 +1,79 @@
+---
+import FormShell from './FormShell.astro';
+import Field from './Field.astro';
+import { site } from '../config/site';
+
+const types = [
+  { value: 'Seller', label: 'Seller' },
+  { value: 'Buyer', label: 'Buyer' },
+  { value: 'Waterfront', label: 'Waterfront' },
+  { value: 'Move-up', label: 'Move-up' },
+  { value: 'Downsizing / transition', label: 'Downsizing / transition' },
+  { value: 'Other', label: 'Other' },
+];
+const displayOptions = [
+  { value: 'Full name', label: 'Full name' },
+  { value: 'First name and last initial', label: 'First name and last initial' },
+  { value: 'First names only', label: 'First names only' },
+  { value: 'Anonymous', label: 'Anonymous' },
+];
+---
+
+<FormShell
+  id="review-form"
+  formType="client_review"
+  endpoint={site.forms.review}
+  subject="New client review submitted (unpublished — needs verification)"
+  thanksKey="review"
+  submitLabel="Share My Experience"
+>
+  <Field id="review-name" name="name" label="Name" required autocomplete="name" />
+  <Field
+    id="review-email"
+    name="email"
+    type="email"
+    label="Email"
+    required
+    autocomplete="email"
+    inputmode="email"
+    hint="Only used to confirm your review. It is never published."
+  />
+  <Field id="review-community" name="community" label="Community" optional hint="For example Ada, Rockford, or East Grand Rapids." />
+  <Field id="review-type" name="experience_type" as="select" label="Type of experience" required options={types} />
+  <Field
+    id="review-text"
+    name="review"
+    as="textarea"
+    rows={8}
+    label="Your review"
+    required
+    hint="What was it like to work with Amie? What would you want someone in your position to know?"
+  />
+
+  <fieldset class="fieldset">
+    <legend>How may we display your name?</legend>
+    {
+      displayOptions.map((o, i) => (
+        <label class="choice">
+          <input type="radio" name="display_name" value={o.value} checked={i === 1} />
+          <span>{o.label}</span>
+        </label>
+      ))
+    }
+  </fieldset>
+
+  <div class="field" data-field>
+    <label class="choice choice--consent" for="review-consent">
+      <input type="checkbox" id="review-consent" name="publish_permission" value="Yes" required />
+      <span>
+        I give Amie Oren permission to publish this review on her website.
+        <span class="field__req" aria-hidden="true"> *</span>
+      </span>
+    </label>
+    <p class="field__hint">
+      Reviews are read and verified before anything is published. Nothing appears on the site automatically,
+      and Amie may follow up with you first.
+    </p>
+    <p class="field__error" data-error hidden></p>
+  </div>
+</FormShell>

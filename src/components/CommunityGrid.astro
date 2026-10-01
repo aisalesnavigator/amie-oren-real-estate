@@ -1,0 +1,34 @@
+---
+import CommunityCard from './CommunityCard.astro';
+import { communities, type Community } from '../data/communities';
+
+interface Props {
+  items?: Community[];
+}
+const { items = communities } = Astro.props;
+const tones = ['sand', 'lake', 'moss'] as const;
+---
+
+<ul class="community-grid">
+  {
+    items.map((c, i) => (
+      <li>
+        <CommunityCard community={c} tone={tones[i % tones.length]} />
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .community-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-xl) var(--space-l);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13.5rem), 1fr));
+  }
+  .community-grid li {
+    margin: 0;
+  }
+</style>

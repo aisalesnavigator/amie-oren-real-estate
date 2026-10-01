@@ -1,0 +1,54 @@
+---
+import ImageSlot from './ImageSlot.astro';
+import type { Community } from '../data/communities';
+
+interface Props {
+  community: Community;
+  tone?: 'sand' | 'lake' | 'moss';
+}
+const { community, tone = 'sand' } = Astro.props;
+---
+
+<a class="community-card" href={`/communities/${community.slug}/`}>
+  <ImageSlot ratio="4 / 3" tone={tone} label={false} caption={community.setting} />
+  <div class="community-card__body">
+    <h3>{community.name}</h3>
+    <p>{community.blurb}</p>
+    <span class="community-card__more">Explore {community.name} <span aria-hidden="true">→</span></span>
+  </div>
+</a>
+
+<style>
+  .community-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+  .community-card :global(.slot) {
+    transition: transform var(--t-slow) var(--ease);
+  }
+  .community-card:hover :global(.slot) {
+    transform: translateY(-3px);
+  }
+  .community-card__body {
+    padding-top: var(--space-s);
+  }
+  h3 {
+    margin-bottom: var(--space-2xs);
+    font-size: var(--step-3);
+  }
+  p {
+    color: var(--c-taupe);
+    margin-bottom: var(--space-xs);
+  }
+  .community-card__more {
+    font-weight: 500;
+    color: var(--c-lake-deep);
+    border-bottom: 1px solid var(--c-sand-deep);
+    padding-bottom: 2px;
+  }
+  .community-card:hover .community-card__more {
+    border-color: var(--c-charcoal);
+    color: var(--c-charcoal);
+  }
+</style>

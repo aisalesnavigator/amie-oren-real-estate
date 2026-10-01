@@ -1,0 +1,80 @@
+---
+import '../styles/global.css';
+import SEO from '../components/SEO.astro';
+import JsonLd from '../components/JsonLd.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { websiteSchema } from '../utils/schema';
+import { samplesEnabled } from '../utils/reviews';
+
+interface Props {
+  title: string;
+  description: string;
+  path?: string;
+  noindex?: boolean;
+  ogType?: 'website' | 'article';
+  fullTitle?: boolean;
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  /** Additional JSON-LD objects for this page. */
+  jsonLd?: Record<string, unknown>[];
+  /** Extra <head> content, e.g. a preload for the hero image. */
+  headExtra?: boolean;
+}
+
+const { title, description, path, noindex, ogType, fullTitle, publishedTime, modifiedTime, jsonLd = [] } = Astro.props;
+// A build that includes illustrative sample reviews must never be indexed.
+const forceNoindex = noindex || samplesEnabled;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#faf7f1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title="Insights" href="/rss.xml" />
+    <meta name="generator" content={Astro.generator} />
+    <SEO
+      title={title}
+      description={description}
+      path={path}
+      noindex={forceNoindex}
+      type={ogType}
+      fullTitle={fullTitle}
+      publishedTime={publishedTime}
+      modifiedTime={modifiedTime}
+    />
+    <JsonLd data={[websiteSchema(), ...jsonLd]} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    {
+      samplesEnabled && (
+        <div class="review-mode-banner" role="note">
+          Design-review build: illustrative sample reviews are visible. Do not publish this build.
+        </div>
+      )
+    }
+    <SiteHeader />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>
+
+<style is:global>
+  .review-mode-banner {
+    background: var(--c-charcoal);
+    color: #fff;
+    text-align: center;
+    font-size: var(--step--1);
+    padding: 0.4rem var(--gutter);
+  }
+  main:focus {
+    outline: none;
+  }
+</style>

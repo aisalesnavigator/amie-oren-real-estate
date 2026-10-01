@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import InsightCard from '../../components/InsightCard.astro';
+import ConversationCTA from '../../components/ConversationCTA.astro';
+import { getInsights } from '../../utils/insights';
+import { breadcrumbSchema } from '../../utils/schema';
+
+const entries = await getInsights();
+const tones = ['sand', 'lake', 'moss'] as const;
+---
+
+<BaseLayout
+  title="Insights: Practical Real Estate Guidance for West Michigan"
+  description="Clear, practical answers for West Michigan home sellers and buyers: preparing to sell, comparing communities, and understanding waterfront property."
+  path="/insights/"
+  jsonLd={[breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Insights' }])]}
+>
+  <PageHero
+    eyebrow="Insights"
+    title="Useful answers, plainly explained."
+    lede="Practical guidance for people considering a move in West Michigan, written to answer the question first and explain it well."
+    breadcrumbs={[{ name: 'Insights' }]}
+  />
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      {
+        entries.length > 0 ? (
+          <div class="grid grid--3">
+            {entries.map((e, i) => <InsightCard entry={e} tone={tones[i % tones.length]} />)}
+          </div>
+        ) : (
+          <p class="lede">New insights are on the way.</p>
+        )
+      }
+      <p class="small muted rss">
+        Prefer a feed? <a href="/rss.xml">Subscribe via RSS</a>.
+      </p>
+    </div>
+  </section>
+
+  <ConversationCTA />
+</BaseLayout>
+
+<style>
+  .rss {
+    margin-top: var(--space-xl);
+  }
+</style>
