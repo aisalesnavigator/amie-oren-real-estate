@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import ImageSlot from './ImageSlot.astro';
+import PhotoCaption from './PhotoCaption.astro';
 import { getPlaceImage, type PlaceImage } from '../utils/placeImages';
 
 interface Props {
@@ -52,19 +53,21 @@ const [w, h] = frameRatio.split('/').map((n) => parseFloat(n));
 
 {
   image ? (
-    <figure class="place" style={`aspect-ratio:${frameRatio}`} data-place-image={image.stem}>
-      <Image
-        src={image.src}
-        alt={image.credit.alt}
-        widths={[480, 800, 1200]}
-        sizes={sizes}
-        loading={eager ? 'eager' : 'lazy'}
-        format="webp"
-        class="place__img"
-        width={Math.round((w || 4) * 100)}
-        height={Math.round((h || 3) * 100)}
-      />
-      <figcaption class="place__credit">Photo: {image.credit.credit}</figcaption>
+    <figure class="place" data-place-image={image.stem}>
+      <div class="place__frame" style={`aspect-ratio:${frameRatio}`}>
+        <Image
+          src={image.src}
+          alt={image.credit.alt}
+          widths={[480, 800, 1200]}
+          sizes={sizes}
+          loading={eager ? 'eager' : 'lazy'}
+          format="webp"
+          class="place__img"
+          width={Math.round((w || 4) * 100)}
+          height={Math.round((h || 3) * 100)}
+        />
+      </div>
+      <PhotoCaption caption={image.caption} credit={image.credit.credit} />
     </figure>
   ) : (
     <ImageSlot ratio={ratio} tone={tone} motif={motif} caption={caption} label={label} />
@@ -73,22 +76,16 @@ const [w, h] = frameRatio.split('/').map((n) => parseFloat(n));
 
 <style>
   .place {
-    position: relative;
     margin: 0;
+  }
+  .place__frame {
     overflow: hidden;
     border-radius: var(--radius-m);
   }
   .place__img {
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
-  }
-  .place__credit {
-    position: absolute;
-    right: 0.75rem;
-    bottom: 0.5rem;
-    font-size: 0.6875rem;
-    color: #fff;
-    text-shadow: 0 1px 3px rgb(0 0 0 / 0.6);
   }
 </style>

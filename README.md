@@ -123,8 +123,8 @@ One hub page built from `src/data/lakes.ts` (Bostwick, Silver, Lake Bella Vista,
 
 ### Photography
 
-Four owner-supplied lake photos (two for Silver Lake, two for Lake Bella Vista) appear only in the Rockford lake drill-down sections. Every other place still shows a designed placeholder until a licensed photo is added. To add one, save `src/assets/places/<place-slug>-<subject>.jpg` and register it in `src/data/placeImages.ts` (a `primary` photo, plus optional `secondary` photos for lakes); both are required for an image to appear. See `docs/COMMUNITY_IMAGE_BRIEF.md` for the shot list, rights status and process.
+Four owner-supplied lake photos (a sunrise and a sunset each for Silver Lake and Lake Bella Vista) appear in the Rockford lake drill-down sections. The convention going forward is one sunrise and one sunset per featured lake. Each photo is captioned from its place and `moment` ("Silver Lake Sunrise") with a small "Photo: ..." credit beneath. Every other place still shows a designed placeholder until a licensed photo is added: save `src/assets/places/<place-slug>-<subject>.jpg` and register it, with its `moment`, in `src/data/placeImages.ts` (both are required for an image to appear). Image files must contain no EXIF/GPS metadata (a test enforces it). See `docs/COMMUNITY_IMAGE_BRIEF.md`.
 
 ### Waterfront gallery (`/waterfront/`)
 
-A reusable carousel fed by `src/data/waterfrontGallery.ts`; photos live in `src/assets/waterfront/`. It is empty by design (designed placeholders show) and adapts to 0, 1-2, or 3+ approved photos. It is deliberately separate from the lake-section photos. Details in `docs/COMMUNITY_IMAGE_BRIEF.md`.
+A reusable carousel fed by `src/data/waterfrontGallery.ts`. It has no maximum: add an entry (a `placePhoto` reference to a registered photo, or a gallery-only file in `src/assets/waterfront/`) and it appears. It currently shows Silver Lake Sunrise first, then designed placeholders until there are three real photos. Details in `docs/COMMUNITY_IMAGE_BRIEF.md`.

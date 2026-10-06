@@ -1,5 +1,6 @@
 import type { ImageMetadata } from 'astro';
 import { placeImageCredits, type PlaceImageCredit } from '../data/placeImages';
+import { photoCaption, placeName } from './photoCaption';
 
 const files = import.meta.glob<{ default: ImageMetadata }>('/src/assets/places/*.{jpg,jpeg,png,webp}', { eager: true });
 
@@ -8,9 +9,14 @@ export interface PlaceImage {
   stem: string;
   src: ImageMetadata;
   credit: PlaceImageCredit;
+  /** Visible caption, for example "Silver Lake Sunrise". */
+  caption: string;
 }
 
 const stemOf = (path: string) => path.replace(/^.*\//, '').replace(/\.(jpe?g|png|webp)$/i, '');
+
+/** Every registered photo as { stem -> image file }, for code that references the register by key. */
+export const placeImageFiles = new Map(Object.entries(files).map(([path, mod]) => [stemOf(path), mod.default]));
 
 /**
  * Every place image for a slug, primary first. An image is returned only when the file exists AND its
@@ -18,10 +24,12 @@ const stemOf = (path: string) => path.replace(/^.*\//, '').replace(/\.(jpe?g|png
  */
 export function getPlaceImages(slug: string): PlaceImage[] {
   const found: PlaceImage[] = [];
-  for (const [path, mod] of Object.entries(files)) {
-    const stem = stemOf(path);
+  for (const [stem, src] of placeImageFiles) {
     const credit = placeImageCredits[stem];
-    if (credit && credit.slug === slug) found.push({ stem, src: mod.default, credit });
+    if (credit && credit.slug === slug) {
+      const caption = photoCaption({ place: placeName(slug) ?? slug, moment: credit.moment, caption: credit.caption });
+      found.push({ stem, src, credit, caption });
+    }
   }
   return found.sort(
     (a, b) => Number(b.credit.role === 'primary') - Number(a.credit.role === 'primary') || a.stem.localeCompare(b.stem),

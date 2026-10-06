@@ -4,17 +4,27 @@
 
 **Four owner-supplied photos are embedded, in the Rockford lake drill-down only** (`/waterfront/rockford-lakes/`):
 
-| File (`src/assets/places/`) | Lake section | Role | Subject |
+| File (`src/assets/places/`) | Displayed caption | Lake section | Role |
 |---|---|---|---|
-| `silver-lake-rainbow-reflection.jpg` | Silver Lake | Primary (5:4 frame) | Rainbow over the lake, mirrored in calm water |
-| `silver-lake-sunset-reflection.jpg` | Silver Lake | Secondary (16:10) | Pink, violet and orange sunset from a sandy shoreline |
-| `lake-bella-vista-sunrise-reflection.jpg` | Lake Bella Vista | Primary (16:10) | Sunrise, silhouetted trees and homes, mirrored sky |
-| `lake-bella-vista-sunset-reflection.jpg` | Lake Bella Vista | Secondary (16:10) | Orange sunset with silhouetted shoreline |
+| `silver-lake-rainbow-reflection.jpg` | **Silver Lake Sunrise** | Silver Lake | Primary (5:4 frame) |
+| `silver-lake-sunset-reflection.jpg` | **Silver Lake Sunset** | Silver Lake | Secondary (16:10) |
+| `lake-bella-vista-sunrise-reflection.jpg` | **Lake Bella Vista Sunrise** | Lake Bella Vista | Primary (16:10) |
+| `lake-bella-vista-sunset-reflection.jpg` | **Lake Bella Vista Sunset** | Lake Bella Vista | Secondary (16:10) |
 
-- **Rights basis:** supplied by the site owner on 2026-10-06 as owned and approved for use on this website. Registered in `src/data/placeImages.ts` (`approval: 'owned-approved'`). The photo credit line reads "Photo: Amie Oren Real Estate"; change `credit` in the register if a different line is preferred (for example the photographer's name).
-- **Where they do NOT appear:** the `/waterfront/` hero, the homepage, community heroes and cards, and the overall `/waterfront/` gallery. Tests enforce this. Do not reuse them elsewhere without the owner's approval.
+The Silver Lake rainbow photo is treated as the Silver Lake Sunrise image for now. Files are never renamed or duplicated to get a caption: the visible caption is derived from the place and the `moment` field in the register.
+
+### Photography convention: one sunrise and one sunset per featured lake
+
+The long-term goal is a consistent collection of real lake life, not a miscellaneous gallery: for every featured lake, one **sunrise** and one **sunset** photo (Silver Lake, Lake Bella Vista, Bostwick Lake, Myers Lake, Brower Lake, and any lake added later). Sunrise is the lake's primary photo and sunset its secondary. A unit test allows at most one of each per lake.
+
+### Caption treatment
+
+Every photo is shown as `<figure>` with the image first and a caption beneath it: the descriptive caption ("Silver Lake Sunrise") in the serif face, then a much smaller, quiet, sentence-case credit line ("Photo: Amie Oren Real Estate") in the muted text color. The credit is no longer an uppercase badge on the image. Both come from one shared component (`PhotoCaption.astro`), so the lake sections and the gallery always match. The credit never replaces the image's alt text, which describes the scene; a test checks that alt differs from the caption.
+
+- **Rights basis:** supplied by the site owner on 2026-10-06 as owned and approved for use on this website. Registered in `src/data/placeImages.ts` (`approval: 'owned-approved'`). The credit reads "Photo: Amie Oren Real Estate"; change `credit` in the register if a different line is preferred (for example the photographer's name).
+- **Where they appear:** in their lake drill-down section and, for Silver Lake Sunrise only, as the first photo of the overall `/waterfront/` gallery (owner-approved; it references the same file, no copy). They never appear in the `/waterfront/` hero, the homepage, or community heroes and cards. Tests enforce this. Do not reuse them elsewhere without the owner's approval.
 - **Not yet photographed:** Rockford (community), Bostwick Lake, Myers Lake, Brower Lake, Ada, East Grand Rapids, Cascade and Forest Hills still show the designed placeholder.
-- Files carry no EXIF/GPS data. Astro generates the responsive WebP sizes; the originals are not shipped to visitors.
+- **Privacy:** the files carry no EXIF/GPS metadata, and a unit test fails if any image in `src/assets/places/` or `src/assets/waterfront/` has any. Before adding a new photo, strip metadata (for example `sharp(input).rotate().toFile(output)`, which also applies the camera orientation). Astro generates the responsive WebP sizes; the originals are not shipped to visitors.
 
 The remaining candidate research below is unchanged: its URLs came from web search only and **their licenses are unverified**. The build environment could not open Commons, Unsplash, Pexels or the municipal and lake-association sites, so nothing from them is embedded.
 
@@ -29,8 +39,10 @@ Rule applied: *research freely, publish carefully.* Where rights are unclear, th
 ## How to add a licensed photo
 
 1. Save the image as `src/assets/places/<place-slug>-<subject>.jpg` (or `.jpeg`, `.png`, `.webp`), for example `myers-lake-dock-morning.jpg`. Place slugs: `rockford`, `ada`, `east-grand-rapids`, `cascade`, `forest-hills`, `bostwick-lake`, `silver-lake`, `lake-bella-vista`, `myers-lake`, `brower-lake`.
-2. Add an entry in `src/data/placeImages.ts`, keyed by the file name without its extension, with `slug`, `role` (`primary` or `secondary`), `alt`, `credit`, `license`, `approval` and, if relevant, `sourceUrl`. A place has one `primary` photo (used by community heroes and cards, or the lake's lead image) and any number of `secondary` photos (lake drill-down sections only).
-3. Run `npm run build`. **An image appears only if both the file and its rights entry exist** (a test also fails if a file has no entry). A credit line is shown on the photo. A lake with a primary and a secondary photo shows both stacked on desktop and as a swipe strip on phones and tablets.
+2. Add an entry in `src/data/placeImages.ts`, keyed by the file name without its extension, with `slug`, `role` (`primary` or `secondary`), **`moment`** (`sunrise`, `sunset` or `other`), `alt` (describe the scene, not the caption), `credit`, `license`, `approval` and, if relevant, `sourceUrl`. The caption is derived as "<place name> <Moment>" (set `caption` only to override it). A place has one `primary` photo (used by community heroes and cards, or the lake's lead image) and any number of `secondary` photos (lake drill-down sections only).
+3. Run `npm run build`. **An image appears only if both the file and its rights entry exist** (a test also fails if a file has no entry). A lake with a primary and a secondary photo shows both stacked on desktop and as a swipe strip on phones and tablets.
+
+**Adding "Bostwick Lake Sunrise":** save `src/assets/places/bostwick-lake-sunrise.jpg` and add `'bostwick-lake-sunrise': { slug: 'bostwick-lake', role: 'primary', moment: 'sunrise', alt: '...', ...ownedApproved }`. Add the sunset the same way with `role: 'secondary'`, `moment: 'sunset'`. No component or carousel code changes.
 
 Acceptable sources: photos taken by or for Amie, commercially licensed stock or commissioned photography, public domain, Creative Commons licenses that allow this use (record attribution and any share-alike terms), Unsplash/Pexels (record photographer and page URL), or official municipal/tourism sources that explicitly permit reuse. Do not use Google Images, social media, or MLS/brokerage listing photos without written permission.
 
@@ -66,8 +78,11 @@ Silver Lake and Lake Bella Vista are resolved by the owner-supplied photos. The 
 
 ## Overall `/waterfront/` gallery
 
-A reusable, data-driven gallery sits on `/waterfront/` and is **intentionally unpopulated**: it shows three designed "photography to come" slides until photos are approved for it. It is separate from the lake sections so each lake's photos stay with that lake.
+A reusable, data-driven carousel on `/waterfront/`, fed by `src/data/waterfrontGallery.ts`. It is a broader collection that grows over time and is separate from the lake sections. Today it holds one real photo, **Silver Lake Sunrise** (featured, first), followed by two designed "photography to come" placeholders.
 
-- **Add a photo:** save it in `src/assets/waterfront/` and add an entry to `galleryItems` in `src/data/waterfrontGallery.ts` with `id`, `file`, `lake`, `caption`, `alt`, `status` (`owned-approved`, `licensed-approved`, or `pending-approval`, which never displays) and optionally `featured: true` (shown first).
-- **Behavior by count:** 0 photos → designed placeholders in the same carousel; 1-2 → a calm static layout with a "more coming" note; 3+ → a swipeable, keyboard-operable carousel (arrow keys, Home/End, previous/next buttons, no JavaScript library, respects reduced motion).
-- **Do not add the four lake-section photos here without explicit approval.** A test fails if they are added.
+- **No maximum.** Every approved entry becomes a slide; "Photo X of N", Previous/Next, the arrow keys and Home/End all derive from the slide count (checked with a temporary 12-photo gallery). Three is only a presentation threshold: below three real photos the carousel is padded with placeholders (each real photo replaces the next placeholder); from three up, only real photos show.
+- **Add a photo already in the register** (no file copy): `{ id: 'bella-vista-sunset', placePhoto: 'lake-bella-vista-sunset-reflection', status: 'owned-approved' }`. Caption, alt, credit and moment are inherited.
+- **Add a gallery-only photo:** save it in `src/assets/waterfront/` and add `{ id, file, lake, moment, alt, credit, status }`, optionally `featured: true` (shown first) or a `caption` override. The caption is derived as "<lake> <Moment>".
+- `status` is `owned-approved`, `licensed-approved`, or `pending-approval` (kept in the file but never shown). An approved entry whose file is missing is skipped and reported as a build warning.
+- **Do not add the other three lake-section photos here without explicit approval.** A test allows only the approved Silver Lake Sunrise reference.
+- **Practical notes as it grows:** only the first image loads eagerly and the rest lazy-load; each photo generates three WebP sizes (roughly 10-50 KB each), so even dozens of photos add little weight; the gallery crops every photo to 3:2 from the center, so portrait photos lose their top and bottom (use landscape photos where possible).

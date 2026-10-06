@@ -1,14 +1,16 @@
 ---
 import { Image } from 'astro:assets';
 import ImageSlot from './ImageSlot.astro';
+import PhotoCaption from './PhotoCaption.astro';
 import { galleryHeading, galleryLede, galleryPlaceholders } from '../data/waterfrontGallery';
-import { getGallerySlides, galleryMode } from '../utils/waterfrontGallery';
+import { fillerPlaceholders, galleryMode, getGallerySlides } from '../utils/waterfrontGallery';
 
+// Real photos first (featured first), then designed placeholders only until there are three real photos.
+// There is no maximum: every approved photo is a slide and the count below drives the status text.
 const slides = getGallerySlides();
 const mode = galleryMode(slides.length);
-// Carousel mechanics are used for real carousels and for the designed placeholder state.
-const scrollable = mode !== 'few';
-const count = mode === 'empty' ? galleryPlaceholders.length : slides.length;
+const fillers = fillerPlaceholders(slides.length, galleryPlaceholders);
+const count = slides.length + fillers.length;
 ---
 
 <section class="section gallery-section" aria-labelledby="gallery-heading" data-waterfront-gallery data-mode={mode}>
@@ -19,75 +21,64 @@ const count = mode === 'empty' ? galleryPlaceholders.length : slides.length;
       <p class="lede">{galleryLede}</p>
     </div>
 
-    <div
-      class={`gallery gallery--${mode}`}
-      data-gallery
-      role="region"
-      aria-roledescription="carousel"
-      aria-label="Waterfront photography"
-    >
+    <div class="gallery" data-gallery role="region" aria-roledescription="carousel" aria-label="Waterfront photography">
       <div
         class="gallery__track"
         data-track
-        tabindex={scrollable ? 0 : undefined}
-        aria-label={scrollable ? 'Waterfront photos. Use the left and right arrow keys, the buttons, or swipe to move between photos.' : undefined}
+        tabindex="0"
+        aria-label="Waterfront photos. Use the left and right arrow keys, the buttons, or swipe to move between photos."
       >
         {
-          mode === 'empty'
-            ? galleryPlaceholders.map((p, i) => (
-                <div class="gallery__slide" role="group" aria-roledescription="slide" aria-label={`${i + 1} of ${count}`}>
-                  <ImageSlot ratio="3 / 2" tone={i === 1 ? 'sand' : 'lake'} motif="lake" caption={p.caption} />
-                </div>
-              ))
-            : slides.map((s, i) => (
-                <figure
-                  class="gallery__slide"
-                  role="group"
-                  aria-roledescription="slide"
-                  aria-label={`${i + 1} of ${count}`}
-                  data-gallery-item={s.id}
-                  data-featured={s.featured ? '' : undefined}
-                >
-                  <div class="gallery__frame">
-                    <Image
-                      src={s.src}
-                      alt={s.alt}
-                      widths={[480, 800, 1200]}
-                      sizes="(min-width: 75em) 40vw, (min-width: 48em) 56vw, 86vw"
-                      width={600}
-                      height={400}
-                      format="webp"
-                      loading={i === 0 ? 'eager' : 'lazy'}
-                      class="gallery__img"
-                    />
-                  </div>
-                  <figcaption>
-                    <span class="gallery__lake">{s.lake}</span>
-                    <span class="gallery__caption">{s.caption}</span>
-                  </figcaption>
-                </figure>
-              ))
+          slides.map((s, i) => (
+            <figure
+              class="gallery__slide"
+              role="group"
+              aria-roledescription="slide"
+              aria-label={`${i + 1} of ${count}`}
+              data-gallery-item={s.id}
+              data-featured={s.featured ? '' : undefined}
+            >
+              <div class="gallery__frame">
+                <Image
+                  src={s.src}
+                  alt={s.alt}
+                  widths={[480, 800, 1200]}
+                  sizes="(min-width: 75em) 40vw, (min-width: 48em) 56vw, 86vw"
+                  width={600}
+                  height={400}
+                  format="webp"
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                  class="gallery__img"
+                />
+              </div>
+              <PhotoCaption caption={s.caption} credit={s.credit} />
+            </figure>
+          ))
+        }
+        {
+          fillers.map((p, j) => {
+            const i = slides.length + j;
+            return (
+              <div class="gallery__slide" role="group" aria-roledescription="slide" aria-label={`${i + 1} of ${count}`} data-gallery-placeholder>
+                <ImageSlot ratio="3 / 2" tone={i % 2 === 1 ? 'sand' : 'lake'} motif="lake" caption={p.caption} />
+              </div>
+            );
+          })
         }
       </div>
 
-      {
-        scrollable && (
-          <div class="gallery__controls" data-controls hidden>
-            <button type="button" class="gallery__btn" data-prev aria-label="Previous photo">
-              <span aria-hidden="true">←</span>
-            </button>
-            <p class="gallery__status small muted" data-status aria-live="polite">
-              Photo 1 of {count}
-            </p>
-            <button type="button" class="gallery__btn" data-next aria-label="Next photo">
-              <span aria-hidden="true">→</span>
-            </button>
-          </div>
-        )
-      }
+      <div class="gallery__controls" data-controls hidden>
+        <button type="button" class="gallery__btn" data-prev aria-label="Previous photo">
+          <span aria-hidden="true">←</span>
+        </button>
+        <p class="gallery__status small muted" data-status aria-live="polite">
+          Photo 1 of {count}
+        </p>
+        <button type="button" class="gallery__btn" data-next aria-label="Next photo">
+          <span aria-hidden="true">→</span>
+        </button>
+      </div>
     </div>
-
-    {mode === 'few' && <p class="muted small gallery__more">More waterfront photography will be added here.</p>}
   </div>
 </section>
 
@@ -131,37 +122,6 @@ const count = mode === 'empty' ? galleryPlaceholders.length : slides.length;
     width: 100%;
     height: 100%;
     object-fit: cover;
-  }
-  .gallery__slide figcaption {
-    display: grid;
-    gap: 0.1rem;
-    padding-top: var(--space-xs);
-  }
-  .gallery__lake {
-    font-size: var(--step--1);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--c-taupe);
-  }
-  .gallery__caption {
-    font-family: var(--font-serif);
-    font-size: var(--step-1);
-    line-height: 1.3;
-    color: var(--c-charcoal);
-  }
-
-  /* One or two photos: a calm static layout rather than a carousel. */
-  .gallery--few .gallery__track {
-    display: grid;
-    grid-template-columns: 1fr;
-    overflow: visible;
-    scroll-snap-type: none;
-  }
-  .gallery--few .gallery__slide {
-    flex: none;
-  }
-  .gallery__more {
-    margin-top: var(--space-m);
   }
 
   .gallery__controls {
@@ -207,9 +167,6 @@ const count = mode === 'empty' ? galleryPlaceholders.length : slides.length;
   @media (min-width: 48em) {
     .gallery__slide {
       flex-basis: 56%;
-    }
-    .gallery--few .gallery__track {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
   @media (min-width: 75em) {

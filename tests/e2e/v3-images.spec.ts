@@ -1,11 +1,36 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Locator, type Page } from '@playwright/test';
 
 const LAKE_PHOTO = /(silver-lake|lake-bella-vista)-(rainbow|sunset|sunrise)-reflection/;
 const otherPages = [
   '/', '/about/', '/buying/', '/selling/', '/communities/', '/communities/rockford/', '/communities/ada/',
-  '/communities/east-grand-rapids/', '/communities/cascade/', '/communities/forest-hills/', '/waterfront/',
+  '/communities/east-grand-rapids/', '/communities/cascade/', '/communities/forest-hills/',
   '/find-your-fit/', '/home-search/', '/contact/', '/client-experiences/',
 ];
+
+/** The credit must be visibly subordinate to the caption: smaller, sentence case, and not an on-image badge. */
+async function expectQuietCredit(figure: Locator) {
+  const m = await figure.evaluate((el) => {
+    const t = getComputedStyle(el.querySelector('.photo-caption__text')!);
+    const c = getComputedStyle(el.querySelector('.photo-caption__credit')!);
+    const frame = el.querySelector('.place__frame, .gallery__frame');
+    return {
+      captionPx: parseFloat(t.fontSize),
+      creditPx: parseFloat(c.fontSize),
+      transform: c.textTransform,
+      letterSpacing: c.letterSpacing,
+      position: c.position,
+      insideImage: !!frame?.contains(el.querySelector('.photo-caption__credit')),
+      creditAfterCaption: !!(el.querySelector('.photo-caption__text')!.compareDocumentPosition(el.querySelector('.photo-caption__credit')!) & Node.DOCUMENT_POSITION_FOLLOWING),
+    };
+  });
+  expect(m.creditPx).toBeLessThanOrEqual(13);
+  expect(m.captionPx / m.creditPx).toBeGreaterThanOrEqual(1.3);
+  expect(m.transform).toBe('none');
+  expect(m.letterSpacing === 'normal' || parseFloat(m.letterSpacing) === 0).toBe(true);
+  expect(m.position).not.toBe('absolute');
+  expect(m.insideImage).toBe(false);
+  expect(m.creditAfterCaption).toBe(true);
+}
 
 async function lakePhotos(page: Page, id: string) {
   const section = page.locator(`#${id}`);
@@ -26,19 +51,41 @@ test.describe('Rockford lake drill-down photography', () => {
     await expect(bella.nth(1)).toHaveAttribute('data-place-image', 'lake-bella-vista-sunset-reflection');
   });
 
-  test('photos have meaningful alt text, a credit line and optimized responsive sources', async ({ page }) => {
+  test('photos have scene-describing alt text, a caption, a credit line and optimized responsive sources', async ({ page }) => {
     await page.goto('/waterfront/rockford-lakes/');
     for (const id of ['silver-lake', 'lake-bella-vista']) {
-      const imgs = (await lakePhotos(page, id)).locator('img');
-      for (let i = 0; i < (await imgs.count()); i++) {
-        const img = imgs.nth(i);
-        expect(((await img.getAttribute('alt')) ?? '').length).toBeGreaterThan(40);
+      const figures = await lakePhotos(page, id);
+      for (let i = 0; i < (await figures.count()); i++) {
+        const fig = figures.nth(i);
+        const img = fig.locator('img');
+        const alt = (await img.getAttribute('alt')) ?? '';
+        const caption = (await fig.locator('.photo-caption__text').innerText()).trim();
+        expect(alt.length).toBeGreaterThan(40);
+        expect(alt.toLowerCase(), 'alt describes the scene, it does not just repeat the caption').not.toBe(caption.toLowerCase());
+        expect(alt).not.toMatch(/^photo:/i);
         expect(await img.getAttribute('srcset')).toMatch(/\.webp/);
         expect(await img.getAttribute('sizes')).toBeTruthy();
         await img.scrollIntoViewIfNeeded();
         await expect.poll(() => img.evaluate((e: HTMLImageElement) => e.complete && e.naturalWidth > 0)).toBe(true);
       }
-      await expect(page.locator(`#${id} .place__credit`).first()).toContainText('Photo:');
+    }
+  });
+
+  test('captions: Sunrise and Sunset for each lake, with the credit as a quiet secondary line', async ({ page }) => {
+    await page.goto('/waterfront/rockford-lakes/');
+    const expected: Record<string, string[]> = {
+      'silver-lake': ['Silver Lake Sunrise', 'Silver Lake Sunset'],
+      'lake-bella-vista': ['Lake Bella Vista Sunrise', 'Lake Bella Vista Sunset'],
+    };
+    for (const [id, captions] of Object.entries(expected)) {
+      const figures = await lakePhotos(page, id);
+      await expect(figures).toHaveCount(2);
+      for (let i = 0; i < 2; i++) {
+        const fig = figures.nth(i);
+        await expect(fig.locator('.photo-caption__text')).toHaveText(captions[i]);
+        await expect(fig.locator('.photo-caption__credit')).toHaveText('Photo: Amie Oren Real Estate');
+        await expectQuietCredit(fig);
+      }
     }
   });
 
@@ -75,6 +122,16 @@ test.describe('lake photos are not reused elsewhere', () => {
     });
   }
 
+  test('/waterfront/ reuses only the approved Silver Lake Sunrise photo, never the other three', async ({ page }) => {
+    await page.goto('/waterfront/');
+    const srcs = await page.locator('main img').evaluateAll((els) => els.map((e) => `${(e as HTMLImageElement).currentSrc} ${e.getAttribute('src')} ${e.getAttribute('srcset') ?? ''}`));
+    expect(srcs.length).toBeGreaterThan(0);
+    for (const s of srcs) {
+      expect(s).toMatch(/silver-lake-rainbow-reflection/);
+      expect(s).not.toMatch(/silver-lake-sunset|lake-bella-vista/);
+    }
+  });
+
   test('the /waterfront/ hero area has no photograph', async ({ page }) => {
     await page.goto('/waterfront/');
     await expect(page.locator('.page-hero img')).toHaveCount(0);
@@ -83,23 +140,43 @@ test.describe('lake photos are not reused elsewhere', () => {
 });
 
 test.describe('/waterfront/ gallery', () => {
-  test('renders as an accessible carousel region in a designed state', async ({ page }) => {
+  test('renders as an accessible carousel region with one real photo and designed placeholders', async ({ page }) => {
     await page.goto('/waterfront/');
     const section = page.locator('[data-waterfront-gallery]');
     await expect(section).toHaveCount(1);
-    await expect(section).toHaveAttribute('data-mode', /^(empty|few|carousel)$/);
+    await expect(section).toHaveAttribute('data-mode', 'partial');
     const region = section.locator('[role="region"][aria-roledescription="carousel"]');
     await expect(region).toHaveAttribute('aria-label', 'Waterfront photography');
     const slides = region.locator('[role="group"][aria-roledescription="slide"]');
-    expect(await slides.count()).toBeGreaterThanOrEqual(3);
-    await expect(slides.first()).toHaveAttribute('aria-label', /^1 of \d+$/);
+    await expect(slides).toHaveCount(3);
+    await expect(slides.first()).toHaveAttribute('aria-label', '1 of 3');
+    await expect(region.locator('[data-gallery-item]')).toHaveCount(1);
+    await expect(region.locator('[data-gallery-placeholder]')).toHaveCount(2);
     await expect(section.getByRole('heading', { level: 2 })).toBeVisible();
   });
 
-  test('the overall gallery is not populated with the lake-section photos', async ({ page }) => {
+  test('the first slide is the featured Silver Lake Sunrise photo, captioned with a quiet credit', async ({ page }) => {
     await page.goto('/waterfront/');
-    await expect(page.locator('[data-waterfront-gallery] [data-gallery-item]')).toHaveCount(0);
-    await expect(page.locator('[data-waterfront-gallery] [data-mode="empty"], [data-waterfront-gallery][data-mode="empty"]').first()).toBeAttached();
+    const first = page.locator('[data-waterfront-gallery] [role="group"][aria-roledescription="slide"]').first();
+    await expect(first).toHaveAttribute('data-gallery-item', 'silver-lake-sunrise');
+    await expect(first).toHaveAttribute('data-featured', '');
+    await expect(first.locator('.photo-caption__text')).toHaveText('Silver Lake Sunrise');
+    await expect(first.locator('.photo-caption__credit')).toHaveText('Photo: Amie Oren Real Estate');
+    await expectQuietCredit(first);
+    const img = first.locator('img');
+    const alt = (await img.getAttribute('alt')) ?? '';
+    expect(alt.length).toBeGreaterThan(40);
+    expect(alt.toLowerCase()).not.toBe('silver lake sunrise');
+    expect(await img.getAttribute('srcset')).toMatch(/silver-lake-rainbow-reflection.*\.webp/);
+    await expect.poll(() => img.evaluate((e: HTMLImageElement) => e.complete && e.naturalWidth > 0)).toBe(true);
+  });
+
+  test('the remaining placeholders stay designed and the page hero is unchanged', async ({ page }) => {
+    await page.goto('/waterfront/');
+    const holders = page.locator('[data-waterfront-gallery] [data-gallery-placeholder] [data-image-slot]');
+    await expect(holders).toHaveCount(2);
+    await expect(page.locator('[data-waterfront-gallery]')).not.toContainText('Morning light on a Rockford-area lake');
+    await expect(page.locator('.page-hero img')).toHaveCount(0);
   });
 
   test('is operable by keyboard and by its buttons', async ({ page }) => {
