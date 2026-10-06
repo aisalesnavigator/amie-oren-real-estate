@@ -3,6 +3,7 @@ import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CommunityHero from '../../components/CommunityHero.astro';
 import CommunityGrid from '../../components/CommunityGrid.astro';
+import CommunityResources from '../../components/CommunityResources.astro';
 import RelatedContent from '../../components/RelatedContent.astro';
 import ConversationCTA from '../../components/ConversationCTA.astro';
 import { communities, getCommunity, type Community } from '../../data/communities';
@@ -90,8 +91,8 @@ const path = `/communities/${community.slug}/`;
           <span class="eyebrow">Rockford-area lakes</span>
           <h2 id="lakes-heading">Lake living is part of what makes Rockford different.</h2>
           <p class="lede" style="color:#e8eef0">
-            I’ve lived on two Rockford-area lakes, and I’ve helped many clients buy and sell lakefront homes in the
-            area. I’ve put together a closer look at five of them.
+            I’ve helped many clients buy and sell lakefront homes in the area, and I’ve put together a closer look at
+            five of the lakes.
           </p>
           <a class="btn btn--light" href="/waterfront/rockford-lakes/">Explore Rockford-area lakes</a>
         </div>
@@ -113,6 +114,8 @@ const path = `/communities/${community.slug}/`;
       </p>
     </div>
   </section>
+
+  <CommunityResources slug={community.slug} name={community.name} />
 
   {
     insights.length > 0 && (

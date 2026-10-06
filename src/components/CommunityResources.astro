@@ -1,0 +1,83 @@
+---
+import { getCommunityResources, defaultResourceIntro } from '../data/communityResources';
+
+interface Props {
+  slug: string;
+  name: string;
+}
+const { slug, name } = Astro.props;
+const set = getCommunityResources(slug);
+---
+
+{
+  set && set.links.length > 0 && (
+    <section class="section section--tight resources" aria-labelledby="resources-heading" data-community-resources>
+      <div class="container container--narrow">
+        <span class="eyebrow">Learn more about {name}</span>
+        <h2 id="resources-heading">Want to explore on your own?</h2>
+        <p class="lede">{set.intro ?? defaultResourceIntro}</p>
+        <ul class="resources__list">
+          {set.links.map((l) => (
+            <li>
+              <a href={l.href} target="_blank" rel="noopener noreferrer" class="resources__link">
+                <span class="resources__label">
+                  {l.label}
+                  <span class="visually-hidden"> (opens in a new tab)</span>
+                </span>
+                <span class="resources__desc">{l.description}</span>
+                <span class="resources__source">{l.source}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p class="muted small">
+          These are independent websites run by the organizations named. I’m not affiliated with them, and their
+          information is theirs to keep current.
+        </p>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .resources__list {
+    list-style: none;
+    margin: var(--space-l) 0 var(--space-m);
+    padding: 0;
+    border-top: 1px solid var(--c-sand-deep);
+  }
+  .resources__list li {
+    margin: 0;
+    border-bottom: 1px solid var(--c-sand-deep);
+  }
+  .resources__link {
+    display: grid;
+    gap: 0.2rem;
+    padding: var(--space-m) 0;
+    text-decoration: none;
+    color: inherit;
+  }
+  .resources__label {
+    font-family: var(--font-serif);
+    font-size: var(--step-2);
+    color: var(--c-lake-deep);
+    line-height: 1.2;
+  }
+  .resources__label::after {
+    content: ' ↗';
+    font-size: 0.8em;
+    color: var(--c-taupe);
+  }
+  .resources__link:hover .resources__label,
+  .resources__link:focus-visible .resources__label {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .resources__desc {
+    color: var(--c-charcoal);
+  }
+  .resources__source {
+    font-size: var(--step--1);
+    color: var(--c-taupe);
+  }
+</style>

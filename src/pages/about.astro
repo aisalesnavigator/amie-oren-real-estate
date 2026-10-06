@@ -37,13 +37,6 @@ const principles = [
     text: 'Dates, documents, conditions, and small requests matter. Carrying them through carefully is much of what clients value.',
   },
 ];
-
-const placeholders = [
-  { label: 'Career history', hint: 'Professional background and path into real estate.' },
-  { label: 'Designations and credentials', hint: 'Only verified designations and certifications.' },
-  { label: 'Community involvement', hint: 'Organizations, causes, and local roots.' },
-  { label: 'Education and training', hint: 'Relevant education or continuing training, if desired.' },
-];
 ---
 
 <BaseLayout
@@ -84,9 +77,8 @@ const placeholders = [
         or navigating a major life transition, you should feel that someone steady is looking out for you.
       </p>
       <p>
-        Lake living is part of my own story. I’ve spent the last 15 years living on two Rockford-area lakes,
-        seven years on Lake Bella Vista and the last eight on Silver Lake, and I’ve helped many clients buy and
-        sell lakefront homes throughout the area. <a href="/waterfront/rockford-lakes/">See how I think about
+        Lake living is part of my own story. Over the last 15 years, I’ve lived on both Lake Bella Vista
+        and Silver Lake, and I’ve helped many clients buy and sell lakefront homes throughout the area. <a href="/waterfront/rockford-lakes/">See how I think about
         Rockford-area lake living.</a>
       </p>
       <blockquote>Understand what the move means. Then do the work to make it go well.</blockquote>
@@ -109,26 +101,6 @@ const placeholders = [
           ))
         }
       </div>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="background-heading">
-    <div class="container container--narrow">
-      <h2 id="background-heading">Background</h2>
-      <p class="muted">
-        More of my professional background will be shared here. The sections below are reserved for verified
-        details only.
-      </p>
-      <ul class="slots">
-        {
-          placeholders.map((p) => (
-            <li data-about-placeholder>
-              <h3>{p.label}</h3>
-              <p class="muted small">{p.hint} <em>(To be added.)</em></p>
-            </li>
-          ))
-        }
-      </ul>
     </div>
   </section>
 
@@ -176,26 +148,6 @@ const placeholders = [
     font-size: var(--step-2);
   }
   .principle p {
-    margin: 0;
-  }
-  .slots {
-    list-style: none;
-    padding: 0;
-    margin: var(--space-l) 0 0;
-    display: grid;
-    gap: var(--space-s);
-  }
-  .slots li {
-    margin: 0;
-    padding: var(--space-m);
-    border: 1px dashed var(--c-sand-deep);
-    border-radius: var(--radius-m);
-  }
-  .slots h3 {
-    font-size: var(--step-1);
-    margin-bottom: 0.15rem;
-  }
-  .slots p {
     margin: 0;
   }
 </style>

@@ -11,6 +11,20 @@ It asks nine short questions about **home and lifestyle preferences** (water, vi
 - Results are presented as "Strongest fit" and "Also worth exploring", with explanations written from the visitor's own answers, honest "worth weighing" considerations, and a link to the full community page. It never shows percentages or scores.
 - If Rockford leads and water is a stated priority, a block links to the Rockford-area lakes.
 
+## Plain-language answers (V3)
+
+Answer choices must be understandable without explanation. The setting question previously offered “Close-in and connected”, which was not self-explanatory. It now reads:
+
+| Value | Label | Visible hint |
+|---|---|---|
+| `close_in` | Closer to Grand Rapids and everyday amenities | Convenient to the city, restaurants, shopping and daily conveniences. |
+| `village` | A village or town-center feel | A recognizable community center with dining and shops close by. |
+| `lake` | Centered on a lake | Daily life organized around the water. |
+| `wooded` | Wooded and private | More space, trees and separation from neighbors. |
+| `flexible` | Flexible | |
+
+The option `hint` is rendered as visible text under the label (not a tooltip). The underlying dimension (`setting_closein`, proximity and connectedness versus space and privacy), the option values and the scoring weights are unchanged, so results and saved-search field values are the same. Do not reintroduce “close-in” in user-facing text; a unit test and an e2e test check for it.
+
 ## What it intentionally does not do
 
 - It does not rank communities as better or worse, and it does not say where anyone "belongs."

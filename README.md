@@ -113,6 +113,14 @@ Posts to the same Formspree endpoint as the other forms with `form_type=location
 
 One hub page built from `src/data/lakes.ts` (Bostwick, Silver, Lake Bella Vista, Myers, Brower). **Add a lake:** add an entry using `build(...)`; it gets a section, jump link, saved-search CTA (`/home-search/?community=rockford&lake=<slug>`) and a checkbox on the saved-search form automatically. **Add verified facts** only through `verifiedFacts` (each needs a source). The data deliberately contains no depths, acreage, frontage, designations, rules, taxes, values, or inventory numbers.
 
+### V3 refinements
+
+- About page: the empty “Background” placeholder was removed; the page ends with the principles and the conversation CTA.
+- Lake-residency wording: About, `/waterfront/`, the Rockford community page and the Rockford lakes hub introduction say *“Over the last 15 years, I’ve lived on both Lake Bella Vista and Silver Lake.”* Exact years remain only in the individual Lake Bella Vista and Silver Lake sections (`src/data/lakes.ts`).
+- Location Fit: “Close-in and connected” became “Closer to Grand Rapids and everyday amenities”, with visible plain-language hints on the setting question. Logic and field values are unchanged.
+- Community resources: each community page has a “Want to explore on your own?” list driven by `src/data/communityResources.ts` (external links open in a new tab with `rel="noopener noreferrer"`). See `docs/CONTENT_GUIDE.md`.
+- Photography: candidates are documented but none is embedded yet (see below).
+
 ### Photography
 
 Community and lake photos are placeholders until licensed images are added; see `docs/COMMUNITY_IMAGE_BRIEF.md` for the shot list and the process (`src/assets/places/<slug>.jpg` plus a rights entry in `src/data/placeImages.ts`; both are required for an image to appear).

@@ -40,7 +40,7 @@ export const communities: Community[] = [
     ],
     lifestyle: [
       'Lake life shapes the rhythm of the area: docks, boats, shoreline, and long summer evenings, with a very different feel in the off-season. If you can, spend time here in more than one season.',
-      'I have lived on two Rockford-area lakes myself, so I try to help clients think through what daily life on the water is really like, not just how the view looks in a listing.',
+      'Over the last 15 years, I’ve lived on both Lake Bella Vista and Silver Lake, so I try to help clients think through what daily life on the water is really like, not just how the view looks in a listing.',
     ],
     buyerQuestions: [
       'How important is being on the water, and what do I actually want to do there?',
@@ -107,11 +107,11 @@ export const communities: Community[] = [
   {
     slug: 'east-grand-rapids',
     name: 'East Grand Rapids',
-    blurb: 'A close-in lake community with a strong sense of place.',
-    headline: 'East Grand Rapids: a close-in community organized around the lake.',
+    blurb: 'A lake community close to Grand Rapids, with a strong sense of place.',
+    headline: 'East Grand Rapids: close to the city, organized around the lake.',
     setting: 'Lakeside neighborhoods and tree-lined streets',
     overview: [
-      'East Grand Rapids is a compact, close-in community with Reeds Lake at its center. Its neighborhoods, lakefront, and village-style shopping area give it a strong identity.',
+      'East Grand Rapids is a compact community close to downtown Grand Rapids, with Reeds Lake at its center. Its neighborhoods, lakefront, and village-style shopping area give it a strong identity.',
       'Because the community is small and well defined, buyers who know the area tend to understand a home quickly. Preparation and positioning matter.',
     ],
     housingCharacter: [
@@ -142,7 +142,7 @@ export const communities: Community[] = [
     ],
     related: ['forest-hills', 'cascade'],
     myNote:
-      "When people tell me they love East Grand Rapids, I ask what they love most: the lake, the village, or being close in. Each points to a slightly different search.",
+      "When people tell me they love East Grand Rapids, I ask what they love most: the lake, the village, or being close to the city. Each points to a slightly different search.",
   },
   {
     slug: 'cascade',

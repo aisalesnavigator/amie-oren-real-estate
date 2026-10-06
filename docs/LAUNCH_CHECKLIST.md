@@ -22,13 +22,13 @@ Items that need real-world input or verification before the site is public. Anal
 ## Content
 - [ ] Amie to read every page of copy for accuracy and tone.
 - [ ] Verify the factual geography statements on the five community pages (Rockford, Ada, East Grand Rapids, Cascade, Forest Hills), especially the Forest Hills description.
-- [ ] About page: supply verified career history, designations, community involvement, credentials (placeholder blocks are marked "To be added").
+- [x] About page: the “Background” placeholder blocks were removed in V3 at Amie’s request. Add credentials or career history later only if Amie supplies verified content.
 - [ ] Review the three demonstration Insights articles; add `reviewedBy`/`reviewedDate` and remove `noindex` when approved, or replace them. The Forest Hills Public Schools source was removed because it could not be verified; add vetted sources where useful. The remaining sources (michigan.gov/egle, legislature.mi.gov) were reachable but are general landing pages; replace with specific pages if desired.
 - [ ] Collect real client reviews; delete or leave out the `sample-*.md` files.
 - [ ] Decide the final wording of any "Properties" content.
 
 ## V2 additions
-- [ ] Amie to confirm the personal facts used in first person (more than 15 years; 7 years on Lake Bella Vista; last 8 years on Silver Lake; helped many clients with lakefront homes) and the exact wording of the early-awareness language.
+- [ ] Amie to confirm the personal facts used in first person (more than 15 years; lived on both Lake Bella Vista and Silver Lake over the last 15 years, with exact 7/8-year detail only in the individual Lake Bella Vista and Silver Lake sections; helped many clients with lakefront homes) and the exact wording of the early-awareness language.
 - [ ] Review the Location Fit community profiles in `src/data/locationFit.ts` (numeric traits and "worth weighing" notes) for accuracy and fairness, and read `docs/LOCATION_FIT_GUIDELINES.md`.
 - [ ] Add lake-specific, verified facts and Amie's own notes to Bostwick, Myers, and Brower (Silver and Bella Vista have only her residency facts). Nothing lake-specific is stated yet.
 - [ ] Source and license place photography (`docs/COMMUNITY_IMAGE_BRIEF.md`). All community and lake images are placeholders.
@@ -51,3 +51,9 @@ Items that need real-world input or verification before the site is public. Anal
 - [ ] Confirm `npm run build` (not `build:review`) is what is deployed.
 - [ ] Confirm production pages show no "Illustrative draft" content.
 - [ ] Submit the sitemap (`/sitemap-index.xml`) when ready (optional; no verification code is installed).
+
+## V3 refinement (copy, Location Fit, community resources, images)
+- [ ] Click through **every** link in `src/data/communityResources.ts` (listed in `docs/CONTENT_GUIDE.md`). The build environment could not open these sites; URLs came from search results. Confirm each loads, is the intended organization, and is current (the Ada Township site appears under both `adamichigan.org/departments/...` and `adamichigan.org/township/...`; the East Grand Rapids city site appears under both `eastgrmi.gov` and `eastgr.org`; use whichever Amie prefers).
+- [ ] Amie to approve the resource choices, especially the DNR boating link on Rockford (statewide, not lake-specific) and the Land Conservancy link for Cascade Peace Park.
+- [ ] Confirm the new Location Fit setting wording (“Closer to Grand Rapids and everyday amenities” and the visible hints).
+- [ ] Photography: approve, license or replace every candidate in `docs/COMMUNITY_IMAGE_BRIEF.md`. **No place image is embedded yet**; all ten remain placeholders. Amie's own photos of Silver Lake and Lake Bella Vista are the best first step.

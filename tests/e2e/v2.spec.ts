@@ -76,8 +76,8 @@ test.describe('waterfront authority', () => {
   test('waterfront page states lake experience and avoids overclaiming', async ({ page }) => {
     await page.goto('/waterfront/');
     const text = await page.locator('main').innerText();
-    expect(text).toContain('Lake Bella Vista for seven years');
-    expect(text).toContain('Silver Lake for the last eight');
+    expect(text).toMatch(/Over the last 15 years, I’ve lived on both Lake Bella Vista and Silver Lake/);
+    expect(text).not.toMatch(/\b(seven|7)\s+years\b|\b(last\s+)?(eight|8)\s+years\b|the last eight\b/i);
     expect(text).toMatch(/helped many\s+clients buy and sell lakefront homes/);
     expect(text).toMatch(/can’t promise a\s+property before it reaches the market/);
     expect(text).not.toMatch(/exclusive|off-market|before everyone else|guarantee[sd]? access|I always know/i);

@@ -95,8 +95,8 @@ export const dimensionLabels: Record<Dimension, { high: string; mid: string; low
     mid: 'some access to the outdoors',
     low: 'the home and property itself over nearby recreation',
   },
-  setting_closein: { high: 'a close-in, connected setting', mid: 'a close-in, connected setting', low: 'a close-in, connected setting' },
-  setting_village: { high: 'a village- or community-centered setting', mid: 'a village- or community-centered setting', low: 'a village- or community-centered setting' },
+  setting_closein: { high: 'a setting closer to Grand Rapids and everyday amenities', mid: 'a setting closer to Grand Rapids and everyday amenities', low: 'a setting closer to Grand Rapids and everyday amenities' },
+  setting_village: { high: 'a village- or town-center setting', mid: 'a village- or town-center setting', low: 'a village- or town-center setting' },
   setting_lake: { high: 'a lake-centered setting', mid: 'a lake-centered setting', low: 'a lake-centered setting' },
   setting_wooded: { high: 'a wooded, private setting', mid: 'a wooded, private setting', low: 'a wooded, private setting' },
 };
@@ -202,10 +202,30 @@ export const fitQuestions: FitQuestion[] = [
     type: 'single',
     required: true,
     options: [
-      { value: 'close_in', label: 'Close-in and connected', prefs: [p('setting_closein', 1, 2)] },
-      { value: 'village', label: 'Village- or community-centered', prefs: [p('setting_village', 1, 2)] },
-      { value: 'lake', label: 'Lake-centered', prefs: [p('setting_lake', 1, 2)] },
-      { value: 'wooded', label: 'Wooded and private', prefs: [p('setting_wooded', 1, 2)] },
+      {
+        value: 'close_in',
+        label: 'Closer to Grand Rapids and everyday amenities',
+        hint: 'Convenient to the city, restaurants, shopping and daily conveniences.',
+        prefs: [p('setting_closein', 1, 2)],
+      },
+      {
+        value: 'village',
+        label: 'A village or town-center feel',
+        hint: 'A recognizable community center with dining and shops close by.',
+        prefs: [p('setting_village', 1, 2)],
+      },
+      {
+        value: 'lake',
+        label: 'Centered on a lake',
+        hint: 'Daily life organized around the water.',
+        prefs: [p('setting_lake', 1, 2)],
+      },
+      {
+        value: 'wooded',
+        label: 'Wooded and private',
+        hint: 'More space, trees and separation from neighbors.',
+        prefs: [p('setting_wooded', 1, 2)],
+      },
       { value: 'flexible', label: 'Flexible', prefs: [] },
     ],
   },
@@ -248,11 +268,11 @@ export const communityProfiles: CommunityProfile[] = [
       setting_closein: 0.1, setting_village: 0.55, setting_lake: 1, setting_wooded: 0.7,
     },
     tradeoffs: {
-      centrality: 'Day-to-day access to central Grand Rapids is less immediate than in the close-in communities, so it is worth testing the drives that matter to you.',
+      centrality: 'Day-to-day access to central Grand Rapids is less immediate than in the communities closest to the city, so it is worth testing the drives that matter to you.',
       upkeep: 'Lake properties and larger lots usually come with more upkeep (shoreline, docks, grounds) than a compact in-town home.',
       space: 'Lakefront and larger properties often trade some connectedness for room and privacy. If you want a tightly connected neighborhood, compare it with East Grand Rapids.',
       character: 'Housing here varies widely, so architectural character depends on the specific property rather than the area.',
-      setting_closein: 'The feel here is lake-and-town rather than close-in city living.',
+      setting_closein: 'The feel here is lake-and-town rather than living close to the city and its everyday amenities.',
     },
   },
   {
@@ -267,7 +287,7 @@ export const communityProfiles: CommunityProfile[] = [
       setting_lake: 'Ada is more village-and-river than lake-centered. For a lake-centered setting, compare Rockford.',
       upkeep: 'Larger, wooded, or river-adjacent properties can involve more care than a compact home.',
       space: 'If you prefer a tightly connected neighborhood, compare East Grand Rapids.',
-      centrality: 'Access to central Grand Rapids is reasonable but less immediate than in the closest-in communities.',
+      centrality: 'Access to central Grand Rapids is reasonable but less immediate than in the communities closest to the city.',
     },
   },
   {
@@ -279,10 +299,10 @@ export const communityProfiles: CommunityProfile[] = [
     },
     tradeoffs: {
       space: 'Lots are typically more modest here. If larger lots or maximum privacy become more important, you may also want to compare Ada or Forest Hills.',
-      setting_wooded: 'The setting is close-in and connected rather than wooded and private.',
+      setting_wooded: 'The setting is closer to the city and its amenities rather than wooded and private.',
       upkeep: 'Older homes can bring their own maintenance considerations even on smaller lots.',
       outdoors: 'Outdoor recreation here centers on the lake and nearby parks more than on large natural areas.',
-      centrality: 'East Grand Rapids is among the closest-in of these areas, so if you are happy to trade proximity for more space or a different setting, other communities may offer more of that.',
+      centrality: 'East Grand Rapids is among the closest of these areas to central Grand Rapids, so if you are happy to trade proximity for more space or a different setting, other communities may offer more of that.',
     },
   },
   {

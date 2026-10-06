@@ -62,7 +62,10 @@ const total = fitQuestions.length;
                       data-max={q.max}
                       id={`${q.id}-${j}`}
                     />
-                    <span>{o.label}</span>
+                    <span class="fit-opt__text">
+                      <span>{o.label}</span>
+                      {o.hint && <small class="fit-opt__hint">{o.hint}</small>}
+                    </span>
                   </label>
                 ))}
               </div>
@@ -211,6 +214,14 @@ const total = fitQuestions.length;
     background: var(--c-paper);
     cursor: pointer;
     transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+  }
+  .fit-opt__text {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .fit-opt__hint {
+    font-size: var(--step--1);
+    color: var(--c-taupe);
   }
   .fit-opt:hover {
     border-color: var(--c-lake-deep);
