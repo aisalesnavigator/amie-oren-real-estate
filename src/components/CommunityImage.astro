@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import ImageSlot from './ImageSlot.astro';
-import { getPlaceImage } from '../utils/placeImages';
+import { getPlaceImage, type PlaceImage } from '../utils/placeImages';
 
 interface Props {
   /** Community or lake slug. */
@@ -14,6 +14,10 @@ interface Props {
   label?: boolean;
   sizes?: string;
   eager?: boolean;
+  /** Render this specific (e.g. secondary) photo instead of the place's primary photo. */
+  image?: PlaceImage;
+  /** Use the photo's own registered aspect ratio instead of `ratio` (lake drill-down only). */
+  useImageRatio?: boolean;
 }
 const motifBySlug: Record<string, NonNullable<Props['motif']>> = {
   rockford: 'lake',
@@ -38,14 +42,17 @@ const {
   label = true,
   sizes = '(min-width: 64em) 40vw, 90vw',
   eager = false,
+  image: given,
+  useImageRatio = false,
 } = Astro.props;
-const image = getPlaceImage(slug);
-const [w, h] = ratio.split('/').map((n) => parseFloat(n));
+const image = given ?? getPlaceImage(slug);
+const frameRatio = useImageRatio && image?.credit.ratio ? image.credit.ratio : ratio;
+const [w, h] = frameRatio.split('/').map((n) => parseFloat(n));
 ---
 
 {
   image ? (
-    <figure class="place" style={`aspect-ratio:${ratio}`}>
+    <figure class="place" style={`aspect-ratio:${frameRatio}`} data-place-image={image.stem}>
       <Image
         src={image.src}
         alt={image.credit.alt}

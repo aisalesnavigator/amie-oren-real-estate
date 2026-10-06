@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 import CommunityImage from '../../components/CommunityImage.astro';
+import WaterfrontGallery from '../../components/WaterfrontGallery.astro';
 import FAQ from '../../components/FAQ.astro';
 import ConversationCTA from '../../components/ConversationCTA.astro';
 import { lakes } from '../../data/lakes';
@@ -111,6 +112,8 @@ const articles = (await getInsights()).filter((e) => e.data.intent === 'waterfro
       <CommunityImage slug="rockford" caption="Rockford-area lakes and shoreline" ratio="5 / 4" />
     </div>
   </section>
+
+  <WaterfrontGallery />
 
   <section class="section section--limestone" aria-labelledby="topics-heading">
     <div class="container">

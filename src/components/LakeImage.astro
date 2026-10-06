@@ -1,11 +1,14 @@
 ---
 import CommunityImage from './CommunityImage.astro';
+import type { PlaceImage } from '../utils/placeImages';
 interface Props {
   slug: string;
   caption?: string;
   ratio?: string;
+  /** A specific photo (e.g. a secondary one). Defaults to the lake's primary photo. */
+  image?: PlaceImage;
 }
-const { slug, caption, ratio = '16 / 10' } = Astro.props;
+const { slug, caption, ratio = '16 / 10', image } = Astro.props;
 ---
 
-<CommunityImage slug={slug} caption={caption} ratio={ratio} tone="lake" motif="lake" />
+<CommunityImage slug={slug} caption={caption} ratio={ratio} tone="lake" motif="lake" image={image} useImageRatio />

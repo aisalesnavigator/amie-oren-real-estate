@@ -1,5 +1,6 @@
 ---
 import LakeImage from './LakeImage.astro';
+import { getSecondaryPlaceImages } from '../utils/placeImages';
 import type { Lake } from '../data/lakes';
 
 interface Props {
@@ -7,12 +8,19 @@ interface Props {
   flip?: boolean;
 }
 const { lake, flip = false } = Astro.props;
+const secondary = getSecondaryPlaceImages(lake.slug);
 const searchHref = `/home-search/?community=rockford&lake=${lake.slug}`;
 ---
 
 <article class={`lake ${flip ? 'lake--flip' : ''}`} id={lake.slug} aria-labelledby={`${lake.slug}-heading`}>
-  <div class="lake__media">
+  <div
+    class={`lake__media ${secondary.length > 0 ? 'lake__media--multi' : ''}`}
+    data-lake-photos={secondary.length > 0 ? '' : undefined}
+    role={secondary.length > 0 ? 'group' : undefined}
+    aria-label={secondary.length > 0 ? `${lake.name} photos` : undefined}
+  >
     <LakeImage slug={lake.slug} caption={lake.imageSubject} />
+    {secondary.map((image) => <LakeImage slug={lake.slug} image={image} />)}
   </div>
   <div class="lake__body">
     <h2 id={`${lake.slug}-heading`}>{lake.name}</h2>
@@ -125,6 +133,32 @@ const searchHref = `/home-search/?community=rockford&lake=${lake.slug}`;
   .lake__cta {
     margin-top: var(--space-m);
   }
+  .lake__media {
+    display: grid;
+    gap: var(--space-s);
+    align-content: start;
+  }
+  /* Below the two-column layout, a lake with two photos becomes a native swipe strip. */
+  @media (max-width: 63.99em) {
+    .lake__media--multi {
+      grid-auto-flow: column;
+      grid-auto-columns: min(88%, 32rem);
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+    }
+    .lake__media--multi::-webkit-scrollbar {
+      display: none;
+    }
+    .lake__media--multi:focus-visible {
+      outline: 3px solid var(--c-focus);
+      outline-offset: 4px;
+    }
+    .lake__media--multi > :global(*) {
+      scroll-snap-align: start;
+    }
+  }
   @media (min-width: 64em) {
     .lake {
       grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
@@ -141,5 +175,21 @@ const searchHref = `/home-search/?community=rockford&lake=${lake.slug}`;
       position: sticky;
       top: calc(var(--header-h) + var(--space-l));
     }
+    /* Taller than a single photo: let it scroll with the section rather than pin past the viewport. */
+    .lake__media--multi {
+      position: static;
+    }
   }
 </style>
+
+<script>
+  // The swipe strip only scrolls below the desktop layout, so it is only a keyboard stop there.
+  const desktop = window.matchMedia('(min-width: 64em)');
+  const sync = () =>
+    document.querySelectorAll<HTMLElement>('[data-lake-photos]').forEach((el) => {
+      if (desktop.matches) el.removeAttribute('tabindex');
+      else el.setAttribute('tabindex', '0');
+    });
+  desktop.addEventListener('change', sync);
+  sync();
+</script>

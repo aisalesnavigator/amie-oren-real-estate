@@ -123,4 +123,8 @@ One hub page built from `src/data/lakes.ts` (Bostwick, Silver, Lake Bella Vista,
 
 ### Photography
 
-Community and lake photos are placeholders until licensed images are added; see `docs/COMMUNITY_IMAGE_BRIEF.md` for the shot list and the process (`src/assets/places/<slug>.jpg` plus a rights entry in `src/data/placeImages.ts`; both are required for an image to appear).
+Four owner-supplied lake photos (two for Silver Lake, two for Lake Bella Vista) appear only in the Rockford lake drill-down sections. Every other place still shows a designed placeholder until a licensed photo is added. To add one, save `src/assets/places/<place-slug>-<subject>.jpg` and register it in `src/data/placeImages.ts` (a `primary` photo, plus optional `secondary` photos for lakes); both are required for an image to appear. See `docs/COMMUNITY_IMAGE_BRIEF.md` for the shot list, rights status and process.
+
+### Waterfront gallery (`/waterfront/`)
+
+A reusable carousel fed by `src/data/waterfrontGallery.ts`; photos live in `src/assets/waterfront/`. It is empty by design (designed placeholders show) and adapts to 0, 1-2, or 3+ approved photos. It is deliberately separate from the lake-section photos. Details in `docs/COMMUNITY_IMAGE_BRIEF.md`.
