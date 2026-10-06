@@ -28,7 +28,7 @@ const required = [
   '/', '/selling/', '/buying/', '/communities/', '/communities/rockford/', '/communities/ada/',
   '/communities/east-grand-rapids/', '/communities/cascade/', '/communities/forest-hills/', '/waterfront/',
   '/about/', '/insights/', '/client-experiences/', '/review/', '/refer/', '/contact/', '/properties/',
-  '/privacy/', '/thank-you/', '/404.html',
+  '/privacy/', '/thank-you/', '/404.html', '/find-your-fit/', '/home-search/', '/waterfront/rockford-lakes/',
 ];
 const urls = new Set(pages.map(toUrl).concat(pages.map((f) => '/' + f.slice(DIST.length + 1).replace(/\\/g, '/'))));
 for (const r of required) if (!urls.has(r)) fail(`Missing route: ${r}`);
@@ -90,6 +90,7 @@ const formChecks = [
   ['/contact/', 'contact'],
   ['/review/', 'client_review'],
   ['/refer/', 'referral'],
+  ['/home-search/', 'location_fit_search'],
 ];
 for (const [url, type] of formChecks) {
   const html = readFileSync(join(DIST, url, 'index.html'), 'utf8');

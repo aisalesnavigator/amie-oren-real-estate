@@ -1,0 +1,96 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import SearchForm from '../components/SearchForm.astro';
+import AmieProfile from '../components/AmieProfile.astro';
+import { breadcrumbSchema } from '../utils/schema';
+---
+
+<BaseLayout
+  title="Send Me Homes That Fit: Saved Home Search"
+  description="Tell Amie Oren what you’re looking for in West Michigan and she will set up a saved search to send you matching homes as they become available."
+  path="/home-search/"
+  jsonLd={[breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Home Search' }])]}
+>
+  <section class="section" style="padding-block-start: var(--space-xl)">
+    <div class="container search__grid">
+      <div>
+        <Breadcrumbs items={[{ name: 'Home Search' }]} />
+        <span class="eyebrow">Saved search</span>
+        <h1>Send me homes that fit this.</h1>
+        <p class="lede">
+          Tell me what you’re looking for, and I’ll review it and create a saved search so I can send you
+          matching homes as they become available.
+        </p>
+        <p class="search__manual">
+          <strong>How this works:</strong> this form comes straight to me, and I set up your search by hand in my
+          own listing system. It isn’t automated, so you’ll hear from me, not from a program.
+        </p>
+
+        <aside class="search__context" data-context hidden aria-labelledby="context-heading">
+          <h2 id="context-heading">What I’m starting from</h2>
+          <ul data-context-list></ul>
+          <p class="small muted">
+            These come from your Find Your Fit answers and are sent with your request so you don’t have to
+            repeat them. You can change anything below.
+          </p>
+        </aside>
+
+        <SearchForm />
+      </div>
+
+      <aside class="search__aside" aria-label="About me">
+        <AmieProfile variant="compact" />
+        <p class="small muted">
+          Waterfront and lake homes in particular can move quickly. Getting a search in place before the right
+          home appears can make a real difference. I can’t promise access to any property before it is publicly
+          marketed.
+        </p>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import '../scripts/home-search';
+</script>
+
+<style>
+  h1 {
+    font-size: var(--step-5);
+  }
+  .search__grid {
+    display: grid;
+    gap: var(--space-xl);
+  }
+  .search__manual {
+    border-left: 2px solid var(--c-sand-deep);
+    padding-left: var(--space-s);
+    font-size: var(--step--1);
+    color: var(--c-taupe);
+    margin-bottom: var(--space-l);
+  }
+  .search__context {
+    padding: var(--space-m);
+    border-radius: var(--radius-m);
+    background: var(--c-lake-mist);
+    margin-bottom: var(--space-xl);
+    max-width: 40rem;
+  }
+  .search__context[hidden] {
+    display: none;
+  }
+  .search__context h2 {
+    font-size: var(--step-2);
+  }
+  @media (min-width: 64em) {
+    .search__grid {
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.7fr);
+      gap: var(--space-3xl);
+      align-items: start;
+    }
+    .search__aside {
+      padding-top: var(--space-3xl);
+    }
+  }
+</style>

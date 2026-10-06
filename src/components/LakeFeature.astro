@@ -1,0 +1,145 @@
+---
+import LakeImage from './LakeImage.astro';
+import type { Lake } from '../data/lakes';
+
+interface Props {
+  lake: Lake;
+  flip?: boolean;
+}
+const { lake, flip = false } = Astro.props;
+const searchHref = `/home-search/?community=rockford&lake=${lake.slug}`;
+---
+
+<article class={`lake ${flip ? 'lake--flip' : ''}`} id={lake.slug} aria-labelledby={`${lake.slug}-heading`}>
+  <div class="lake__media">
+    <LakeImage slug={lake.slug} caption={lake.imageSubject} />
+  </div>
+  <div class="lake__body">
+    <h2 id={`${lake.slug}-heading`}>{lake.name}</h2>
+    <p class="lede">{lake.summary}</p>
+    <p>{lake.feel}</p>
+    {lake.amieNote && <p class="lake__note">{lake.amieNote}</p>}
+
+    {
+      lake.verifiedFacts.length > 0 && (
+        <dl class="lake__facts">
+          {lake.verifiedFacts.map((f) => (
+            <div>
+              <dt>{f.label}</dt>
+              <dd>{f.value} <span class="small muted">({f.source})</span></dd>
+            </div>
+          ))}
+        </dl>
+      )
+    }
+
+    <details class="lake__more">
+      <summary>What I’d look at on {lake.name}</summary>
+      <div class="lake__cols">
+        <div>
+          <h3>Housing you may encounter</h3>
+          <ul>{lake.housing.map((i) => <li>{i}</li>)}</ul>
+        </div>
+        <div>
+          <h3>If you’re buying</h3>
+          <ul>{lake.buyerConsiderations.map((i) => <li>{i}</li>)}</ul>
+        </div>
+        <div>
+          <h3>If you’re selling</h3>
+          <ul>{lake.sellerConsiderations.map((i) => <li>{i}</li>)}</ul>
+        </div>
+        <div>
+          <h3>On the water</h3>
+          <ul>{lake.waterLifestyle.map((i) => <li>{i}</li>)}</ul>
+        </div>
+      </div>
+      <p class="small muted">
+        This is general guidance for inland-lake ownership, not lake-specific rules or statistics. For rules,
+        access rights, and regulations, please confirm with the relevant authority or a qualified professional.
+        <a href="/waterfront/">Read my broader waterfront guide.</a>
+      </p>
+    </details>
+
+    <div class="btn-row lake__cta">
+      <a class="btn btn--primary" href={searchHref}>{lake.ctaLabel}</a>
+      <a class="text-link" href="/contact/?interest=waterfront">Or just talk with me</a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .lake {
+    display: grid;
+    gap: var(--space-l);
+    padding-block: var(--space-2xl);
+    border-top: 1px solid var(--c-sand-deep);
+    scroll-margin-top: calc(var(--header-h) + 1rem);
+  }
+  .lake__body h2 {
+    font-size: var(--step-4);
+  }
+  .lake__note {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--step-1);
+    color: var(--c-lake-deep);
+    border-left: 2px solid var(--c-lake);
+    padding-left: var(--space-s);
+  }
+  .lake__facts {
+    margin: var(--space-m) 0;
+  }
+  .lake__facts dt {
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--c-taupe);
+  }
+  .lake__facts dd {
+    margin: 0 0 var(--space-xs);
+  }
+  .lake__more {
+    margin: var(--space-m) 0;
+    border-top: 1px solid var(--c-line);
+    border-bottom: 1px solid var(--c-line);
+    padding-block: var(--space-xs);
+  }
+  .lake__more summary {
+    cursor: pointer;
+    font-weight: 500;
+    padding-block: var(--space-2xs);
+  }
+  .lake__cols {
+    display: grid;
+    gap: var(--space-l);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    padding-block: var(--space-m);
+  }
+  .lake__cols h3 {
+    font-size: var(--step-1);
+  }
+  .lake__cols ul {
+    padding-left: 1.1rem;
+    font-size: var(--step--1);
+  }
+  .lake__cta {
+    margin-top: var(--space-m);
+  }
+  @media (min-width: 64em) {
+    .lake {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      gap: var(--space-2xl);
+      align-items: start;
+    }
+    .lake--flip {
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    }
+    .lake--flip .lake__media {
+      order: 2;
+    }
+    .lake__media {
+      position: sticky;
+      top: calc(var(--header-h) + var(--space-l));
+    }
+  }
+</style>

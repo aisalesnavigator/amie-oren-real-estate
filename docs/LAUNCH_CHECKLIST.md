@@ -27,6 +27,15 @@ Items that need real-world input or verification before the site is public. Anal
 - [ ] Collect real client reviews; delete or leave out the `sample-*.md` files.
 - [ ] Decide the final wording of any "Properties" content.
 
+## V2 additions
+- [ ] Amie to confirm the personal facts used in first person (more than 15 years; 7 years on Lake Bella Vista; last 8 years on Silver Lake; helped many clients with lakefront homes) and the exact wording of the early-awareness language.
+- [ ] Review the Location Fit community profiles in `src/data/locationFit.ts` (numeric traits and "worth weighing" notes) for accuracy and fairness, and read `docs/LOCATION_FIT_GUIDELINES.md`.
+- [ ] Add lake-specific, verified facts and Amie's own notes to Bostwick, Myers, and Brower (Silver and Bella Vista have only her residency facts). Nothing lake-specific is stated yet.
+- [ ] Source and license place photography (`docs/COMMUNITY_IMAGE_BRIEF.md`). All community and lake images are placeholders.
+- [ ] Send a real test of each form, including `/home-search/` (`form_type=location_fit_search`) and a Find Your Fit round trip, and confirm the fields arrive.
+- [ ] Decide the saved-search workflow on Amie's side (who monitors the Formspree inbox, expected reply time).
+- [ ] Re-check the privacy page wording about the saved-search form with the brokerage.
+
 ## Assets
 - [ ] Community, waterfront, and property photography (owned or licensed) to replace the gradient image slots.
 - [ ] Additional Amie photography, if desired.

@@ -1,0 +1,123 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import LakeFeature from '../../components/LakeFeature.astro';
+import ConversationCTA from '../../components/ConversationCTA.astro';
+import { lakes } from '../../data/lakes';
+import { breadcrumbSchema } from '../../utils/schema';
+---
+
+<BaseLayout
+  title="A Closer Look at Rockford-Area Lake Living"
+  description="Bostwick Lake, Silver Lake, Lake Bella Vista, Myers Lake and Brower Lake: a practical guide to buying or selling lake property in the Rockford area."
+  path="/waterfront/rockford-lakes/"
+  jsonLd={[
+    breadcrumbSchema([
+      { name: 'Home', href: '/' },
+      { name: 'Waterfront', href: '/waterfront/' },
+      { name: 'Rockford-area lakes' },
+    ]),
+  ]}
+>
+  <PageHero
+    eyebrow="Waterfront · Rockford"
+    title="A closer look at Rockford-area lake living"
+    lede="I’ve spent the last 15 years living on two Rockford-area lakes: seven years on Lake Bella Vista and the last eight on Silver Lake. I’ve also helped many clients buy and sell lakefront homes throughout the area. This is how I think about choosing a lake."
+    breadcrumbs={[{ name: 'Waterfront', href: '/waterfront/' }, { name: 'Rockford-area lakes' }]}
+    tone="limestone"
+  >
+    <nav aria-label="Jump to a lake" class="jump">
+      <ul>
+        {lakes.map((l) => <li><a href={`#${l.slug}`}>{l.name}</a></li>)}
+      </ul>
+    </nav>
+  </PageHero>
+
+  <section class="section section--tight">
+    <div class="container container--narrow prose">
+      <h2>Every lake has its own personality.</h2>
+      <p>
+        Two lakes a few minutes apart can feel completely different, and so can two stretches of the same
+        shoreline. The right choice depends on how you want to use the water, how you want the property to
+        feel, and what you’re willing to take care of.
+      </p>
+      <p>
+        The sections below are a starting point. I’m building this resource carefully and adding lake-specific
+        details only as they’re confirmed, so I’d rather tell you what to ask than guess at what isn’t verified.
+        I’m always glad to talk through a specific lake in person.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight" aria-label="The lakes">
+    <div class="container">
+      {lakes.map((l, i) => <LakeFeature lake={l} flip={i % 2 === 1} />)}
+    </div>
+  </section>
+
+  <section class="section section--lake" aria-labelledby="early-heading">
+    <div class="container container--narrow stack">
+      <span class="eyebrow">Staying prepared</span>
+      <h2 id="early-heading">Waterfront homes can move quickly.</h2>
+      <p class="lede" style="color:#e8eef0">
+        Some opportunities begin through conversations long before a sign goes in the yard. After more than 15
+        years working locally, and 15 years living on Rockford-area lakes myself, I often have context and
+        relationships that help me stay close to what may be changing.
+      </p>
+      <p>
+        I can’t promise a property before it reaches the market, but I can help you stay prepared when the
+        right opportunity appears. A saved search is a good way to start.
+      </p>
+      <a class="btn btn--light" href="/home-search/?community=rockford">Send me Rockford-area lake homes</a>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="guide-heading">
+    <div class="container container--narrow stack">
+      <h2 id="guide-heading">Keep reading</h2>
+      <p>
+        My broader <a href="/waterfront/">waterfront guide</a> covers shoreline, access, docks, due diligence and
+        resale across any lake. If you’re still deciding where to live, try <a href="/find-your-fit/">Find Your West
+        Michigan Fit</a> or see my <a href="/communities/rockford/">Rockford community guide</a>.
+      </p>
+      <p class="small muted">
+        This page offers general guidance only. It is not legal, environmental, or engineering advice, and it
+        states no lake-specific rules, depths, acreage, frontage, access designations, or market statistics.
+        Please confirm anything specific with the appropriate authority or a qualified professional.
+      </p>
+    </div>
+  </section>
+
+  <ConversationCTA
+    title="Have a lake in mind?"
+    text="Tell me which one, or tell me what you want from the water, and I’ll help you narrow it down."
+    label="Talk with me about lake living"
+    href="/contact/?interest=waterfront"
+  />
+</BaseLayout>
+
+<style>
+  .jump ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-m);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .jump li {
+    margin: 0;
+  }
+  .jump a {
+    display: inline-block;
+    padding: 0.4rem 0;
+    font-family: var(--font-serif);
+    font-size: var(--step-2);
+    color: var(--c-lake-deep);
+    text-decoration: none;
+    border-bottom: 1px solid var(--c-sand-deep);
+  }
+  .jump a:hover {
+    border-color: var(--c-lake-deep);
+  }
+</style>

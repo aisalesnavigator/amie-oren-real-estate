@@ -1,0 +1,11 @@
+---
+import CommunityImage from './CommunityImage.astro';
+interface Props {
+  slug: string;
+  caption?: string;
+  ratio?: string;
+}
+const { slug, caption, ratio = '16 / 10' } = Astro.props;
+---
+
+<CommunityImage slug={slug} caption={caption} ratio={ratio} tone="lake" motif="lake" />

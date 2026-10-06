@@ -15,7 +15,7 @@ const steps = [
   },
   {
     title: 'Compare communities',
-    text: 'The right house in the wrong setting rarely works. Amie helps you weigh the character, rhythm, and practical realities of different communities.',
+    text: 'The right house in the wrong setting rarely works. I help you weigh the character, rhythm, and practical realities of different communities.',
   },
   {
     title: 'Evaluate condition and setting',
@@ -27,11 +27,11 @@ const steps = [
   },
   {
     title: 'Read the market context',
-    text: 'Amie puts a property in context: how comparable homes are being treated, how long a home has been available, and what that may mean for your approach.',
+    text: 'I put a property in context: how comparable homes are being treated, how long a home has been available, and what that may mean for your approach.',
   },
   {
     title: 'Build the right offer strategy',
-    text: 'Price is one part of an offer. Terms, timing, contingencies, and the seller’s priorities all matter, and together they shape a strategy suited to the home and the moment.',
+    text: 'Price is one part of an offer. Terms, timing, contingencies, and the seller’s priorities all matter, and together they shape a strategy suited to the home and the moment, which I build with you.',
   },
   {
     title: 'Negotiate with care',
@@ -39,11 +39,11 @@ const steps = [
   },
   {
     title: 'Inspections and due diligence',
-    text: 'Inspections and other due diligence are where a house becomes understood. Amie helps you decide what to investigate and how to weigh what you learn.',
+    text: 'Inspections and other due diligence are where a house becomes understood. I help you decide what to investigate and how to weigh what you learn.',
   },
   {
     title: 'Closing and transition',
-    text: 'Scheduling, final walk-through, paperwork, and the move itself are coordinated so you arrive at the new home prepared rather than scrambling.',
+    text: 'Scheduling, final walk-through, paperwork, and the move itself I coordinate so you arrive at the new home prepared rather than scrambling.',
   },
 ];
 
@@ -51,17 +51,17 @@ const faq = [
   {
     question: 'Should I get a lender conversation started before I look?',
     answer:
-      'It is usually wise to understand your financing options early so you can act confidently. Amie can suggest questions to ask and lenders you may wish to speak with, and the financing decision itself is always yours.',
+      'It is usually wise to understand your financing options early so you can act confidently. I can suggest questions to ask and lenders you may wish to speak with, and the financing decision itself is always yours.',
   },
   {
     question: 'How many homes should I expect to see?',
     answer:
-      'There is no right number. Some buyers know quickly; others need to see a range to understand their priorities. Amie adapts to how you decide.',
+      'There is no right number. Some buyers know quickly; others need to see a range to understand their priorities. I adapt to how you decide.',
   },
   {
     question: 'Can you help me compare different communities?',
     answer:
-      'Yes. Comparing communities is often the most useful early step. Start with the community guides on this site, then talk it through with Amie.',
+      'Yes. Comparing communities is often the most useful early step. Start with the community guides on this site, then talk it through with me. You can also try Find Your West Michigan Fit.',
   },
 ];
 
@@ -75,9 +75,9 @@ const articles = (await getInsights()).filter((e) => e.data.intent === 'buy').sl
   jsonLd={[breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Buying' }])]}
 >
   <PageHero
-    eyebrow="Buying with Amie"
+    eyebrow="Buying"
     title="Find the right home, and understand what you’re choosing."
-    lede="Strong buyer representation is more than unlocking doors. It is helping you see clearly, weigh honestly, and decide with confidence."
+    lede="Strong buyer representation is more than unlocking doors. For more than 15 years I’ve helped buyers see clearly, weigh honestly, and decide with confidence."
     breadcrumbs={[{ name: 'Buying' }]}
   >
     <a class="btn btn--primary" href="/contact/?interest=buying">Start a Buying Conversation</a>
@@ -92,9 +92,9 @@ const articles = (await getInsights()).filter((e) => e.data.intent === 'buy').sl
           finding something that meets a checklist.
         </p>
         <p>
-          Amie brings local knowledge and careful preparation to each step so you can make an important decision
-          with clarity. She will tell you what she sees, including the things that give her pause, and then help
-          you decide what matters to you.
+          I bring local knowledge and careful preparation to each step so you can make an important decision with
+          clarity. I’ll tell you what I see, including the things that give me pause, and then help you decide
+          what matters to you.
         </p>
       </div>
       <ImageSlot ratio="4 / 3" tone="moss" caption="Setting, light, and lifestyle" />
@@ -104,7 +104,7 @@ const articles = (await getInsights()).filter((e) => e.data.intent === 'buy').sl
   <section class="section" style="padding-top:0">
     <div class="container">
       <div class="section-head">
-        <span class="eyebrow">How Amie helps buyers</span>
+        <span class="eyebrow">How I help buyers</span>
         <h2>From priorities to the keys in your hand.</h2>
       </div>
       <ProcessList steps={steps} />
@@ -130,7 +130,7 @@ const articles = (await getInsights()).filter((e) => e.data.intent === 'buy').sl
 
   <ConversationCTA
     title="Beginning to look?"
-    text="Whether you’re just starting or already touring, Amie is glad to talk through what you’re hoping to find."
+    text="Whether you’re just starting or already touring, I’m glad to talk through what you’re hoping to find."
     label="Start a Buying Conversation"
     href="/contact/?interest=buying"
   />

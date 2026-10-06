@@ -1,0 +1,87 @@
+---
+import { Image } from 'astro:assets';
+import ImageSlot from './ImageSlot.astro';
+import { getPlaceImage } from '../utils/placeImages';
+
+interface Props {
+  /** Community or lake slug. */
+  slug: string;
+  /** Placeholder caption (what the finished photo should show). */
+  caption?: string;
+  ratio?: string;
+  tone?: 'sand' | 'lake' | 'moss';
+  motif?: 'lake' | 'river' | 'village' | 'hills' | 'woods';
+  label?: boolean;
+  sizes?: string;
+  eager?: boolean;
+}
+const motifBySlug: Record<string, NonNullable<Props['motif']>> = {
+  rockford: 'lake',
+  ada: 'river',
+  'east-grand-rapids': 'village',
+  cascade: 'hills',
+  'forest-hills': 'woods',
+};
+const toneBySlug: Record<string, NonNullable<Props['tone']>> = {
+  rockford: 'lake',
+  ada: 'sand',
+  'east-grand-rapids': 'lake',
+  cascade: 'moss',
+  'forest-hills': 'moss',
+};
+const {
+  slug,
+  caption,
+  ratio = '4 / 3',
+  tone = toneBySlug[slug] ?? 'lake',
+  motif = motifBySlug[slug] ?? 'lake',
+  label = true,
+  sizes = '(min-width: 64em) 40vw, 90vw',
+  eager = false,
+} = Astro.props;
+const image = getPlaceImage(slug);
+const [w, h] = ratio.split('/').map((n) => parseFloat(n));
+---
+
+{
+  image ? (
+    <figure class="place" style={`aspect-ratio:${ratio}`}>
+      <Image
+        src={image.src}
+        alt={image.credit.alt}
+        widths={[480, 800, 1200]}
+        sizes={sizes}
+        loading={eager ? 'eager' : 'lazy'}
+        format="webp"
+        class="place__img"
+        width={Math.round((w || 4) * 100)}
+        height={Math.round((h || 3) * 100)}
+      />
+      <figcaption class="place__credit">Photo: {image.credit.credit}</figcaption>
+    </figure>
+  ) : (
+    <ImageSlot ratio={ratio} tone={tone} motif={motif} caption={caption} label={label} />
+  )
+}
+
+<style>
+  .place {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+    border-radius: var(--radius-m);
+  }
+  .place__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .place__credit {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.5rem;
+    font-size: 0.6875rem;
+    color: #fff;
+    text-shadow: 0 1px 3px rgb(0 0 0 / 0.6);
+  }
+</style>

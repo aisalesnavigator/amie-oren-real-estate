@@ -1,0 +1,300 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import LocationFitCard from '../components/LocationFitCard.astro';
+import { fitQuestions } from '../data/locationFit';
+import { lakes } from '../data/lakes';
+import { breadcrumbSchema } from '../utils/schema';
+
+const total = fitQuestions.length;
+---
+
+<BaseLayout
+  title="Find Your West Michigan Fit"
+  description="Compare Rockford, Ada, East Grand Rapids, Cascade and Forest Hills based on the home and lifestyle preferences that matter to you."
+  path="/find-your-fit/"
+  jsonLd={[breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Find Your Fit' }])]}
+>
+  <section class="section fit" style="padding-block-start: var(--space-xl)">
+    <div class="container container--narrow">
+      <Breadcrumbs items={[{ name: 'Find Your Fit' }]} />
+      <span class="eyebrow">A short conversation</span>
+      <h1>Find your West Michigan fit</h1>
+      <p class="lede">
+        Every community offers something different. Answer a few questions about how you want to live, and I’ll
+        show you the areas I’d suggest exploring first.
+      </p>
+      <p class="fit__disclaimer">
+        This isn’t a ranking of communities. It’s a starting point based on the lifestyle and property
+        preferences you select. Nothing is collected or sent while you answer, and you don’t need to share
+        any contact information to see your results.
+      </p>
+
+      <noscript>
+        <p class="fit__noscript">
+          This short guide needs JavaScript to show results. You can still <a href="/communities/">browse the
+          communities</a> or <a href="/contact/">start a conversation with me</a>.
+        </p>
+      </noscript>
+
+      <form id="fit-form" class="fit__form" novalidate aria-labelledby="fit-form-label">
+        <p class="visually-hidden" id="fit-form-label">Find your fit questions</p>
+
+        <div class="fit__progress" data-progress-wrap hidden>
+          <p class="small muted" data-progress aria-live="polite">Question 1 of {total}</p>
+          <div class="fit__bar" aria-hidden="true"><div class="fit__bar-fill" data-bar></div></div>
+        </div>
+
+        {
+          fitQuestions.map((q, i) => (
+            <fieldset class="fit-q" data-step={i} aria-describedby={`${q.id}-help`}>
+              <legend tabindex="-1">{q.prompt}</legend>
+              <p class="small muted" id={`${q.id}-help`}>
+                {q.type === 'multi' ? `Choose up to ${q.max}. ${q.help ?? ''}` : 'Choose one.'}
+              </p>
+              <div class="fit-q__options">
+                {q.options.map((o, j) => (
+                  <label class="fit-opt">
+                    <input
+                      type={q.type === 'multi' ? 'checkbox' : 'radio'}
+                      name={q.id}
+                      value={o.value}
+                      data-max={q.max}
+                      id={`${q.id}-${j}`}
+                    />
+                    <span>{o.label}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          ))
+        }
+
+        <p class="fit__error" role="alert" data-error hidden></p>
+
+        <div class="fit__nav" data-nav hidden>
+          <button type="button" class="btn btn--secondary" data-back>Back</button>
+          <button type="submit" class="btn btn--primary" data-next>Next</button>
+        </div>
+      </form>
+
+      <section id="fit-results" class="fit__results" tabindex="-1" aria-labelledby="fit-results-heading" hidden>
+        <span class="eyebrow">Where I’d start</span>
+        <h2 id="fit-results-heading" tabindex="-1">Here’s what I’d explore first</h2>
+        <p class="fit__disclaimer">
+          This isn’t a ranking of communities. It’s a starting point based on the lifestyle and property
+          preferences you selected.
+        </p>
+        <div class="fit__cards" data-cards></div>
+
+        <aside class="fit__lakes" data-lakes hidden aria-labelledby="fit-lakes-heading">
+          <h3 id="fit-lakes-heading">Explore Rockford-area lakes</h3>
+          <p>
+            I’ve spent the last 15 years living on two Rockford-area lakes, and I’ve helped many clients buy and
+            sell lakefront homes in the area. If the water is a priority, these are good places to look closer.
+          </p>
+          <ul class="fit__lake-links">
+            {lakes.map((l) => <li><a href={`/waterfront/rockford-lakes/#${l.slug}`}>{l.name}</a></li>)}
+          </ul>
+          <a class="text-link" href="/waterfront/rockford-lakes/">A closer look at Rockford-area lake living</a>
+        </aside>
+
+        <aside class="fit__cta" aria-labelledby="fit-cta-heading">
+          <h3 id="fit-cta-heading">Send me homes that fit this</h3>
+          <p>
+            If these areas feel right, I can turn what you’ve told me into a saved property search and send you
+            homes that match as they become available.
+          </p>
+          <p data-water-note hidden>
+            Lakefront inventory can move quickly, so getting the search set up before the right home appears can
+            make a real difference.
+          </p>
+          <p class="small muted">
+            I set these searches up by hand. After you send your details, I’ll review what you’re looking for and
+            create the saved search myself.
+          </p>
+          <div class="btn-row">
+            <a class="btn btn--primary" data-search-link href="/home-search/">Send me homes that fit this</a>
+            <button type="button" class="btn btn--secondary" data-edit>Change my answers</button>
+          </div>
+        </aside>
+      </section>
+    </div>
+  </section>
+
+  <LocationFitCard />
+</BaseLayout>
+
+<script>
+  import '../scripts/find-fit';
+</script>
+
+<style>
+  h1 {
+    font-size: var(--step-5);
+  }
+  .fit__disclaimer {
+    font-size: var(--step--1);
+    color: var(--c-taupe);
+    border-left: 2px solid var(--c-sand-deep);
+    padding-left: var(--space-s);
+    margin-block: var(--space-m) var(--space-xl);
+  }
+  .fit__noscript {
+    padding: var(--space-s) var(--space-m);
+    border: 1px solid var(--c-line);
+    border-radius: var(--radius-m);
+    background: #fff;
+  }
+  .fit__form {
+    display: grid;
+    gap: var(--space-l);
+  }
+  .fit__form[hidden],
+  .fit__results[hidden],
+  .fit__nav[hidden],
+  .fit__progress[hidden] {
+    display: none;
+  }
+  .fit__progress {
+    display: grid;
+    gap: var(--space-2xs);
+  }
+  .fit__progress p {
+    margin: 0;
+  }
+  .fit__bar {
+    height: 4px;
+    background: var(--c-sand);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .fit__bar-fill {
+    height: 100%;
+    width: 0;
+    background: var(--c-lake-deep);
+    transition: width var(--t-med) var(--ease);
+  }
+  .fit-q {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+  }
+  .fit-q[hidden] {
+    display: none;
+  }
+  .fit-q legend {
+    padding: 0;
+    margin-bottom: var(--space-2xs);
+    font-family: var(--font-serif);
+    font-size: var(--step-3);
+    line-height: 1.2;
+    color: var(--c-charcoal);
+  }
+  .fit-q legend:focus {
+    outline: none;
+  }
+  .fit-q__options {
+    display: grid;
+    gap: var(--space-xs);
+    margin-top: var(--space-m);
+  }
+  .fit-opt {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    min-height: 3.25rem;
+    padding: 0.7rem 1rem;
+    border: 1px solid var(--c-taupe-soft);
+    border-radius: var(--radius-m);
+    background: var(--c-paper);
+    cursor: pointer;
+    transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+  }
+  .fit-opt:hover {
+    border-color: var(--c-lake-deep);
+  }
+  .fit-opt input {
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    accent-color: var(--c-lake-deep);
+  }
+  .fit-opt:has(input:checked) {
+    border-color: var(--c-lake-deep);
+    background: var(--c-lake-mist);
+    box-shadow: inset 0 0 0 1px var(--c-lake-deep);
+  }
+  .fit-opt:has(input:focus-visible) {
+    outline: 3px solid var(--c-focus);
+    outline-offset: 2px;
+  }
+  .fit-opt:has(input:disabled) {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .fit__error {
+    margin: 0;
+    color: var(--c-danger);
+    font-weight: 500;
+  }
+  .fit__nav {
+    display: flex;
+    gap: var(--space-s);
+    flex-wrap: wrap;
+  }
+  .fit__results {
+    margin-top: var(--space-xl);
+  }
+  .fit__results:focus {
+    outline: none;
+  }
+  .fit__results h2 {
+    font-size: var(--step-4);
+  }
+  .fit__results h2:focus {
+    outline: none;
+  }
+  .fit__cards {
+    display: grid;
+    gap: var(--space-xl);
+    margin-block: var(--space-l) var(--space-xl);
+  }
+  .fit__lakes,
+  .fit__cta {
+    padding: var(--space-l);
+    border-radius: var(--radius-l);
+    margin-bottom: var(--space-l);
+  }
+  .fit__lakes {
+    background: var(--c-lake-mist);
+  }
+  .fit__lakes[hidden] {
+    display: none;
+  }
+  .fit__lake-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-m);
+    list-style: none;
+    padding: 0;
+  }
+  .fit__lake-links li {
+    margin: 0;
+  }
+  .fit__cta {
+    background: var(--c-lake-deep);
+    color: #e8eef0;
+  }
+  .fit__cta h3 {
+    color: #fff;
+    font-size: var(--step-3);
+  }
+  .fit__cta .muted {
+    color: #c9d8de;
+  }
+  .fit__cta p[hidden] {
+    display: none;
+  }
+</style>
