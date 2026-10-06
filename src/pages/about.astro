@@ -18,7 +18,7 @@ const principles = [
   },
   {
     title: 'Preparation',
-    text: 'Good outcomes are usually prepared for. Amie works to anticipate what is coming, from buyer reactions to inspection findings, so there are fewer surprises.',
+    text: 'Good outcomes are usually prepared for. I work to anticipate what is coming, from buyer reactions to inspection findings, so there are fewer surprises.',
   },
   {
     title: 'Local perspective',
@@ -37,13 +37,6 @@ const principles = [
     text: 'Dates, documents, conditions, and small requests matter. Carrying them through carefully is much of what clients value.',
   },
 ];
-
-const placeholders = [
-  { label: 'Career history', hint: 'Professional background and path into real estate.' },
-  { label: 'Designations and credentials', hint: 'Only verified designations and certifications.' },
-  { label: 'Community involvement', hint: 'Organizations, causes, and local roots.' },
-  { label: 'Education and training', hint: 'Relevant education or continuing training, if desired.' },
-];
 ---
 
 <BaseLayout
@@ -60,7 +53,7 @@ const placeholders = [
         <h1>Real estate is rarely only about real estate.</h1>
         <p class="lede">
           It’s about a family that has outgrown a house, a home that holds decades of memories, a change in pace,
-          a lake that has become part of a life. Amie’s work begins with understanding what the move means to you.
+          a lake that has become part of a life. My work begins with understanding what the move means to you.
         </p>
       </div>
       <div class="about-hero__media">
@@ -73,14 +66,20 @@ const placeholders = [
     <div class="container container--narrow stack prose">
       <h2>Helping people through the whole move.</h2>
       <p>
-        Amie Oren is a {site.professionalTitle.toLowerCase()} with {site.brokerage}, working with buyers and sellers across
-        Rockford, Ada, East Grand Rapids, Cascade, Forest Hills, and the greater Grand Rapids and West Michigan
-        area.
+        For more than 15 years, I’ve built my real estate practice around helping people navigate important
+        moves throughout West Michigan. I’m a {site.professionalTitle.toLowerCase()} with {site.brokerage}, and I work with
+        buyers and sellers across Rockford, Ada, East Grand Rapids, Cascade, Forest Hills, and the greater Grand
+        Rapids area.
       </p>
       <p>
-        Her approach is simple to describe and demanding to do well: pay close attention, prepare carefully, and
-        stay with the details until the move is complete. Clients navigating a sale, a purchase, a waterfront
-        property, or a major life transition should feel that someone steady is looking out for them.
+        My approach is simple to describe and demanding to do well: pay close attention, prepare carefully, and
+        stay with the details until the move is complete. Whether you’re selling, buying, moving to the water,
+        or navigating a major life transition, you should feel that someone steady is looking out for you.
+      </p>
+      <p>
+        Lake living is part of my own story. Over the last 15 years, I’ve lived on both Lake Bella Vista
+        and Silver Lake, and I’ve helped many clients buy and sell lakefront homes throughout the area. <a href="/waterfront/rockford-lakes/">See how I think about
+        Rockford-area lake living.</a>
       </p>
       <blockquote>Understand what the move means. Then do the work to make it go well.</blockquote>
     </div>
@@ -89,7 +88,7 @@ const placeholders = [
   <section class="section section--limestone" aria-labelledby="principles-heading">
     <div class="container">
       <div class="section-head">
-        <span class="eyebrow">How Amie works</span>
+        <span class="eyebrow">How I work</span>
         <h2 id="principles-heading">What clients can expect.</h2>
       </div>
       <div class="principles">
@@ -105,29 +104,9 @@ const placeholders = [
     </div>
   </section>
 
-  <section class="section" aria-labelledby="background-heading">
-    <div class="container container--narrow">
-      <h2 id="background-heading">Background</h2>
-      <p class="muted">
-        More of Amie’s professional background will be shared here. The sections below are reserved for verified
-        details only.
-      </p>
-      <ul class="slots">
-        {
-          placeholders.map((p) => (
-            <li data-about-placeholder>
-              <h3>{p.label}</h3>
-              <p class="muted small">{p.hint} <em>(To be added.)</em></p>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
-
   <ConversationCTA
     title="Let’s talk about your move."
-    text="Tell Amie what you’re thinking about. She’ll listen first."
+    text="Tell me what you’re thinking about. I’ll listen first."
   />
 </BaseLayout>
 
@@ -169,26 +148,6 @@ const placeholders = [
     font-size: var(--step-2);
   }
   .principle p {
-    margin: 0;
-  }
-  .slots {
-    list-style: none;
-    padding: 0;
-    margin: var(--space-l) 0 0;
-    display: grid;
-    gap: var(--space-s);
-  }
-  .slots li {
-    margin: 0;
-    padding: var(--space-m);
-    border: 1px dashed var(--c-sand-deep);
-    border-radius: var(--radius-m);
-  }
-  .slots h3 {
-    font-size: var(--step-1);
-    margin-bottom: 0.15rem;
-  }
-  .slots p {
     margin: 0;
   }
 </style>

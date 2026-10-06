@@ -6,7 +6,7 @@ import ConversationCTA from '../components/ConversationCTA.astro';
 import { breadcrumbSchema } from '../utils/schema';
 
 const frames = [
-  { title: 'Featured properties', text: 'Selected homes Amie is representing, presented with the care they deserve.', tone: 'sand' },
+  { title: 'Featured properties', text: 'Selected homes I’m representing, presented with the care they deserve.', tone: 'sand' },
   { title: 'Active listings', text: 'A current view of available homes, once a listing integration is chosen.', tone: 'lake' },
   { title: 'Selected recent work', text: 'Recently completed sales, shared only where appropriate and permitted.', tone: 'moss' },
 ] as const;
@@ -21,12 +21,12 @@ const frames = [
   <PageHero
     eyebrow="Properties"
     title="Property search and featured listings coming soon."
-    lede="This is where featured homes and available listings will live. Until then, the most direct route is a conversation: tell Amie what you’re looking for and she’ll help you find it."
+    lede="This is where featured homes and available listings will live. Until then, the most direct route is a conversation: tell me what you’re looking for and I’ll help you find it, or ask me to set up a saved search."
     breadcrumbs={[{ name: 'Properties' }]}
   >
     <div class="btn-row">
-      <a class="btn btn--primary" href="/contact/?interest=buying">Start a Buying Conversation</a>
-      <a class="btn btn--secondary" href="/communities/">Explore Communities</a>
+      <a class="btn btn--primary" href="/home-search/">Send me homes that fit</a>
+      <a class="btn btn--secondary" href="/find-your-fit/">Find Your West Michigan Fit</a>
     </div>
   </PageHero>
 

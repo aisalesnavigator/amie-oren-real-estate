@@ -15,11 +15,28 @@ import { breadcrumbSchema } from '../../utils/schema';
   <PageHero
     eyebrow="Communities"
     title="Know the place before you choose the house."
-    lede="Each community has its own character, its own kinds of homes, and its own questions worth asking. These guides are meant to help you decide, not to sell you on a location."
+    lede="Each community has its own character, its own kinds of homes, and its own questions worth asking. Many buyers don’t know at first which one fits their priorities, and that’s completely normal. Here are two ways in."
     breadcrumbs={[{ name: 'Communities' }]}
   />
 
-  <section class="section" style="padding-top:0">
+  <section class="section section--tight" style="padding-top:0" aria-label="Two ways to begin">
+    <div class="container paths">
+      <div class="path-card">
+        <span class="eyebrow">Explore directly</span>
+        <h2>Browse the five communities.</h2>
+        <p>Read my guide to each place and the questions I ask buyers and sellers there.</p>
+        <a class="text-link" href="#communities">Jump to the communities</a>
+      </div>
+      <div class="path-card path-card--guided">
+        <span class="eyebrow">Get guidance</span>
+        <h2>Let me help you narrow it down.</h2>
+        <p>Answer a few questions about how you want to live, and I’ll suggest where to start.</p>
+        <a class="btn btn--primary" href="/find-your-fit/">Find Your West Michigan Fit</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0" id="communities" aria-label="The communities">
     <div class="container">
       <CommunityGrid />
     </div>
@@ -29,8 +46,8 @@ import { breadcrumbSchema } from '../../utils/schema';
     <div class="container container--narrow stack">
       <h2>Beyond these five.</h2>
       <p class="lede">
-        Amie also works throughout greater Grand Rapids and West Michigan. If your move involves a community not
-        listed here, she is glad to talk it through.
+        I also work throughout greater Grand Rapids and West Michigan. If your move involves a community not
+        listed here, I’m glad to talk it through.
       </p>
       <a class="text-link" href="/contact/">Start a conversation</a>
     </div>
@@ -38,3 +55,28 @@ import { breadcrumbSchema } from '../../utils/schema';
 
   <ConversationCTA />
 </BaseLayout>
+
+<style>
+  .paths {
+    display: grid;
+    gap: var(--space-l);
+  }
+  .path-card {
+    padding: var(--space-l);
+    border: 1px solid var(--c-sand-deep);
+    border-radius: var(--radius-l);
+    background: var(--c-paper);
+  }
+  .path-card--guided {
+    background: var(--c-lake-mist);
+    border-color: transparent;
+  }
+  .path-card h2 {
+    font-size: var(--step-3);
+  }
+  @media (min-width: 48em) {
+    .paths {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

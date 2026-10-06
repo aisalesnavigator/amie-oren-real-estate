@@ -11,31 +11,31 @@ import { breadcrumbSchema } from '../utils/schema';
 const steps = [
   {
     title: 'Understand the move',
-    text: 'Every sale starts with what it needs to accomplish: your timing, your next step, the numbers that matter, and the constraints you’re working within. The plan is built around that, not around a template.',
+    text: 'Every sale starts with what it needs to accomplish: your timing, your next step, the numbers that matter, and the constraints you’re working within. I build the plan around that, not around a template.',
   },
   {
     title: 'See the property through a buyer’s eyes',
-    text: 'A candid walk-through of strengths, presentation concerns, and the details likely to affect buyer confidence, including the things owners stop noticing after years of living in a home.',
+    text: 'I give you a candid walk-through of strengths, presentation concerns, and the details likely to affect buyer confidence, including the things owners stop noticing after years of living in a home.',
   },
   {
     title: 'Prepare selectively',
-    text: 'Not every project is worth doing before a sale. Amie helps you separate the preparation that matters from work that would be unnecessary, so time and money go where they count.',
+    text: 'Not every project is worth doing before a sale. I help you separate the preparation that matters from work that would be unnecessary, so time and money go where they count.',
   },
   {
     title: 'Position intentionally',
-    text: 'Pricing, photography, presentation, launch strategy, and the story of the property are coordinated as one plan, so the home meets the market clearly and with purpose.',
+    text: 'I coordinate pricing, photography, presentation, launch strategy, and the story of the property as one plan, so the home meets the market clearly and with purpose.',
   },
   {
     title: 'Manage communication and momentum',
-    text: 'You’re kept informed without having to ask. Feedback, showings, and next steps are shared clearly, and decisions are brought to you with context and a recommendation.',
+    text: 'I keep you informed without your having to ask. I share feedback, showings, and next steps clearly, and I bring decisions to you with context and a recommendation.',
   },
   {
     title: 'Negotiate the whole offer',
-    text: 'Price matters, and so do contingencies, timing, certainty, and your priorities. Offers are weighed together, so you can choose the one that best fits what the sale needs to do.',
+    text: 'Price matters, and so do contingencies, timing, certainty, and your priorities. We weigh offers together, so you can choose the one that best fits what the sale needs to do.',
   },
   {
     title: 'Carry the details through closing',
-    text: 'Inspections, appraisal, title, repair conversations, schedules, and handoffs all stay on Amie’s radar until the keys are exchanged, and the transition around the sale is handled with the same care.',
+    text: 'Inspections, appraisal, title, repair conversations, schedules, and handoffs all stay on my radar until the keys are exchanged, and I handle the transition around the sale with the same care.',
   },
 ];
 
@@ -43,7 +43,7 @@ const faq = [
   {
     question: 'How do I know whether now is the right time to sell?',
     answer:
-      'It depends on your plans as much as on the market. Amie starts by understanding your timeline, your next home, and your financial picture, then talks through the tradeoffs of selling sooner or later.',
+      'It depends on your plans as much as on the market. I start by understanding your timeline, your next home, and your financial picture, then talk through the tradeoffs of selling sooner or later.',
   },
   {
     question: 'Do I need to renovate or repair before listing?',
@@ -53,12 +53,12 @@ const faq = [
   {
     question: 'What if I’m buying my next home at the same time?',
     answer:
-      'Coordinating a sale and a purchase is one of the most common challenges in a move. Amie plans both together so timing, contingencies, and logistics work in your favor.',
+      'Coordinating a sale and a purchase is one of the most common challenges in a move. I plan both together so timing, contingencies, and logistics work in your favor.',
   },
   {
-    question: 'What does Amie’s communication look like during a sale?',
+    question: 'What does your communication look like during a sale?',
     answer:
-      'You’ll hear from Amie proactively, with clear updates and next steps, so you are never left wondering where things stand.',
+      'You’ll hear from me proactively, with clear updates and next steps, so you are never left wondering where things stand.',
   },
 ];
 
@@ -72,12 +72,12 @@ const articles = (await getInsights()).filter((e) => e.data.intent === 'sell').s
   jsonLd={[breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Selling' }])]}
 >
   <PageHero
-    eyebrow="Selling with Amie"
+    eyebrow="Selling"
     title="Selling a home deserves more than putting it on the market."
-    lede="A thoughtful sale is built on preparation, judgment, coordination, and steady communication. Here is what that looks like in practice."
+    lede="A thoughtful sale is built on preparation, judgment, coordination, and steady communication. After more than 15 years helping sellers in West Michigan, here is what that looks like in practice."
     breadcrumbs={[{ name: 'Selling' }]}
   >
-    <a class="btn btn--primary" href="/contact/?interest=selling">Talk with Amie About Selling</a>
+    <a class="btn btn--primary" href="/contact/?interest=selling">Talk with me about selling</a>
   </PageHero>
 
   <section class="section section--tight" aria-labelledby="value-heading">
@@ -85,7 +85,7 @@ const articles = (await getInsights()).filter((e) => e.data.intent === 'sell').s
       <h2 id="value-heading">What a thoughtful sale involves.</h2>
       <p class="lede">
         Great service is easy to promise and hard to picture. So instead of adjectives, here are the seven things
-        Amie actually does when she helps someone sell.
+        I actually do when I help someone sell.
       </p>
     </div>
   </section>
@@ -106,9 +106,9 @@ const articles = (await getInsights()).filter((e) => e.data.intent === 'sell').s
           what comes next.
         </p>
         <p>
-          Amie keeps the larger picture in view: the timing of your next home, the logistics of the transition,
-          and the conversations that make a major change feel manageable. If there are family members, advisors, or
-          other professionals involved, she works alongside them.
+          I keep the larger picture in view: the timing of your next home, the logistics of the transition, and
+          the conversations that make a major change feel manageable. If there are family members, advisors, or
+          other professionals involved, I work alongside them.
         </p>
       </div>
       <div class="amie-card"><AmieProfile variant="feature" /></div>
@@ -130,8 +130,8 @@ const articles = (await getInsights()).filter((e) => e.data.intent === 'sell').s
 
   <ConversationCTA
     title="Considering a sale?"
-    text="A conversation costs nothing. Tell Amie about the home and the move, and she’ll tell you honestly what she would do."
-    label="Talk with Amie About Selling"
+    text="A conversation costs nothing. Tell me about the home and the move, and I’ll tell you honestly what I would do."
+    label="Talk with me about selling"
     href="/contact/?interest=selling"
   />
 </BaseLayout>

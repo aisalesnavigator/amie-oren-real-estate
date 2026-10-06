@@ -17,6 +17,8 @@ export interface Community {
   sellerQuestions: string[];
   propertyConsiderations: string[];
   related: string[];
+  /** First-person note from Amie (her practical perspective, not a statistic). */
+  myNote: string;
   /** Caption for the (placeholder) community photography slot. */
   setting: string;
 }
@@ -25,40 +27,42 @@ export const communities: Community[] = [
   {
     slug: 'rockford',
     name: 'Rockford',
-    blurb: 'A river-town center with room to spread out nearby.',
-    headline: 'Rockford: a small-town center with the Rogue River running through it.',
-    setting: 'River town and surrounding countryside',
+    blurb: 'Rockford-area lake living, with a town center close by.',
+    headline: 'Rockford: lake living, with a town center close by.',
+    setting: 'Rockford-area lakes and shoreline',
     overview: [
-      'Rockford combines a walkable town center along the Rogue River with homes that range from established in-town streets to larger parcels on the edges of the area.',
-      'Buyers are often weighing how much of the in-town rhythm they want against the space, privacy, and setting available a few minutes out. That balance is usually the real decision, more than any single house.',
+      'Rockford is a town center surrounded by a collection of lakes. Many of the people I work with here are deciding how much of their life they want centered on the water: living on a lake, being a short drive from one, or enjoying the lakes seasonally.',
+      'Beyond the water, the area offers a walkable town center, established neighborhoods, and larger parcels a little further out. How those fit together is usually the real decision, more than any single house.',
     ],
     housingCharacter: [
-      'Expect a mix: older homes near the center, neighborhoods built over several decades, and newer construction and rural-feeling properties further out.',
-      'Because the range is wide, two homes in the same area can serve very different lives. Condition, lot, and how a property is actually used matter more than the label on the neighborhood.',
+      'Lake homes in the area can range from long-held cottages to substantially updated and newly built homes, and two properties on the same lake can offer very different frontage and settings.',
+      'Away from the water you will find established neighborhoods and larger properties. Condition, lot, and how a home will actually be used matter more than the label on the neighborhood.',
     ],
     lifestyle: [
-      'The river and the town center shape daily life here. Some households want to be close enough to walk to errands and gatherings; others want trails, land, or quiet.',
-      'Spend time in the area on a weekday evening and a weekend morning before deciding. The feel of a place is hard to read from a listing.',
+      'Lake life shapes the rhythm of the area: docks, boats, shoreline, and long summer evenings, with a very different feel in the off-season. If you can, spend time here in more than one season.',
+      'Over the last 15 years, I’ve lived on both Lake Bella Vista and Silver Lake, so I try to help clients think through what daily life on the water is really like, not just how the view looks in a listing.',
     ],
     buyerQuestions: [
-      'How much do I want to be in or near town versus further out?',
-      'What will daily and seasonal routines look like from this address?',
-      'Which maintenance responsibilities come with the lot, well, septic, or outbuildings, if any?',
-      'How might this property serve me if my household changes?',
+      'How important is being on the water, and what do I actually want to do there?',
+      'Would being near a lake, rather than on it, give me what I want?',
+      'Do I want a seasonal retreat, a year-round home, or something that does both?',
+      'What upkeep comes with the shoreline, dock, and property, and how do I feel about it?',
     ],
     sellerQuestions: [
-      'Who is the most likely buyer for this particular property, and what will they notice first?',
+      'What is the story of the property, whether that is the water, the setting, or the neighborhood?',
       'Which updates would a buyer value, and which would simply be my preference?',
-      'How does the setting, whether in-town convenience or privacy, come through in the presentation?',
+      'How should the shoreline, dock, and outdoor spaces be presented through the seasons?',
       'What is the timing of my next move, and how does it shape the plan for this sale?',
     ],
     propertyConsiderations: [
+      'For lake properties: shoreline condition, seawalls, docks, and what access or rights actually come with the home.',
       'Well and septic systems, where applicable, and what documentation exists.',
-      'River or creek proximity, and what that means for use and upkeep.',
-      'Age and condition of major systems on older homes.',
+      'Seasonal versus year-round use, including insulation, heating, and winter access.',
       'Outbuildings, acreage, and how boundaries and access are defined.',
     ],
     related: ['ada', 'cascade'],
+    myNote:
+      'For buyers considering Rockford, one of the first questions I ask is how important lake access is. The answer changes which part of the area makes sense.',
   },
   {
     slug: 'ada',
@@ -97,15 +101,17 @@ export const communities: Community[] = [
       'Home age, additions, and the quality of past work.',
     ],
     related: ['forest-hills', 'cascade', 'rockford'],
+    myNote:
+      "When I'm helping someone compare Ada and Forest Hills, I usually start by asking how much they value being near the village versus having space and privacy.",
   },
   {
     slug: 'east-grand-rapids',
     name: 'East Grand Rapids',
-    blurb: 'A close-in lake community with a strong sense of place.',
-    headline: 'East Grand Rapids: a close-in community organized around the lake.',
+    blurb: 'A lake community close to Grand Rapids, with a strong sense of place.',
+    headline: 'East Grand Rapids: close to the city, organized around the lake.',
     setting: 'Lakeside neighborhoods and tree-lined streets',
     overview: [
-      'East Grand Rapids is a compact, close-in community with Reeds Lake at its center. Its neighborhoods, lakefront, and village-style shopping area give it a strong identity.',
+      'East Grand Rapids is a compact community close to downtown Grand Rapids, with Reeds Lake at its center. Its neighborhoods, lakefront, and village-style shopping area give it a strong identity.',
       'Because the community is small and well defined, buyers who know the area tend to understand a home quickly. Preparation and positioning matter.',
     ],
     housingCharacter: [
@@ -135,6 +141,8 @@ export const communities: Community[] = [
       'Basement and moisture conditions in older construction.',
     ],
     related: ['forest-hills', 'cascade'],
+    myNote:
+      "When people tell me they love East Grand Rapids, I ask what they love most: the lake, the village, or being close to the city. Each points to a slightly different search.",
   },
   {
     slug: 'cascade',
@@ -173,6 +181,8 @@ export const communities: Community[] = [
       'The quality and permitting of finished basements and additions.',
     ],
     related: ['forest-hills', 'ada'],
+    myNote:
+      "With Cascade, I often start by asking how much space and how much convenience each matter, because the neighborhoods vary quite a bit.",
   },
   {
     slug: 'forest-hills',
@@ -189,7 +199,7 @@ export const communities: Community[] = [
       'Move-up households often compare homes on lot, layout, and condition as much as on location.',
     ],
     lifestyle: [
-      'Many people are drawn here for space, wooded settings, and a family-oriented feel.',
+      'Many people are drawn here for space and wooded settings.',
       'Consider daily logistics carefully, since the area spans several communities with different characters.',
     ],
     buyerQuestions: [
@@ -211,6 +221,8 @@ export const communities: Community[] = [
       'Age and condition of mechanical systems.',
     ],
     related: ['ada', 'cascade', 'east-grand-rapids'],
+    myNote:
+      "Because “Forest Hills” means different things to different people, I start by getting specific about which streets and neighborhoods someone has in mind.",
   },
 ];
 

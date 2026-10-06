@@ -20,7 +20,7 @@ Other commands:
 | `npm run typecheck` | `astro check` (TypeScript + Astro diagnostics) |
 | `npm run lint` | ESLint |
 | `npm run verify` | Checks `dist/` after a build: routes exist, internal links resolve, unique titles, JSON-LD is valid and invents nothing, forms are POST with identifiers, no sample reviews, no tracking code |
-| `npm test` | Playwright browser tests (needs a build first; first run: `npx playwright install chromium`) |
+| `npm test` | Playwright: unit tests for the fit engine and fair-housing guardrails, plus browser tests on desktop, tablet and mobile (needs a build first; first run: `npx playwright install chromium`) |
 | `npm run check` | Everything above in order |
 | `npm run build:review` | Design-review build **with** illustrative sample reviews (noindex). Never publish this. |
 
@@ -33,12 +33,13 @@ Build with `npm run build` and publish the `dist/` directory. Set `PUBLIC_SITE_U
 ```
 src/
   assets/amie/  Amie photography (the only copy)
+  assets/places/ licensed community/lake photography (see docs/COMMUNITY_IMAGE_BRIEF.md)
   components/   reusable UI (header, footer, forms, cards, article parts, SEO, JSON-LD)
   config/       site.ts (business info + form endpoints), nav.ts, siteUrl.ts
   content/
     insights/   Insights articles (Markdown)
     reviews/    client reviews (Markdown frontmatter) - see docs/REVIEW_WORKFLOW.md
-  data/         communities.ts (community page content)
+  data/         communities.ts, lakes.ts, locationFit.ts, placeImages.ts
   layouts/      BaseLayout, InsightArticle
   pages/        routes (communities/[slug].astro is the reusable community template)
   scripts/      forms.ts (progressive enhancement for forms)
@@ -87,3 +88,43 @@ See `docs/REVIEW_WORKFLOW.md`. In short: add a Markdown file to `src/content/rev
 Pages set unique titles/descriptions, canonical URLs, Open Graph and Twitter cards. The sitemap (`/sitemap-index.xml`), `robots.txt`, and Insights RSS (`/rss.xml`) are generated. JSON-LD includes `WebSite`, `RealEstateAgent`, `Person`, `Article`, `BreadcrumbList`, and `FAQPage` (only where the FAQ is visibly shown). It never includes ratings, review counts, price ranges, awards, credentials, addresses, or licenses.
 
 There is no analytics, advertising, tracking, or CRM code in this build.
+
+## V2 features
+
+Voice: the site speaks in Amie's first person ("I help my clients..."). Metadata, structured data, legal text, and testimonials stay neutral. Experience is stated as "more than 15 years" (no invented start year).
+
+### Find Your West Michigan Fit (`/find-your-fit/`)
+
+A short, client-side-only guided set of questions that suggests two or three communities. Nothing is collected or sent while answering; results are not gated. Logic is deterministic and editable in `src/data/locationFit.ts`; the engine is `src/utils/fit.ts`. **Read `docs/LOCATION_FIT_GUIDELINES.md` before editing** (fair-housing boundaries).
+
+- **Change location weights:** edit the numbers in `communityProfiles` (how strongly each community has each trait) or `fitQuestions[].options[].prefs` (target and weight of an answer).
+- **Add a community:** add it to `src/data/communities.ts`, add a full profile to `communityProfiles`, and (optionally) to `site.serviceAreas`. Tests verify the profile.
+- **Change a question:** edit `fitQuestions`; keep `formField` names stable because they are the field names Amie sees in submissions.
+
+### Saved search (`/home-search/`)
+
+Posts to the same Formspree endpoint as the other forms with `form_type=location_fit_search`. It is **not automated**: the request arrives by email and Amie creates the saved search by hand in her own listing system. Query parameters prefill the form (whitelisted): `community`, `lake`, or the full fit result from the Find Your Fit page.
+
+**Processing a request:** open the Formspree email. Look at name/email/phone, communities and lakes, waterfront, price range, bedrooms/bathrooms, timing and notes. When the request came from Find Your Fit it also includes `search_source`, `fit_primary`, `fit_secondary`, the raw answers (`water_priority`, `walkability`, `privacy_preference`, `home_character`, `maintenance`, `gr_access`, `recreation`, `setting`, `priorities`) and a readable `fit_summary`. Create the saved search, then reply personally.
+
+**Verify Formspree data:** submit a test from each of `/home-search/`, `/home-search/?community=rockford&lake=silver-lake` and a completed `/find-your-fit/` result, then confirm the email shows `form_type = location_fit_search` and the expected fields.
+
+### Rockford lakes (`/waterfront/rockford-lakes/`)
+
+One hub page built from `src/data/lakes.ts` (Bostwick, Silver, Lake Bella Vista, Myers, Brower). **Add a lake:** add an entry using `build(...)`; it gets a section, jump link, saved-search CTA (`/home-search/?community=rockford&lake=<slug>`) and a checkbox on the saved-search form automatically. **Add verified facts** only through `verifiedFacts` (each needs a source). The data deliberately contains no depths, acreage, frontage, designations, rules, taxes, values, or inventory numbers.
+
+### V3 refinements
+
+- About page: the empty “Background” placeholder was removed; the page ends with the principles and the conversation CTA.
+- Lake-residency wording: About, `/waterfront/`, the Rockford community page and the Rockford lakes hub introduction say *“Over the last 15 years, I’ve lived on both Lake Bella Vista and Silver Lake.”* Exact years remain only in the individual Lake Bella Vista and Silver Lake sections (`src/data/lakes.ts`).
+- Location Fit: “Close-in and connected” became “Closer to Grand Rapids and everyday amenities”, with visible plain-language hints on the setting question. Logic and field values are unchanged.
+- Community resources: each community page has a “Want to explore on your own?” list driven by `src/data/communityResources.ts` (external links open in a new tab with `rel="noopener noreferrer"`). See `docs/CONTENT_GUIDE.md`.
+- Photography: candidates are documented but none is embedded yet (see below).
+
+### Photography
+
+Four owner-supplied lake photos (a sunrise and a sunset each for Silver Lake and Lake Bella Vista) appear in the Rockford lake drill-down sections. The convention going forward is one sunrise and one sunset per featured lake. Each photo is captioned from its place and `moment` ("Silver Lake Sunrise") with a small "Photo: ..." credit beneath. Every other place still shows a designed placeholder until a licensed photo is added: save `src/assets/places/<place-slug>-<subject>.jpg` and register it, with its `moment`, in `src/data/placeImages.ts` (both are required for an image to appear). Image files must contain no EXIF/GPS metadata (a test enforces it). See `docs/COMMUNITY_IMAGE_BRIEF.md`.
+
+### Waterfront gallery (`/waterfront/`)
+
+A reusable carousel fed by `src/data/waterfrontGallery.ts`. It has no maximum: add an entry (a `placePhoto` reference to a registered photo, or a gallery-only file in `src/assets/waterfront/`) and it appears. It currently shows Silver Lake Sunrise first, then designed placeholders until there are three real photos. Details in `docs/COMMUNITY_IMAGE_BRIEF.md`.

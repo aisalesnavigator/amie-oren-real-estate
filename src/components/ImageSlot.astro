@@ -9,18 +9,24 @@ interface Props {
   tone?: 'sand' | 'lake' | 'moss';
   /** Show the small "photography to come" label. */
   label?: boolean;
+  /** Simple line motif that hints at the intended subject. */
+  motif?: 'lake' | 'river' | 'village' | 'hills' | 'woods';
 }
-const { caption, ratio = '4 / 3', tone = 'sand', label = true } = Astro.props;
+const { caption, ratio = '4 / 3', tone = 'sand', label = true, motif = 'lake' } = Astro.props;
+const motifs: Record<string, string[]> = {
+  lake: ['M-20 210 C 60 180, 120 240, 200 205 S 340 170, 430 215', 'M-20 232 C 70 205, 130 260, 205 228 S 345 195, 430 238', 'M-20 254 C 80 228, 140 280, 210 251 S 350 220, 430 261', 'M-20 276 C 90 252, 150 300, 215 274 S 355 245, 430 284', 'M40 205 L 120 205 M60 205 L 60 190 M100 205 L 100 190'],
+  river: ['M-20 80 C 100 120, 120 200, 220 190 S 340 140, 430 230', 'M-20 104 C 104 146, 130 226, 224 216 S 350 168, 430 256', 'M300 60 a 30 30 0 1 0 0.1 0'],
+  village: ['M30 230 H 370', 'M50 230 V 160 H 110 V 230', 'M130 230 V 130 L 165 100 L 200 130 V 230', 'M225 230 V 170 H 285 V 230', 'M305 230 V 150 H 355 V 230', 'M165 100 V 80'],
+  hills: ['M-20 220 C 60 150, 140 150, 200 205 S 340 150, 430 200', 'M-20 250 C 80 190, 160 200, 220 235 S 350 190, 430 240', 'M300 70 a 24 24 0 1 0 0.1 0'],
+  woods: ['M60 240 V 170 M60 170 L 35 210 H 85 Z', 'M130 240 V 140 M130 140 L 100 200 H 160 Z', 'M210 240 V 160 M210 160 L 182 205 H 238 Z', 'M290 240 V 130 M290 130 L 258 195 H 322 Z', 'M350 240 V 175 M350 175 L 328 212 H 372 Z', 'M-20 240 H 430'],
+};
+const paths = motifs[motif] ?? motifs.lake;
 ---
 
 <figure class={`slot slot--${tone}`} style={`aspect-ratio: ${ratio};`} data-image-slot role="img" aria-label={caption ? `Photography placeholder: ${caption}` : 'Photography placeholder'}>
   <svg class="slot__lines" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
     <g fill="none" stroke="currentColor" stroke-width="1">
-      <path d="M-20 210 C 60 180, 120 240, 200 205 S 340 170, 430 215" />
-      <path d="M-20 232 C 70 205, 130 260, 205 228 S 345 195, 430 238" />
-      <path d="M-20 254 C 80 228, 140 280, 210 251 S 350 220, 430 261" />
-      <path d="M-20 276 C 90 252, 150 300, 215 274 S 355 245, 430 284" />
-      <circle cx="300" cy="82" r="26" />
+      {paths.map((d) => <path d={d} />)}
     </g>
   </svg>
   {

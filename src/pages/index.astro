@@ -5,7 +5,7 @@ import Hero from '../components/Hero.astro';
 import ServicePathCard from '../components/ServicePathCard.astro';
 import CommunityGrid from '../components/CommunityGrid.astro';
 import AmieProfile from '../components/AmieProfile.astro';
-import ImageSlot from '../components/ImageSlot.astro';
+import CommunityImage from '../components/CommunityImage.astro';
 import InsightCard from '../components/InsightCard.astro';
 import ReviewsSection from '../components/ReviewsSection.astro';
 import ReferralCTA from '../components/ReferralCTA.astro';
@@ -32,7 +32,7 @@ const lifeMoments = [
 
 <BaseLayout
   title="Real estate guidance for the moments that matter"
-  description="Amie Oren brings experience, local knowledge, attention to detail, and highly personal service to buyers and sellers navigating important moves throughout West Michigan."
+  description="For more than 15 years, Amie Oren has helped buyers and sellers throughout West Michigan navigate important moves, with local knowledge, attention to detail, and highly personal service."
   path="/"
   jsonLd={[agentSchema(portraitUrl), personSchema(portraitUrl)]}
 >
@@ -60,9 +60,9 @@ const lifeMoments = [
           decades of memories, a decision that deserves to be made carefully.
         </p>
         <p>
-          Amie helps clients navigate the whole move, not just the transaction. That means listening first,
+          I help my clients navigate the whole move, not just the transaction. That means listening first,
           preparing thoughtfully, bringing local knowledge and judgment to each decision, and carrying the
-          details through so clients are never left chasing for answers.
+          details through so you’re never left chasing for answers.
         </p>
         <ul class="attributes">
           <li>Preparation</li>
@@ -88,14 +88,14 @@ const lifeMoments = [
           title="Selling"
           text="Selling a home deserves more than putting it on the market. See how preparation, positioning, and steady communication shape a sale."
           href="/selling/"
-          linkLabel="Selling with Amie"
+          linkLabel="How I help sellers"
         />
         <ServicePathCard
           number="ii."
           title="Buying"
           text="Find the right home and understand what you’re choosing: the setting, the condition, the tradeoffs, and the offer."
           href="/buying/"
-          linkLabel="Buying with Amie"
+          linkLabel="How I help buyers"
         />
         <ServicePathCard
           number="iii."
@@ -114,11 +114,23 @@ const lifeMoments = [
         <span class="eyebrow">Community discovery</span>
         <h2 id="communities-heading">Know the place before you choose the house.</h2>
         <p class="lede">
-          Each community page is a practical guide to the questions buyers and sellers should consider, written
-          to help you decide, not to sell you on a zip code.
+          Each community page is a practical guide to the questions I ask buyers and sellers, written to help you
+          decide, not to sell you on a zip code.
         </p>
       </div>
       <CommunityGrid />
+    </div>
+  </section>
+
+  <section class="section section--tight fit-promo" aria-labelledby="fit-promo-heading">
+    <div class="container container--narrow center stack">
+      <span class="eyebrow">Not sure where to start?</span>
+      <h2 id="fit-promo-heading">Five communities, five very different experiences.</h2>
+      <p class="lede center">
+        Rockford, Ada, East Grand Rapids, Cascade and Forest Hills each offer something different. Tell me what
+        matters to you, and I’ll help narrow the places worth exploring first.
+      </p>
+      <a class="btn btn--primary" href="/find-your-fit/">Find Your West Michigan Fit</a>
     </div>
   </section>
 
@@ -131,14 +143,14 @@ const lifeMoments = [
         <span class="eyebrow">Meet Amie</span>
         <h2 id="amie-heading">Calm, prepared, and personally involved.</h2>
         <p class="lede">
-          Clients should feel that someone is paying close attention, because someone is.
+          You should feel that someone is paying close attention, because I am.
         </p>
         <p>
-          Amie Oren is a {site.professionalTitle.toLowerCase()} with {site.brokerage}, serving buyers and sellers across West
-          Michigan. Her approach is built on listening carefully, anticipating what comes next, and staying
-          close to the details that make a move go smoothly.
+          I’m a {site.professionalTitle.toLowerCase()} with {site.brokerage}, and for more than 15 years I’ve served
+          buyers and sellers across West Michigan. My approach is built on listening carefully, anticipating what
+          comes next, and staying close to the details that make a move go smoothly.
         </p>
-        <a class="text-link" href="/about/">Read Amie’s story</a>
+        <a class="text-link" href="/about/">Read my story</a>
       </div>
     </div>
   </section>
@@ -151,7 +163,7 @@ const lifeMoments = [
         <p class="lede">
           Whatever is behind yours, the work starts with understanding what the move needs to accomplish.
         </p>
-        <a class="btn btn--secondary" href="/contact/">Tell Amie About Yours</a>
+        <a class="btn btn--secondary" href="/contact/">Tell Me About Yours</a>
       </div>
       <ul class="moments">
         {lifeMoments.map((m) => <li>{m}</li>)}
@@ -166,11 +178,12 @@ const lifeMoments = [
         <h2 id="waterfront-heading">Buy the water as carefully as you buy the home.</h2>
         <p class="lede" style="color:#e8eef0">
           Shoreline, access, orientation, and use all shape what a waterfront property is really like to own.
-          Amie helps clients look beyond the view.
+          I’ve lived on two Rockford-area lakes and helped many clients buy and sell lakefront homes, and I help
+          you look beyond the view.
         </p>
         <a class="btn btn--light" href="/waterfront/">Explore Waterfront</a>
       </div>
-      <ImageSlot ratio="5 / 4" tone="lake" caption="West Michigan shoreline" />
+      <CommunityImage slug="rockford" ratio="5 / 4" caption="Rockford-area lakes and shoreline" />
     </div>
   </section>
 

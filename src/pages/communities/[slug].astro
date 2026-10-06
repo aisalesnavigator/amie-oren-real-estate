@@ -1,9 +1,9 @@
 ---
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PageHero from '../../components/PageHero.astro';
-import ImageSlot from '../../components/ImageSlot.astro';
+import CommunityHero from '../../components/CommunityHero.astro';
 import CommunityGrid from '../../components/CommunityGrid.astro';
+import CommunityResources from '../../components/CommunityResources.astro';
 import RelatedContent from '../../components/RelatedContent.astro';
 import ConversationCTA from '../../components/ConversationCTA.astro';
 import { communities, getCommunity, type Community } from '../../data/communities';
@@ -35,20 +35,14 @@ const path = `/communities/${community.slug}/`;
     ]),
   ]}
 >
-  <PageHero
-    eyebrow="Community guide"
-    title={community.headline}
-    breadcrumbs={[{ name: 'Communities', href: '/communities/' }, { name: community.name }]}
-    tone="limestone"
-  />
+  <CommunityHero community={community} />
 
   <section class="section" aria-labelledby="overview-heading">
-    <div class="container split split--wide-left">
+    <div class="container container--narrow">
       <div class="stack">
         <h2 id="overview-heading">Overview</h2>
         {community.overview.map((p, i) => <p class={i === 0 ? 'lede' : undefined}>{p}</p>)}
       </div>
-      <ImageSlot ratio="4 / 3" tone="sand" caption={community.setting} />
     </div>
   </section>
 
@@ -90,6 +84,22 @@ const path = `/communities/${community.slug}/`;
     </div>
   </section>
 
+  {
+    community.slug === 'rockford' && (
+      <section class="section section--lake" aria-labelledby="lakes-heading">
+        <div class="container container--narrow stack">
+          <span class="eyebrow">Rockford-area lakes</span>
+          <h2 id="lakes-heading">Lake living is part of what makes Rockford different.</h2>
+          <p class="lede" style="color:#e8eef0">
+            I’ve helped many clients buy and sell lakefront homes in the area, and I’ve put together a closer look at
+            five of the lakes.
+          </p>
+          <a class="btn btn--light" href="/waterfront/rockford-lakes/">Explore Rockford-area lakes</a>
+        </div>
+      </section>
+    )
+  }
+
   <section class="section" aria-labelledby="considerations-heading">
     <div class="container container--narrow">
       <h2 id="considerations-heading">Property considerations</h2>
@@ -99,11 +109,13 @@ const path = `/communities/${community.slug}/`;
       </ul>
       <p class="muted small">
         This guide is general and intentionally avoids prices, statistics, and market claims. For current
-        conditions or specifics about any property, talk with Amie and consult the relevant professionals and
+        conditions or specifics about any property, talk with me and consult the relevant professionals and
         public agencies.
       </p>
     </div>
   </section>
+
+  <CommunityResources slug={community.slug} name={community.name} />
 
   {
     insights.length > 0 && (
@@ -129,7 +141,7 @@ const path = `/communities/${community.slug}/`;
 
   <ConversationCTA
     title={`Thinking about a move in ${community.name}?`}
-    text="Share what you’re considering and Amie will reply personally, with no pressure."
+    text="Share what you’re considering and I’ll reply personally, with no pressure."
   />
 </BaseLayout>
 

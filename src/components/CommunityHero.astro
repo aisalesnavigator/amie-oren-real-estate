@@ -1,0 +1,55 @@
+---
+import Breadcrumbs from './Breadcrumbs.astro';
+import CommunityImage from './CommunityImage.astro';
+import type { Community } from '../data/communities';
+
+interface Props {
+  community: Community;
+}
+const { community } = Astro.props;
+---
+
+<section class="chero">
+  <div class="container chero__grid">
+    <div class="chero__copy">
+      <Breadcrumbs items={[{ name: 'Communities', href: '/communities/' }, { name: community.name }]} />
+      <span class="eyebrow">Community guide</span>
+      <h1>{community.headline}</h1>
+      <p class="lede chero__note">{community.myNote}</p>
+      <div class="btn-row">
+        <a class="btn btn--primary" href={`/home-search/?community=${community.slug}`}>Send me homes in {community.name}</a>
+        <a class="btn btn--secondary" href="/find-your-fit/">Compare with Find Your Fit</a>
+      </div>
+    </div>
+    <div class="chero__media">
+      <CommunityImage slug={community.slug} caption={community.setting} ratio="5 / 4" eager />
+    </div>
+  </div>
+</section>
+
+<style>
+  .chero {
+    background: var(--c-limestone);
+    padding-block: var(--space-xl) var(--space-3xl);
+  }
+  .chero__grid {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: center;
+  }
+  h1 {
+    font-size: var(--step-4);
+  }
+  .chero__note {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--c-lake-deep);
+    margin-bottom: var(--space-l);
+  }
+  @media (min-width: 64em) {
+    .chero__grid {
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: var(--space-2xl);
+    }
+  }
+</style>

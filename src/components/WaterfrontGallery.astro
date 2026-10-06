@@ -1,0 +1,242 @@
+---
+import { Image } from 'astro:assets';
+import ImageSlot from './ImageSlot.astro';
+import PhotoCaption from './PhotoCaption.astro';
+import { galleryHeading, galleryLede, galleryPlaceholders } from '../data/waterfrontGallery';
+import { fillerPlaceholders, galleryMode, getGallerySlides } from '../utils/waterfrontGallery';
+
+// Real photos first (featured first), then designed placeholders only until there are three real photos.
+// There is no maximum: every approved photo is a slide and the count below drives the status text.
+const slides = getGallerySlides();
+const mode = galleryMode(slides.length);
+const fillers = fillerPlaceholders(slides.length, galleryPlaceholders);
+const count = slides.length + fillers.length;
+---
+
+<section class="section gallery-section" aria-labelledby="gallery-heading" data-waterfront-gallery data-mode={mode}>
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Waterfront, in pictures</span>
+      <h2 id="gallery-heading">{galleryHeading}</h2>
+      <p class="lede">{galleryLede}</p>
+    </div>
+
+    <div class="gallery" data-gallery role="region" aria-roledescription="carousel" aria-label="Waterfront photography">
+      <div
+        class="gallery__track"
+        data-track
+        tabindex="0"
+        aria-label="Waterfront photos. Use the left and right arrow keys, the buttons, or swipe to move between photos."
+      >
+        {
+          slides.map((s, i) => (
+            <figure
+              class="gallery__slide"
+              role="group"
+              aria-roledescription="slide"
+              aria-label={`${i + 1} of ${count}`}
+              data-gallery-item={s.id}
+              data-featured={s.featured ? '' : undefined}
+            >
+              <div class="gallery__frame">
+                <Image
+                  src={s.src}
+                  alt={s.alt}
+                  widths={[480, 800, 1200]}
+                  sizes="(min-width: 75em) 40vw, (min-width: 48em) 56vw, 86vw"
+                  width={600}
+                  height={400}
+                  format="webp"
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                  class="gallery__img"
+                />
+              </div>
+              <PhotoCaption caption={s.caption} credit={s.credit} />
+            </figure>
+          ))
+        }
+        {
+          fillers.map((p, j) => {
+            const i = slides.length + j;
+            return (
+              <div class="gallery__slide" role="group" aria-roledescription="slide" aria-label={`${i + 1} of ${count}`} data-gallery-placeholder>
+                <ImageSlot ratio="3 / 2" tone={i % 2 === 1 ? 'sand' : 'lake'} motif="lake" caption={p.caption} />
+              </div>
+            );
+          })
+        }
+      </div>
+
+      <div class="gallery__controls" data-controls hidden>
+        <button type="button" class="gallery__btn" data-prev aria-label="Previous photo">
+          <span aria-hidden="true">←</span>
+        </button>
+        <p class="gallery__status small muted" data-status aria-live="polite">
+          Photo 1 of {count}
+        </p>
+        <button type="button" class="gallery__btn" data-next aria-label="Next photo">
+          <span aria-hidden="true">→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .gallery {
+    position: relative;
+  }
+  .gallery__track {
+    position: relative;
+    display: flex;
+    gap: var(--space-m);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: var(--space-2xs);
+    border-radius: var(--radius-m);
+  }
+  .gallery__track::-webkit-scrollbar {
+    display: none;
+  }
+  .gallery__track:focus-visible {
+    outline: 3px solid var(--c-focus);
+    outline-offset: 4px;
+  }
+  .gallery__slide {
+    flex: 0 0 86%;
+    margin: 0;
+    scroll-snap-align: start;
+    min-width: 0;
+  }
+  .gallery__frame {
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    border-radius: var(--radius-m);
+    background: var(--c-limestone);
+  }
+  .gallery__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .gallery__controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-s);
+    margin-top: var(--space-s);
+  }
+  .gallery__controls[hidden] {
+    display: none;
+  }
+  .gallery__status {
+    margin: 0;
+  }
+  .gallery__btn {
+    display: inline-grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    border: 1px solid var(--c-taupe-soft);
+    background: var(--c-paper);
+    color: var(--c-lake-deep);
+    font-size: 1.15rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+  }
+  .gallery__btn:hover:not(:disabled) {
+    border-color: var(--c-lake-deep);
+    background: var(--c-lake-mist);
+  }
+  .gallery__btn:focus-visible {
+    outline: 3px solid var(--c-focus);
+    outline-offset: 2px;
+  }
+  .gallery__btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  @media (min-width: 48em) {
+    .gallery__slide {
+      flex-basis: 56%;
+    }
+  }
+  @media (min-width: 75em) {
+    .gallery__slide {
+      flex-basis: 40%;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-gallery]').forEach((root) => {
+    const track = root.querySelector<HTMLElement>('[data-track]');
+    const controls = root.querySelector<HTMLElement>('[data-controls]');
+    if (!track || !controls) return;
+    const slides = Array.from(track.children) as HTMLElement[];
+    if (slides.length < 2) return;
+
+    const prev = controls.querySelector<HTMLButtonElement>('[data-prev]')!;
+    const next = controls.querySelector<HTMLButtonElement>('[data-next]')!;
+    const status = controls.querySelector<HTMLElement>('[data-status]')!;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    controls.hidden = false;
+
+    const left = (i: number) => slides[i].offsetLeft - slides[0].offsetLeft;
+    const atStart = () => track.scrollLeft <= 2;
+    const atEnd = () => track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
+    // The slide whose left edge is nearest the left of the track. Stepping is based on this, because on wide
+    // screens several slides are visible and the last slides can never reach the left edge.
+    const lead = () => {
+      let best = 0;
+      slides.forEach((_, i) => {
+        if (Math.abs(left(i) - track.scrollLeft) < Math.abs(left(best) - track.scrollLeft)) best = i;
+      });
+      return best;
+    };
+    let shown = '';
+    const update = () => {
+      const i = atEnd() ? slides.length - 1 : lead();
+      const label = `Photo ${i + 1} of ${slides.length}`;
+      prev.disabled = atStart();
+      next.disabled = atEnd();
+      if (label === shown) return;
+      shown = label;
+      status.textContent = label;
+    };
+    const go = (i: number) => {
+      const target = Math.max(0, Math.min(slides.length - 1, i));
+      track.scrollTo({ left: left(target), behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+    };
+
+    prev.addEventListener('click', () => go(lead() - 1));
+    next.addEventListener('click', () => go(lead() + 1));
+    track.addEventListener('keydown', (e) => {
+      const keys: Record<string, () => void> = {
+        ArrowLeft: () => go(lead() - 1),
+        ArrowRight: () => go(lead() + 1),
+        Home: () => go(0),
+        End: () => go(slides.length - 1),
+      };
+      const action = keys[e.key];
+      if (!action) return;
+      e.preventDefault();
+      action();
+    });
+    let frame = 0;
+    track.addEventListener('scroll', () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(update);
+    }, { passive: true });
+    window.addEventListener('resize', () => requestAnimationFrame(update));
+    update();
+  });
+</script>

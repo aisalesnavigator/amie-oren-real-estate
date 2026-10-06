@@ -1,0 +1,108 @@
+---
+import FormShell from './FormShell.astro';
+import Field from './Field.astro';
+import { site } from '../config/site';
+import { communities } from '../data/communities';
+import { lakes } from '../data/lakes';
+import { fitQuestions } from '../data/locationFit';
+
+const waterfront = [
+  { value: 'Must have', label: 'Must have waterfront' },
+  { value: 'Strongly preferred', label: 'Strongly preferred' },
+  { value: 'Open to nearby', label: 'Open to water nearby' },
+  { value: 'Not necessary', label: 'Not necessary' },
+];
+const timing = [
+  { value: 'Actively looking now', label: 'Actively looking now' },
+  { value: 'Next 3 months', label: 'Within the next 3 months' },
+  { value: '3-6 months', label: '3 to 6 months' },
+  { value: '6-12 months', label: '6 to 12 months' },
+  { value: 'Just exploring', label: 'Just exploring' },
+];
+const counts = (unit: string) => [
+  { value: 'No minimum', label: 'No minimum' },
+  ...[1, 2, 3, 4, 5].map((n) => ({ value: `${n}+`, label: `${n}+ ${unit}` })),
+];
+// Hidden fields that carry the Find Your Fit outcome. They are disabled (not submitted) until populated.
+const fitFields = ['search_source', 'fit_primary', 'fit_secondary', ...fitQuestions.map((q) => q.formField), 'fit_summary'];
+---
+
+<FormShell
+  id="search-form"
+  formType="location_fit_search"
+  endpoint={site.forms.search}
+  subject="New saved-search request — send me homes that fit this"
+  thanksKey="search"
+  submitLabel="Send My Search Request"
+>
+  <Field id="search-name" name="name" label="Name" required autocomplete="name" />
+  <Field id="search-email" name="email" type="email" label="Email" required autocomplete="email" inputmode="email" />
+  <Field id="search-phone" name="phone" type="tel" label="Phone" optional autocomplete="tel" inputmode="tel" />
+
+  <fieldset class="fieldset" data-field>
+    <legend>Community or communities <span class="field__opt">(optional)</span></legend>
+    <div class="checks">
+      {
+        communities.map((c) => (
+          <label class="choice">
+            <input type="checkbox" name="communities" value={c.name} data-slug={c.slug} />
+            <span>{c.name}</span>
+          </label>
+        ))
+      }
+    </div>
+  </fieldset>
+
+  <fieldset class="fieldset" data-field>
+    <legend>Rockford-area lake or lakes <span class="field__opt">(optional)</span></legend>
+    <div class="checks">
+      {
+        lakes.map((l) => (
+          <label class="choice">
+            <input type="checkbox" name="lakes" value={l.name} data-slug={l.slug} />
+            <span>{l.name}</span>
+          </label>
+        ))
+      }
+    </div>
+  </fieldset>
+
+  <Field id="search-waterfront" name="waterfront" as="select" label="Waterfront" optional options={waterfront} />
+  <Field
+    id="search-price"
+    name="price_range"
+    label="Approximate price range"
+    optional
+    hint="For example, “up to $800,000” or “$600,000 to $900,000”."
+  />
+  <div class="pair">
+    <Field id="search-beds" name="bedrooms_min" as="select" label="Bedrooms" optional options={counts('bedrooms')} />
+    <Field id="search-baths" name="bathrooms_min" as="select" label="Bathrooms" optional options={counts('bathrooms')} />
+  </div>
+  <Field id="search-timing" name="timing" as="select" label="Timing" optional options={timing} />
+  <Field
+    id="search-notes"
+    name="notes"
+    as="textarea"
+    rows={5}
+    label="Important features or notes"
+    optional
+    hint="Anything that would help me set up the right search."
+  />
+
+  {fitFields.map((name) => <input type="hidden" name={name} data-fit-field disabled />)}
+</FormShell>
+
+<style is:global>
+  .checks {
+    display: grid;
+    gap: var(--space-xs);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+    margin-top: var(--space-2xs);
+  }
+  .pair {
+    display: grid;
+    gap: var(--space-m);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  }
+</style>

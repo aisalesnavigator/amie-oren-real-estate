@@ -3,21 +3,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 const variants = {
   contact: {
-    title: 'Thank you. Your message is on its way to Amie.',
-    text: 'She will reply personally, usually as soon as she can. If your question is time-sensitive, you’re also welcome to email her directly.',
+    title: 'Thank you. Your message is on its way to me.',
+    text: 'I’ll reply personally, usually as soon as I can. If your question is time-sensitive, you’re also welcome to email me directly.',
   },
   review: {
     title: 'Thank you for sharing your experience.',
-    text: 'Your review has been received. It will be read and verified before anything is published, and Amie may reach out if she has a question.',
+    text: 'Your review has been received. I’ll read and verify it before anything is published, and I may reach out if I have a question.',
   },
   referral: {
     title: 'Thank you for the introduction.',
-    text: 'Amie has your referral and will reach out thoughtfully. She is grateful for your trust.',
+    text: 'I have your referral and will reach out thoughtfully. I’m grateful for your trust.',
+  },
+  search: {
+    title: 'Thank you. I’ll set up your search.',
+    text: 'I’ll review what you’re looking for and create a saved search so I can send you matching homes as they become available. I set these up by hand, so you’ll hear from me personally.',
   },
 } as const;
 const generic = {
   title: 'Thank you. Your message has been received.',
-  text: 'Amie will be in touch personally. If your question is time-sensitive, you’re also welcome to email her directly.',
+  text: 'I’ll be in touch personally. If your question is time-sensitive, you’re also welcome to email me directly.',
 };
 ---
 

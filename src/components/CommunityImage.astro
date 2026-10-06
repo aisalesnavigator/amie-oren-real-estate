@@ -1,0 +1,91 @@
+---
+import { Image } from 'astro:assets';
+import ImageSlot from './ImageSlot.astro';
+import PhotoCaption from './PhotoCaption.astro';
+import { getPlaceImage, type PlaceImage } from '../utils/placeImages';
+
+interface Props {
+  /** Community or lake slug. */
+  slug: string;
+  /** Placeholder caption (what the finished photo should show). */
+  caption?: string;
+  ratio?: string;
+  tone?: 'sand' | 'lake' | 'moss';
+  motif?: 'lake' | 'river' | 'village' | 'hills' | 'woods';
+  label?: boolean;
+  sizes?: string;
+  eager?: boolean;
+  /** Render this specific (e.g. secondary) photo instead of the place's primary photo. */
+  image?: PlaceImage;
+  /** Use the photo's own registered aspect ratio instead of `ratio` (lake drill-down only). */
+  useImageRatio?: boolean;
+}
+const motifBySlug: Record<string, NonNullable<Props['motif']>> = {
+  rockford: 'lake',
+  ada: 'river',
+  'east-grand-rapids': 'village',
+  cascade: 'hills',
+  'forest-hills': 'woods',
+};
+const toneBySlug: Record<string, NonNullable<Props['tone']>> = {
+  rockford: 'lake',
+  ada: 'sand',
+  'east-grand-rapids': 'lake',
+  cascade: 'moss',
+  'forest-hills': 'moss',
+};
+const {
+  slug,
+  caption,
+  ratio = '4 / 3',
+  tone = toneBySlug[slug] ?? 'lake',
+  motif = motifBySlug[slug] ?? 'lake',
+  label = true,
+  sizes = '(min-width: 64em) 40vw, 90vw',
+  eager = false,
+  image: given,
+  useImageRatio = false,
+} = Astro.props;
+const image = given ?? getPlaceImage(slug);
+const frameRatio = useImageRatio && image?.credit.ratio ? image.credit.ratio : ratio;
+const [w, h] = frameRatio.split('/').map((n) => parseFloat(n));
+---
+
+{
+  image ? (
+    <figure class="place" data-place-image={image.stem}>
+      <div class="place__frame" style={`aspect-ratio:${frameRatio}`}>
+        <Image
+          src={image.src}
+          alt={image.credit.alt}
+          widths={[480, 800, 1200]}
+          sizes={sizes}
+          loading={eager ? 'eager' : 'lazy'}
+          format="webp"
+          class="place__img"
+          width={Math.round((w || 4) * 100)}
+          height={Math.round((h || 3) * 100)}
+        />
+      </div>
+      <PhotoCaption caption={image.caption} credit={image.credit.credit} />
+    </figure>
+  ) : (
+    <ImageSlot ratio={ratio} tone={tone} motif={motif} caption={caption} label={label} />
+  )
+}
+
+<style>
+  .place {
+    margin: 0;
+  }
+  .place__frame {
+    overflow: hidden;
+    border-radius: var(--radius-m);
+  }
+  .place__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>

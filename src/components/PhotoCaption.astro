@@ -1,0 +1,36 @@
+---
+/**
+ * The site's photo caption convention: a descriptive caption first ("Silver Lake Sunrise"), with a much
+ * quieter credit line beneath ("Photo: Amie Oren Real Estate"). Used for lake photos and the gallery so
+ * the hierarchy is identical everywhere. The credit never replaces the image's alt text.
+ */
+interface Props {
+  caption?: string;
+  credit: string;
+}
+const { caption, credit } = Astro.props;
+---
+
+<figcaption class="photo-caption">
+  {caption && <span class="photo-caption__text">{caption}</span>}
+  <span class="photo-caption__credit">Photo: {credit}</span>
+</figcaption>
+
+<style>
+  .photo-caption {
+    display: grid;
+    gap: 0.1rem;
+    padding-top: var(--space-xs);
+  }
+  .photo-caption__text {
+    font-family: var(--font-serif);
+    font-size: var(--step-1);
+    line-height: 1.25;
+    color: var(--c-charcoal);
+  }
+  .photo-caption__credit {
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: var(--c-taupe);
+  }
+</style>

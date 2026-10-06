@@ -1,0 +1,63 @@
+---
+/**
+ * Markup template for one Location Fit result. The page script clones this <template> and fills
+ * the [data-*] slots, so all result markup and styling live here (one place, no duplicate markup).
+ */
+---
+
+<template id="fit-card-template">
+  <article class="fit-card" data-card>
+    <p class="fit-card__rank eyebrow" data-rank></p>
+    <h3 class="fit-card__name" data-name></h3>
+    <p class="fit-card__why" data-why></p>
+    <div class="fit-card__block" data-matches-block>
+      <h4>What lines up</h4>
+      <ul data-matches></ul>
+    </div>
+    <div class="fit-card__block" data-considerations-block>
+      <h4>Worth weighing</h4>
+      <ul data-considerations></ul>
+    </div>
+    <a class="text-link" data-link>Read the community guide</a>
+  </article>
+</template>
+
+<style is:global>
+  .fit-card {
+    padding: var(--space-l) 0 0;
+    border-top: 1px solid var(--c-sand-deep);
+  }
+  .fit-card--lead {
+    background: var(--c-paper);
+    border: 1px solid var(--c-sand-deep);
+    border-radius: var(--radius-l);
+    padding: var(--space-l);
+    box-shadow: var(--shadow-m);
+  }
+  .fit-card__name {
+    font-size: var(--step-4);
+    margin-bottom: var(--space-xs);
+  }
+  .fit-card--lead .fit-card__name {
+    font-size: var(--step-5);
+  }
+  .fit-card__why {
+    font-size: var(--step-1);
+    max-width: 40rem;
+  }
+  .fit-card__block h4 {
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-lake);
+    font-weight: 500;
+    margin-bottom: var(--space-2xs);
+  }
+  .fit-card__block ul {
+    padding-left: 1.1rem;
+  }
+  .fit-card__block[hidden] {
+    display: none;
+  }
+</style>

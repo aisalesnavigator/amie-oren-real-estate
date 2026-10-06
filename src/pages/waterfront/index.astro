@@ -1,0 +1,264 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import CommunityImage from '../../components/CommunityImage.astro';
+import WaterfrontGallery from '../../components/WaterfrontGallery.astro';
+import FAQ from '../../components/FAQ.astro';
+import ConversationCTA from '../../components/ConversationCTA.astro';
+import { lakes } from '../../data/lakes';
+import { getInsights, insightHref } from '../../utils/insights';
+import { breadcrumbSchema } from '../../utils/schema';
+
+const topics = [
+  {
+    title: 'Shoreline and water access',
+    text: 'What does the frontage actually look like: sandy, rocky, steep, or soft? Is it shared or private? Rights of access and use vary widely, so I encourage clients to confirm them in writing instead of assuming them from a listing.',
+  },
+  {
+    title: 'Orientation and view',
+    text: 'Which way the home faces affects sun, wind, and sightlines throughout the day and across seasons. If you can, visit more than once.',
+  },
+  {
+    title: 'Privacy and neighbors',
+    text: 'Waterfront often means being more visible, from the water and from neighboring properties. I help clients think about spacing, boat traffic, and screening.',
+  },
+  {
+    title: 'Elevation and the walk to the water',
+    text: 'How the house relates to the shore matters: the grade, how you move between them, and whether that works for everyone who will use the property.',
+  },
+  {
+    title: 'Docks and water use',
+    text: 'If a dock, lift, or boating is part of your plan, find out what is in place, what is permitted, and who maintains it. I’ll point you to the right authority to confirm.',
+  },
+  {
+    title: 'Intended use',
+    text: 'A seasonal retreat, a year-round home, an entertaining hub, or something that does it all? The right property depends heavily on how you intend to live there.',
+  },
+  {
+    title: 'Maintenance and the elements',
+    text: 'Water, ice, wind, and moisture are hard on properties. Seawalls, docks, decks, and drainage deserve a realistic view of upkeep. I’ve lived with that upkeep myself.',
+  },
+  {
+    title: 'Inspections and due diligence',
+    text: 'Lakefront properties often need investigation beyond a standard home inspection. I help you decide what to look into and which qualified professionals to involve.',
+  },
+  {
+    title: 'Future resale',
+    text: 'The features that make a property special to you may or may not be the ones future buyers prize. I like to consider both while you’re choosing.',
+  },
+];
+
+const faq = [
+  {
+    question: 'Can you advise on regulations, permits, or environmental questions?',
+    answer:
+      'I can help you identify what to ask and who to ask. Rules about shoreline, docks, wetlands, and water use can be specific and change over time, so those questions belong with the relevant governmental authority or a qualified professional such as an attorney, surveyor, or environmental specialist.',
+  },
+  {
+    question: 'Is a standard home inspection enough for a waterfront property?',
+    answer:
+      'Often it is only the starting point. Seawalls, docks, shoreline conditions, and drainage may call for specialists. I can help you plan the right due diligence.',
+  },
+  {
+    question: 'Should I visit in more than one season?',
+    answer:
+      'If it is possible, yes. A lake can look and feel very different in summer, fall, and winter, and so can access, noise, and maintenance needs.',
+  },
+  {
+    question: 'Can you promise me a lake home before it is listed?',
+    answer:
+      'No. I can’t promise any property before it reaches the market. What I can do is stay close to the area, keep my relationships current, and help you be ready if the right opportunity appears. A saved search is a good first step.',
+  },
+];
+
+const articles = (await getInsights()).filter((e) => e.data.intent === 'waterfront').slice(0, 1);
+---
+
+<BaseLayout
+  title="Waterfront & Lake Property in West Michigan"
+  description="Buy the water as carefully as you buy the home. Amie Oren has lived on two Rockford-area lakes and has helped many clients buy and sell lakefront homes. A practical guide to shoreline, access, due diligence and resale."
+  path="/waterfront/"
+  jsonLd={[breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Waterfront' }])]}
+>
+  <PageHero
+    eyebrow="Waterfront"
+    title="Buy the water as carefully as you buy the home."
+    lede="A waterfront property is a home and a relationship with a body of water. After more than 15 years in West Michigan real estate, I understand lake property both professionally and personally."
+    breadcrumbs={[{ name: 'Waterfront' }]}
+    tone="limestone"
+  >
+    <div class="btn-row">
+      <a class="btn btn--primary" href="/home-search/?community=rockford">Send me lakefront homes</a>
+      <a class="btn btn--secondary" href="/waterfront/rockford-lakes/">Explore Rockford-area lakes</a>
+    </div>
+  </PageHero>
+
+  <section class="section" aria-labelledby="mine-heading">
+    <div class="container split split--wide-left">
+      <div class="stack">
+        <span class="eyebrow">Lake life, firsthand</span>
+        <h2 id="mine-heading">I’ve lived what I help clients decide.</h2>
+        <p class="lede">
+          Over the last 15 years, I’ve lived on both Lake Bella Vista and Silver Lake.
+        </p>
+        <p>
+          That time on the water shaped how I help people. I know what the first warm weekend feels like, and I
+          also know what the shoreline, the dock, and the off-season ask of an owner. I’ve also helped many
+          clients buy and sell lakefront homes throughout Rockford and the surrounding area, so I bring both
+          the lived experience and the professional one.
+        </p>
+        <a class="text-link" href="/waterfront/rockford-lakes/">A closer look at Rockford-area lake living</a>
+      </div>
+      <CommunityImage slug="rockford" caption="Rockford-area lakes and shoreline" ratio="5 / 4" />
+    </div>
+  </section>
+
+  <WaterfrontGallery />
+
+  <section class="section section--limestone" aria-labelledby="topics-heading">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">What I look at with clients</span>
+        <h2 id="topics-heading">The questions that shape a waterfront decision.</h2>
+        <p class="lede">
+          Many aren’t visible in photographs. These are the ones I encourage clients to consider early.
+        </p>
+      </div>
+      <div class="topics">
+        {
+          topics.map((t) => (
+            <div class="topic">
+              <h3>{t.title}</h3>
+              <p>{t.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--lake" aria-labelledby="early-heading">
+    <div class="container split split--wide-left">
+      <div class="stack">
+        <span class="eyebrow">Staying prepared</span>
+        <h2 id="early-heading">Waterfront homes can move quickly.</h2>
+        <p class="lede" style="color:#e8eef0">
+          Some opportunities begin through conversations long before a sign goes in the yard.
+        </p>
+        <p>
+          After more than 15 years working locally, and 15 years living on Rockford-area lakes myself, I often
+          have context and relationships that help me stay close to what may be changing. I can’t promise a
+          property before it reaches the market, but I can help you stay prepared when the right opportunity
+          appears.
+        </p>
+        <div class="btn-row">
+          <a class="btn btn--light" href="/home-search/?community=rockford">Send me homes that fit this</a>
+        </div>
+      </div>
+      <ul class="lakes-list" aria-label="Rockford-area lakes">
+        {lakes.map((l) => <li><a href={`/waterfront/rockford-lakes/#${l.slug}`}>{l.name}</a></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="sellers-heading">
+    <div class="container container--narrow stack">
+      <span class="eyebrow">For sellers</span>
+      <h2 id="sellers-heading">The water is part of the story you’re selling.</h2>
+      <p>
+        Buyers are drawn to the view, but they invest in the details: the shoreline, the access, the condition
+        of docks and walls, and what ownership will really be like. When I help someone sell a lake home, I
+        make sure those details are presented clearly, and that we’re ready for the questions they raise.
+      </p>
+      <p>
+        Photography, timing, and preparation take on added importance when the water is the centerpiece.
+      </p>
+      <a class="text-link" href="/selling/">How I approach selling</a>
+    </div>
+  </section>
+
+  <section class="section section--tight" aria-label="Important notice">
+    <div class="container container--narrow">
+      <div class="notice">
+        <h2>A note on regulations and professional advice</h2>
+        <p>
+          I’m a real estate professional, not an attorney, surveyor, or environmental specialist. Laws and
+          regulations affecting shorelines, docks, wetlands, floodplains, and water use can be specific to a
+          property and change over time. This page offers general guidance only. For any such question, please
+          consult the appropriate governmental authority or a qualified professional.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--limestone" aria-label="Waterfront questions">
+    <div class="container">
+      <FAQ items={faq} heading="Waterfront questions" schema={false} />
+      {
+        articles.length > 0 && (
+          <p class="more">
+            Related reading: <a class="text-link" href={insightHref(articles[0])}>{articles[0].data.title}</a>
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  <ConversationCTA
+    title="Considering the water?"
+    text="Whether you’re buying, selling, or still imagining, I’m glad to talk through what matters most."
+    label="Talk with me about waterfront"
+    href="/contact/?interest=waterfront"
+  />
+</BaseLayout>
+
+<style>
+  .topics {
+    display: grid;
+    gap: var(--space-xl) var(--space-xl);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  }
+  .topic {
+    border-top: 1px solid var(--c-sand-deep);
+    padding-top: var(--space-m);
+  }
+  .topic h3 {
+    font-size: var(--step-2);
+  }
+  .topic p {
+    margin: 0;
+  }
+  .lakes-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .lakes-list li {
+    margin: 0;
+    padding-block: var(--space-xs);
+    border-top: 1px solid rgb(255 255 255 / 0.25);
+  }
+  .lakes-list li:last-child {
+    border-bottom: 1px solid rgb(255 255 255 / 0.25);
+  }
+  .lakes-list a {
+    font-family: var(--font-serif);
+    font-size: var(--step-2);
+    text-decoration: none;
+  }
+  .notice {
+    border: 1px solid var(--c-sand-deep);
+    border-radius: var(--radius-m);
+    padding: var(--space-l);
+    background: var(--c-paper);
+  }
+  .notice h2 {
+    font-size: var(--step-2);
+  }
+  .notice p {
+    margin: 0;
+  }
+  .more {
+    margin-top: var(--space-xl);
+  }
+</style>

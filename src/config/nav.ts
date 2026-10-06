@@ -12,6 +12,8 @@ export const primaryNav = [
 export const primaryCta = { label: 'Start a Conversation', href: '/contact/' } as const;
 
 export const footerNav = [
+  { label: 'Find Your Fit', href: '/find-your-fit/' },
+  { label: 'Home Search', href: '/home-search/' },
   { label: 'Properties', href: '/properties/' },
   { label: 'Refer Someone', href: '/refer/' },
   { label: 'Leave a Review', href: '/review/' },

@@ -36,35 +36,51 @@ const hasEndpoint = Boolean(site.forms.contact || site.forms.review);
         hasEndpoint ? (
           <p>
             Form submissions are sent to a third-party form service, currently Formspree, which delivers them to
-            Amie by email. That service processes your submission on its servers; its own privacy policy
-            describes how it handles data. Submissions are also received in Amie’s email inbox.
+            me by email. That service processes your submission on its servers; its own privacy policy
+            describes how it handles data. Submissions also arrive in my email inbox.
           </p>
         ) : (
           <p>
-            Forms on this site prepare an email to Amie. Nothing is sent until you send the message from your
+            Forms on this site prepare an email to me. Nothing is sent until you send the message from your
             own email application.
           </p>
         )
       }
 
-      <h2>How Amie uses your information</h2>
+      <h2>Find Your West Michigan Fit and saved searches</h2>
+      <p>
+        The Find Your West Michigan Fit guide runs entirely in your browser. Your answers are not collected,
+        stored, or sent anywhere while you use it, and you don’t need to provide any contact information to see
+        your results.
+      </p>
+      <p>
+        If you choose “Send me homes that fit this,” your answers (as preference selections, such as water
+        priority or lot preference) travel in the address of the saved-search page so the form can be filled in
+        for you. They contain no personal information. When you submit the saved-search form, the details you
+        enter, plus a short summary of your Find Your Fit selections and results, are sent to me through the
+        form service described above. I use them to set up a saved search in my own listing system by hand. The
+        site does not create listing alerts automatically.
+      </p>
+
+      <h2>How I use your information</h2>
       <ul>
         <li>To reply to your message or inquiry.</li>
+        <li>For saved-search requests: to set up a search for you and send matching homes.</li>
         <li>
-          For reviews: to verify that a review is genuine. Reviews are never published automatically. Amie
-          confirms them and your permission first, and your email address is never published.
+          For reviews: to verify that a review is genuine. Reviews are never published automatically. I
+          confirm them and your permission first, and your email address is never published.
         </li>
         <li>
           For referrals: to reach out to the person you introduced, in the way you suggested. Please share
           someone’s details only if they’re comfortable with it.
         </li>
       </ul>
-      <p>Amie does not sell your information.</p>
+      <p>I do not sell your information.</p>
 
-      <h2>Emailing Amie directly</h2>
+      <h2>Emailing me directly</h2>
       <p>
         If you email <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>, your message is handled
-        by your email provider and Amie’s, under their policies.
+        by your email provider and mine, under their policies.
       </p>
 
       <h2>External links</h2>

@@ -31,8 +31,12 @@ export const site = {
   contactEmail: 'Amieoren@yahoo.com',
   siteUrl: resolveSiteUrl(import.meta.env.PUBLIC_SITE_URL),
   tagline: 'Real estate guidance for the moments that matter.',
+  /** Neutral third-person description for metadata and structured data. */
   description:
-    'Amie Oren brings experience, local knowledge, attention to detail, and highly personal service to buyers and sellers navigating important moves throughout West Michigan.',
+    'Amie Oren, a West Michigan real estate professional with more than 15 years of experience, brings local knowledge, attention to detail, and highly personal service to buyers and sellers navigating important moves.',
+  /** First-person supporting line for the homepage hero. */
+  heroIntro:
+    'For more than 15 years, I’ve helped buyers and sellers throughout West Michigan navigate moves that are about far more than a transaction. I bring local knowledge, close attention to detail, and highly personal service to every decision.',
 
   /** Unknown until supplied. Leave undefined - the UI hides anything that is not set. */
   phone: undefined as string | undefined,
@@ -60,6 +64,7 @@ export const site = {
   forms: {
     contact: formEndpoint,
     referral: formEndpoint,
+    search: formEndpoint,
     review: endpoint(import.meta.env.PUBLIC_REVIEW_FORM_ENDPOINT, formEndpoint),
   },
 } as const;
