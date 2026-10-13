@@ -2,23 +2,37 @@
 /**
  * Markup template for one Location Fit result. The page script clones this <template> and fills
  * the [data-*] slots, so all result markup and styling live here (one place, no duplicate markup).
+ * Content comes from src/utils/fit.ts and src/data/fitOrientation.ts.
  */
 ---
 
 <template id="fit-card-template">
   <article class="fit-card" data-card>
-    <p class="fit-card__rank eyebrow" data-rank></p>
-    <h3 class="fit-card__name" data-name></h3>
-    <p class="fit-card__why" data-why></p>
-    <div class="fit-card__block" data-matches-block>
-      <h4>What lines up</h4>
-      <ul data-matches></ul>
+    <h3 class="fit-card__title">
+      <span class="fit-card__name" data-name></span>
+      <span class="fit-card__pos" data-pos></span>
+    </h3>
+    <p class="fit-card__summary" data-summary></p>
+
+    <section class="fit-card__block">
+      <h4>Why it fits</h4>
+      <ul class="fit-card__why" data-why></ul>
+    </section>
+
+    <section class="fit-card__block">
+      <h4>What I’d want you to know</h4>
+      <ul data-know></ul>
+    </section>
+
+    <section class="fit-card__block fit-card__tour">
+      <h4>If I were showing you the area…</h4>
+      <p data-tour></p>
+    </section>
+
+    <div class="fit-card__actions">
+      <a class="btn btn--secondary fit-card__cta" data-search></a>
+      <a class="text-link" data-link>Read the community guide</a>
     </div>
-    <div class="fit-card__block" data-considerations-block>
-      <h4>Worth weighing</h4>
-      <ul data-considerations></ul>
-    </div>
-    <a class="text-link" data-link>Read the community guide</a>
   </article>
 </template>
 
@@ -26,6 +40,8 @@
   .fit-card {
     padding: var(--space-l) 0 0;
     border-top: 1px solid var(--c-sand-deep);
+    display: grid;
+    gap: var(--space-m);
   }
   .fit-card--lead {
     background: var(--c-paper);
@@ -34,16 +50,31 @@
     padding: var(--space-l);
     box-shadow: var(--shadow-m);
   }
+  .fit-card__title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.6rem;
+    margin: 0;
+  }
   .fit-card__name {
     font-size: var(--step-4);
-    margin-bottom: var(--space-xs);
   }
   .fit-card--lead .fit-card__name {
     font-size: var(--step-5);
   }
-  .fit-card__why {
+  .fit-card__pos {
+    font-family: var(--font-sans);
+    font-size: var(--step--1);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-lake);
+    font-weight: 500;
+  }
+  .fit-card__summary {
     font-size: var(--step-1);
-    max-width: 40rem;
+    max-width: 42rem;
+    margin: 0;
   }
   .fit-card__block h4 {
     font-family: var(--font-sans);
@@ -56,8 +87,49 @@
   }
   .fit-card__block ul {
     padding-left: 1.1rem;
+    margin: 0;
   }
-  .fit-card__block[hidden] {
-    display: none;
+  .fit-card__block li {
+    margin-bottom: var(--space-2xs);
+  }
+  .fit-card__why strong {
+    font-weight: 600;
+    color: var(--c-charcoal);
+  }
+  .fit-card__tour {
+    border-left: 2px solid var(--c-lake);
+    padding-left: var(--space-m);
+  }
+  .fit-card__tour h4 {
+    font-family: var(--font-serif);
+    font-size: var(--step-2);
+    font-style: italic;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--c-lake-deep);
+  }
+  .fit-card__tour p {
+    margin: 0;
+    font-size: var(--step-1);
+    line-height: 1.6;
+    max-width: 42rem;
+  }
+  .fit-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-s) var(--space-l);
+    padding-top: var(--space-s);
+    border-top: 1px solid var(--c-line);
+  }
+  .fit-card__cta {
+    min-height: 2.75rem;
+    padding: 0.55rem 1.25rem;
+    font-size: var(--step--1);
+  }
+  @media (max-width: 35.99em) {
+    .fit-card__cta {
+      width: 100%;
+    }
   }
 </style>

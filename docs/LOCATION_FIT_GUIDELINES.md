@@ -4,26 +4,25 @@ Page: `/find-your-fit/` · Configuration: `src/data/locationFit.ts` · Engine: `
 
 ## What the tool does
 
-It asks nine short questions about **home and lifestyle preferences** (water, village access, lot and privacy, housing character, upkeep, Grand Rapids access, everyday recreation, setting, and optional priorities) and suggests **two or three** of the five communities (Rockford, Ada, East Grand Rapids, Cascade, Forest Hills) as places to explore first.
+Page: `/find-your-fit/`. It asks **six or seven** short questions about **home and lifestyle preferences** and suggests **two or three** of the five communities (Rockford, Ada, East Grand Rapids, Cascade, Forest Hills) as places to explore first, "based on what you told me."
 
-- It is deterministic, runs entirely in the browser, and sends nothing while a visitor answers.
-- No name, email, or phone is requested before results. Value comes first; the saved-search request comes after.
-- Results are presented as "Strongest fit" and "Also worth exploring", with explanations written from the visitor's own answers, honest "worth weighing" considerations, and a link to the full community page. It never shows percentages or scores.
-- If Rockford leads and water is a stated priority, a block links to the Rockford-area lakes.
-
-## Plain-language answers (V3)
-
-Answer choices must be understandable without explanation. The setting question previously offered “Close-in and connected”, which was not self-explanatory. It now reads:
-
-| Value | Label | Visible hint |
+| # | Question (`formField`) | Notes |
 |---|---|---|
-| `close_in` | Closer to Grand Rapids and everyday amenities | Convenient to the city, restaurants, shopping and daily conveniences. |
-| `village` | A village or town-center feel | A recognizable community center with dining and shops close by. |
-| `lake` | Centered on a lake | Daily life organized around the water. |
-| `wooded` | Wooded and private | More space, trees and separation from neighbors. |
-| `flexible` | Flexible | |
+| 1 | What matters most to you? Choose up to three (`top_priorities`) | Strongest signal (weight 3). Drives branching. |
+| 2 | What kind of water setting are you most drawn to? (`water_type`) | **Branch:** shown only if water is a top priority. All-sports lake, quieter inland lake, riverfront, near water, open. |
+| 3 | Which setting feels most like home to you? (`setting`) | Village, connected neighborhood, larger lot, wooded, lake-centered, flexible (each with a visible hint). |
+| 4 | What kind of home are you most drawn to? (`home_preference`) | Character vs. traditional vs. newer/updated vs. move-in ready. |
+| 5 | Trade a shorter drive for setting, space or water? (`drive_tradeoff`) | The **only** Grand Rapids proximity question. Measures willingness to trade drive time; never implies a community lacks access. |
+| 6 | How much property care are you comfortable with? (`property_care`) | Actual ownership burden, including waterfront upkeep. |
+| 7 | What would be hardest to give up? (`hardest_to_give_up`) | Modest extra signal **and** the tie-breaker. |
 
-The option `hint` is rendered as visible text under the label (not a tooltip). The underlying dimension (`setting_closein`, proximity and connectedness versus space and privacy), the option values and the scoring weights are unchanged, so results and saved-search field values are the same. Do not reintroduce “close-in” in user-facing text; a unit test and an e2e test check for it.
+Concepts kept deliberately distinct: **newer/updated** (age, style, renovation state) vs. **move-in ready** (willingness to take on projects) vs. **lower maintenance** (ongoing property burden).
+
+- Deterministic, runs entirely in the browser, sends nothing while a visitor answers. No name, email or phone before results.
+- Progress counts only the questions actually shown ("Question 2 of 7" with the water branch, "of 6" without). Back retraces the questions the visitor saw; removing water from Q1 clears the water answer.
+- Each result card has: the community and fit position; **Why it fits** (2-4 items, each quoting one of the visitor's answers); **What I'd want you to know** (relevant tradeoffs first, then neutral orientation facts); **If I were showing you the area...** (Amie's first-person orientation plus one personalized stop); a guide link; and **Send me homes that fit {Community}**. No percentages or scores are shown.
+- If Rockford is among the leading results and lake water (not river-only) is a priority, a block links to the Rockford-area lakes.
+- Answer text must be plain language with visible hints where useful (no tooltips). Do not use "close-in" in user-facing text; tests check for it.
 
 ## What it intentionally does not do
 
@@ -33,13 +32,16 @@ The option `hint` is rendered as visible text under the label (not a tooltip). T
 
 ## How the matching works
 
-1. Each answer maps to one or more **preferences** `{ dimension, target 0..1, weight }`.
-2. Each community has a **profile**: a 0..1 value for each dimension (for example how strongly water or walkable village access characterize the area).
-3. A community's score is the weighted average of `1 - |target - profileValue|`. Preferences on the same dimension are merged first.
-4. The top two are always shown; a third is shown only when it scores within 0.10 of the leader. Ties resolve by the community order in `communityProfiles`.
-5. Explanations come from the preferences a community matches closely; considerations come from strongly stated preferences it matches poorly (using the community's own `tradeoffs` text where provided).
+1. Each answer maps to **preferences** `{ dimension, target 0..1, weight }` (`src/data/locationFit.ts`).
+2. Each community has a **profile**: a 0..1 value per dimension.
+3. Preferences on the same dimension are merged; a community's score is the weighted average of `1 - |target - value|`.
+4. **One dimension per concept.** Walkability (`village`), privacy (`space`) and Grand Rapids proximity (`proximity`) are each measured once, so a community can't win by being counted several times for the same trait. This is what previously over-rewarded East Grand Rapids.
+5. **Water is split by type:** `lakeDepth` (a deep, varied inland-lake market), `allSports`, `quietLake`, `river`, `nearWater`, and `waterGeneral` (when no type is given). Rockford is strong on lake types; East Grand Rapids is strong on "near water" (Reeds Lake) but low on lake-market depth; Ada and Cascade are strong on river; Forest Hills is not a waterfront market.
+6. Q7 adds a modest weight (1.5; water uses the chosen water type at half weight) and breaks near-ties (within 0.01) toward the community strongest on what the visitor would hate to give up.
+7. The top two are always shown; a third only when within 0.06 of the leader.
+8. Result copy comes from `src/data/fitOrientation.ts` (reasons, orientation facts, tradeoffs, tour base and personalized stops). The personalized stop is chosen from, in order: the Q7 answer, the water type, Q1 priorities, the setting, and a shortest-drive preference. At most one water-related tradeoff appears per card.
 
-Everything is inspectable in `src/data/locationFit.ts`. Profile values are editorial judgments for Amie to review.
+Every factual statement in result copy is sourced in `docs/LOCATION_FIT_SOURCES.md`.
 
 ## Fair-housing boundary (do not cross)
 
@@ -62,14 +64,15 @@ Why these inputs are excluded: they are protected characteristics (or common pro
 
 ## Guardrails in the repository
 
-- `tests/unit/fit.spec.ts` scans the entire Location Fit configuration (questions, answers, dimension labels, community profile text) and generated explanations for prohibited terms. A failing test means a prohibited word was added; fix the wording rather than the list.
+- `tests/unit/fit.spec.ts` scans the Location Fit questions, profiles, all result content in `fitOrientation.ts`, the source files themselves (outside guardrail comments), and generated results for 120 answer combinations for prohibited terms. It also checks five personas (lake, walkable/character, wooded/privacy, river, village + space). A failing test means a prohibited word was added; fix the wording rather than the list.
 - Community pages still say to confirm school boundaries "directly with the district" only where a name like Forest Hills depends on it. They contain no school quality or ranking claims. Keep it that way.
 
 ## How to edit safely
 
-- **Change weights or profile values:** edit numbers in `communityProfiles` (profiles) or `fitQuestions[].options[].prefs` (answer weights). Re-run `npm test`.
-- **Add a community:** add it to `src/data/communities.ts`, add a profile (all 11 dimensions) in `communityProfiles`, then run the tests (they check every profile covers every dimension and matches a community).
-- **Change a question:** edit `fitQuestions`. Keep answers about preferences, keep `formField` names stable (they are the field names Amie sees in Formspree emails), and keep at least one non-judgmental option such as "Flexible" or "Not important."
-- **Add a dimension:** add it to the `Dimension` type, `dimensionLabels`, and every profile.
-- Never describe a community as suited to a particular demographic group.
+- **Change weights or profile values:** edit `communityProfiles` (traits) or `fitQuestions[].options[].prefs` (answer targets and weights) in `src/data/locationFit.ts`, then run `npm test`; the persona tests show whether the directional behavior still holds.
+- **Change result wording or Amie's recommendations:** edit `src/data/fitOrientation.ts`. Add a personalized stop by keying it to a dimension (e.g. `nature`) or a water type (e.g. `riverfront`). Verify any new place or fact and add it to `docs/LOCATION_FIT_SOURCES.md`.
+- **Add a community:** add it to `src/data/communities.ts`, a full profile (every dimension) in `communityProfiles`, and an entry in `fitOrientation`. Tests check all three.
+- **Change a question:** keep answers about preferences, keep `formField` names stable (Amie sees them in Formspree emails), and keep a non-judgmental option such as "Flexible" or "Open." A branch uses `showIf`.
+- **Add a dimension:** add it to the `Dimension` type, the `dimensions` list, and every profile.
+- Never describe a community as suited to a particular demographic group, and never state lake acreage, depths, boating rules or public access unless verified from an authoritative source.
 - Re-read this file before any edit.

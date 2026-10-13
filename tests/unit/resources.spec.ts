@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { communities } from '../../src/data/communities';
 import { communityResources } from '../../src/data/communityResources';
-import { fitQuestions, communityProfiles, dimensionLabels } from '../../src/data/locationFit';
+import { fitQuestions, communityProfiles } from '../../src/data/locationFit';
+import { fitOrientation } from '../../src/data/fitOrientation';
 
 // Directories, portals and lead-generation sites are not acceptable outbound resources.
 const lowQualityHosts = /(zillow|realtor\.com|redfin|trulia|homes\.com|movoto|niche\.com|yelp|tripadvisor|facebook|linkedin|nextdoor|apartments\.com|marketgrandrapids|polarisrealestate|lucashoward)/i;
@@ -40,18 +41,15 @@ test.describe('community resource links (data)', () => {
 });
 
 test.describe('Location Fit plain-language setting wording', () => {
-  test('“close-in” no longer appears in any user-facing Location Fit text', () => {
-    const corpus = JSON.stringify({ fitQuestions, communityProfiles, dimensionLabels });
-    // Internal identifiers (`close_in`, `setting_closein`) have no hyphen or space, so they do not match.
+  test('“close-in” does not appear in any user-facing Location Fit text', () => {
+    const corpus = JSON.stringify({ fitQuestions, communityProfiles, fitOrientation });
     expect(corpus).not.toMatch(/close[- ]in(?!\w)/i);
   });
 
-  test('the setting question states what “closer in” means in plain language', () => {
+  test('the setting question offers distinct, plainly described settings', () => {
     const setting = fitQuestions.find((q) => q.id === 'setting')!;
-    const closer = setting.options.find((o) => o.value === 'close_in')!;
-    expect(closer.label).toBe('Closer to Grand Rapids and everyday amenities');
-    expect(closer.hint).toMatch(/restaurants, shopping/i);
-    // The proximity-versus-space dimension survives: the other options still describe distinct settings.
-    expect(setting.options.map((o) => o.value)).toEqual(['close_in', 'village', 'lake', 'wooded', 'flexible']);
+    expect(setting.prompt).toBe('Which setting feels most like home to you?');
+    expect(setting.options.map((o) => o.value)).toEqual(['village', 'connected', 'larger_lot', 'wooded', 'lake', 'flexible']);
+    for (const o of setting.options.filter((x) => x.value !== 'flexible')) expect(o.hint, o.value).toBeTruthy();
   });
 });

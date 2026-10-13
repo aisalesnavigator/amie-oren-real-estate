@@ -1,41 +1,68 @@
 /**
- * "Find Your West Michigan Fit": editable configuration.
+ * "Find Your West Michigan Fit": questions, branching, and community profiles.
  *
- * HOW IT WORKS (deterministic, local, explainable):
- *  - Each answer contributes one or more PREFERENCES: { dim, target (0..1), weight }.
- *  - Each community has a PROFILE: a 0..1 value for every dimension (how strongly that
- *    dimension characterizes the community).
- *  - A community's score is the weighted average of (1 - |target - profileValue|) over all preferences.
- *  - The top 2-3 communities are shown, with explanations generated from the visitor's own answers.
+ * HOW IT WORKS (deterministic, local, explainable; no AI or network calls):
+ *  - Each answer contributes PREFERENCES: { dim, target (0..1), weight }.
+ *  - Each community has a PROFILE: a 0..1 value per dimension (how strongly that trait characterizes it).
+ *  - Preferences on the same dimension are merged, then a community's score is the weighted average of
+ *    (1 - |target - value|). Question 1 (top priorities) carries the most weight; question 7 is a
+ *    tie-breaker plus a modest extra signal.
+ *  - Each concept is measured by ONE dimension (water types are split, but walkability, privacy and
+ *    Grand Rapids proximity each appear once), so no community wins by being counted twice.
  *
- * FAIR HOUSING BOUNDARY: dimensions and questions describe PROPERTY and LIFESTYLE PREFERENCES only.
- * Never add questions, answers, dimensions, or profile text about protected characteristics or their
- * proxies (age, family status, children, schools, religion, race, ethnicity, national origin, sex/gender,
- * disability, crime/safety perceptions, demographics). See docs/LOCATION_FIT_GUIDELINES.md. A test
- * scans this file for prohibited terms.
+ * Result copy (reasons, orientation, "If I were showing you the area…") lives in
+ * src/data/fitOrientation.ts. Sources for factual statements: docs/LOCATION_FIT_SOURCES.md.
  *
- * Profile values are editorial judgments and should be reviewed by Amie. Change them freely, since
- * nothing else depends on the exact numbers.
+ * FAIR HOUSING BOUNDARY: property and lifestyle preferences only. Never add questions, answers,
+ * dimensions or text about protected characteristics or their proxies (age, family status, children,
+ * schools, religion, race, ethnicity, national origin, sex/gender, disability, crime/safety perceptions,
+ * demographics). See docs/LOCATION_FIT_GUIDELINES.md. A test scans this file and fitOrientation.ts.
+ *
+ * Profile values are editorial judgments for Amie to review. Change them freely.
  */
 
 export type Dimension =
-  | 'water'
+  /** Depth and variety of the inland-lake waterfront market (several lakes to choose among). */
+  | 'lakeDepth'
+  /** Lakes where boating is a central part of lake life. */
+  | 'allSports'
+  /** Quieter inland-lake settings. */
+  | 'quietLake'
+  /** River frontage and river-oriented settings. */
+  | 'river'
+  /** Enjoying water nearby (parks, trails, public access) without owning waterfront. */
+  | 'nearWater'
+  /** Overall water presence, used when no water type is specified. */
+  | 'waterGeneral'
+  /** Walkable restaurants, coffee, and a recognizable town center. */
   | 'village'
+  /** Connected, neighborhood-style streets. */
+  | 'connected'
+  /** Larger lots and privacy. */
   | 'space'
+  /** Trails, woods, and natural surroundings. */
+  | 'nature'
+  /** Older homes with architectural character. */
   | 'character'
-  | 'upkeep'
-  | 'centrality'
-  | 'outdoors'
-  | 'setting_closein'
-  | 'setting_village'
-  | 'setting_lake'
-  | 'setting_wooded';
+  /** Newer or recently updated homes (age/style/renovation state). */
+  | 'updated'
+  /** Move-in-ready options (willingness to take on projects). Mostly a search filter. */
+  | 'turnkey'
+  /** Lower ongoing property burden available (smaller lots, simpler properties). */
+  | 'lowCare'
+  /** A shorter, easier drive to central Grand Rapids. */
+  | 'proximity';
+
+export const dimensions: Dimension[] = [
+  'lakeDepth', 'allSports', 'quietLake', 'river', 'nearWater', 'waterGeneral', 'village', 'connected',
+  'space', 'nature', 'character', 'updated', 'turnkey', 'lowCare', 'proximity',
+];
 
 export interface Preference {
   dim: Dimension;
   /** 0..1: where on the dimension the visitor's preference sits. */
   target: number;
-  /** Importance. ~1 = mild, 2 = clear, 3 = strong. */
+  /** Importance. Q1 priorities = 3; branch = 3; setting = 2; others smaller. */
   weight: number;
 }
 
@@ -44,209 +71,160 @@ export interface FitOption {
   label: string;
   hint?: string;
   prefs: Preference[];
+  /** Q7 only: use the visitor's chosen water type (scaled) instead of `prefs`, when one exists. */
+  useWaterType?: boolean;
+  /** Q7 only: the dimension used to break near-ties. */
+  tieBreak?: Dimension;
 }
 
 export interface FitQuestion {
   id: string;
-  /** Name of the hidden field sent with the saved-search request. */
+  /** Name of the hidden field sent with the saved-search request. Keep stable. */
   formField: string;
   prompt: string;
+  /** Short label used in the saved-search summary Amie receives. */
+  summaryLabel: string;
   help?: string;
   type: 'single' | 'multi';
   /** For multi: maximum number of choices. */
   max?: number;
   required: boolean;
+  /** Branching: show this question only when another answer includes a value. */
+  showIf?: { question: string; includes: string };
   options: FitOption[];
 }
 
-export const dimensionLabels: Record<Dimension, { high: string; mid: string; low: string }> = {
-  water: {
-    high: 'being on or close to the water',
-    mid: 'some access to water',
-    low: 'not needing to be near water',
-  },
-  village: {
-    high: 'easy access to restaurants, coffee, and a recognizable community center',
-    mid: 'a village or town center within reach',
-    low: 'more separation from busy centers',
-  },
-  space: {
-    high: 'a larger lot and more privacy',
-    mid: 'some room around you',
-    low: 'a connected neighborhood',
-  },
-  character: {
-    high: 'older homes with architectural character',
-    mid: 'established, traditional homes',
-    low: 'newer or updated homes',
-  },
-  upkeep: {
-    high: 'having more property to care for',
-    mid: 'moderate upkeep',
-    low: 'lower-maintenance living',
-  },
-  centrality: {
-    high: 'convenient access to central Grand Rapids',
-    mid: 'reasonable access to central Grand Rapids',
-    low: 'trading proximity for setting and space',
-  },
-  outdoors: {
-    high: 'trails and outdoor recreation close at hand',
-    mid: 'some access to the outdoors',
-    low: 'the home and property itself over nearby recreation',
-  },
-  setting_closein: { high: 'a setting closer to Grand Rapids and everyday amenities', mid: 'a setting closer to Grand Rapids and everyday amenities', low: 'a setting closer to Grand Rapids and everyday amenities' },
-  setting_village: { high: 'a village- or town-center setting', mid: 'a village- or town-center setting', low: 'a village- or town-center setting' },
-  setting_lake: { high: 'a lake-centered setting', mid: 'a lake-centered setting', low: 'a lake-centered setting' },
-  setting_wooded: { high: 'a wooded, private setting', mid: 'a wooded, private setting', low: 'a wooded, private setting' },
-};
-
 const p = (dim: Dimension, target: number, weight: number): Preference => ({ dim, target, weight });
+
+/** Weight multiplier applied to the water-type preferences when Q7 says water is hardest to give up. */
+export const TIE_BREAK_WATER_SCALE = 0.5;
 
 export const fitQuestions: FitQuestion[] = [
   {
-    id: 'water',
-    formField: 'water_priority',
-    prompt: 'How important is being on or close to water?',
-    type: 'single',
+    id: 'priorities',
+    formField: 'top_priorities',
+    prompt: 'What matters most to you?',
+    summaryLabel: 'Top priorities',
+    help: 'Choose up to three.',
+    type: 'multi',
+    max: 3,
     required: true,
     options: [
-      { value: 'waterfront', label: 'I want waterfront if possible', prefs: [p('water', 1, 3)] },
-      { value: 'nearby', label: 'I want water and recreation nearby', prefs: [p('water', 0.8, 2)] },
-      { value: 'nice', label: 'It would be nice to have', prefs: [p('water', 0.6, 1)] },
-      { value: 'not_important', label: 'Not important', prefs: [] },
+      { value: 'water', label: 'Waterfront or water access', prefs: [] /* refined by the water-setting question */ },
+      { value: 'walkable', label: 'Walkable restaurants, coffee, and town-center feel', prefs: [p('village', 1, 3)] },
+      { value: 'privacy', label: 'Larger lot and privacy', prefs: [p('space', 1, 3)] },
+      { value: 'character', label: 'Architectural character', prefs: [p('character', 1, 3)] },
+      { value: 'updated', label: 'Newer or updated home', prefs: [p('updated', 1, 3)] },
+      {
+        value: 'move_in_ready',
+        label: 'Move-in ready / minimal projects',
+        hint: 'How much work you want to take on when you move in.',
+        prefs: [p('turnkey', 1, 1.5)],
+      },
+      {
+        value: 'low_maintenance',
+        label: 'Lower-maintenance property',
+        hint: 'Less ongoing yard, grounds, and property care over time.',
+        prefs: [p('lowCare', 1, 3)],
+      },
+      { value: 'short_drive', label: 'Shorter drive to Grand Rapids', prefs: [p('proximity', 1, 3)] },
+      { value: 'nature', label: 'Trails, woods, and natural surroundings', prefs: [p('nature', 1, 3)] },
     ],
   },
   {
-    id: 'village',
-    formField: 'walkability',
-    prompt: 'How important is it to reach restaurants, coffee, shopping, or a recognizable community center easily?',
+    id: 'water_type',
+    formField: 'water_type',
+    prompt: 'What kind of water setting are you most drawn to?',
+    summaryLabel: 'Water setting',
     type: 'single',
     required: true,
+    showIf: { question: 'priorities', includes: 'water' },
     options: [
-      { value: 'very', label: 'Very important', prefs: [p('village', 1, 3)] },
-      { value: 'somewhat', label: 'Somewhat important', prefs: [p('village', 0.7, 2)] },
-      { value: 'not_deciding', label: 'Not a deciding factor', prefs: [] },
-      { value: 'separation', label: 'I prefer more separation and privacy', prefs: [p('village', 0.1, 2)] },
-    ],
-  },
-  {
-    id: 'lot',
-    formField: 'privacy_preference',
-    prompt: 'Which feels more appealing?',
-    type: 'single',
-    required: true,
-    options: [
-      { value: 'connected', label: 'A connected neighborhood', prefs: [p('space', 0.15, 2)] },
-      { value: 'some_room', label: 'Some room around me', prefs: [p('space', 0.5, 2)] },
-      { value: 'large', label: 'A larger lot and privacy', prefs: [p('space', 1, 3)] },
-      { value: 'flexible', label: 'Flexible', prefs: [] },
-    ],
-  },
-  {
-    id: 'character',
-    formField: 'home_character',
-    prompt: 'Which housing direction appeals most?',
-    type: 'single',
-    required: true,
-    options: [
-      { value: 'older', label: 'Older homes with architectural character', prefs: [p('character', 1, 2)] },
-      { value: 'traditional', label: 'Established, traditional homes', prefs: [p('character', 0.55, 2)] },
-      { value: 'newer', label: 'Newer or updated homes', prefs: [p('character', 0, 2)] },
-      { value: 'open', label: 'I’m open to different styles', prefs: [] },
-    ],
-  },
-  {
-    id: 'maintenance',
-    formField: 'maintenance',
-    prompt: 'How involved do you want to be with the property itself?',
-    type: 'single',
-    required: true,
-    options: [
-      { value: 'low', label: 'Lower maintenance matters a lot', prefs: [p('upkeep', 0, 3)] },
-      { value: 'moderate', label: 'Moderate upkeep is fine', prefs: [p('upkeep', 0.5, 1.5)] },
-      { value: 'more_property', label: 'I enjoy having more property', prefs: [p('upkeep', 1, 2)] },
-      { value: 'flexible', label: 'Flexible', prefs: [] },
-    ],
-  },
-  {
-    id: 'access',
-    formField: 'gr_access',
-    prompt: 'How important is convenient access to central Grand Rapids?',
-    type: 'single',
-    required: true,
-    options: [
-      { value: 'very', label: 'Very important', prefs: [p('centrality', 1, 3)] },
-      { value: 'helpful', label: 'Helpful', prefs: [p('centrality', 0.7, 2)] },
-      { value: 'minor', label: 'Not a major concern', prefs: [] },
-      { value: 'trade', label: 'I’m comfortable trading proximity for setting and space', prefs: [p('centrality', 0.2, 1.5)] },
-    ],
-  },
-  {
-    id: 'recreation',
-    formField: 'recreation',
-    prompt: 'Which kind of access matters most to your everyday life?',
-    type: 'single',
-    required: true,
-    options: [
-      { value: 'lakes', label: 'Lakes and water', prefs: [p('water', 1, 2), p('outdoors', 0.8, 1)] },
-      { value: 'trails', label: 'Trails and the outdoors', prefs: [p('outdoors', 1, 2.5)] },
-      { value: 'walkable', label: 'Walkable amenities', prefs: [p('village', 1, 2)] },
-      { value: 'property', label: 'The home and property itself matter more', prefs: [p('space', 0.7, 1), p('outdoors', 0.2, 1)] },
+      { value: 'all_sports', label: 'All-sports lake / boating', prefs: [p('allSports', 1, 3), p('lakeDepth', 1, 1)] },
+      { value: 'quiet_lake', label: 'Quieter inland lake', prefs: [p('quietLake', 1, 3), p('lakeDepth', 1, 1)] },
+      { value: 'riverfront', label: 'Riverfront', prefs: [p('river', 1, 3)] },
+      { value: 'near_water', label: 'Near water, but not necessarily on it', prefs: [p('nearWater', 1, 3)] },
+      { value: 'any_water', label: 'Open to any of these', prefs: [p('waterGeneral', 1, 3)] },
     ],
   },
   {
     id: 'setting',
     formField: 'setting',
-    prompt: 'Which setting sounds most appealing?',
+    prompt: 'Which setting feels most like home to you?',
+    summaryLabel: 'Setting',
     type: 'single',
     required: true,
     options: [
+      { value: 'village', label: 'Walkable village or town-center', hint: 'Shops and dining within an easy walk.', prefs: [p('village', 1, 2)] },
+      { value: 'connected', label: 'Connected neighborhood', hint: 'Sidewalks, neighbors, and streets that link together.', prefs: [p('connected', 1, 2)] },
+      { value: 'larger_lot', label: 'Larger lot with some privacy', hint: 'More room between you and the next home.', prefs: [p('space', 1, 2)] },
+      { value: 'wooded', label: 'Wooded and private', hint: 'Trees, quiet, and natural surroundings.', prefs: [p('nature', 1, 2), p('space', 1, 1)] },
+      { value: 'lake', label: 'Lake-centered', hint: 'Daily life organized around the water.', prefs: [p('lakeDepth', 1, 2)] },
+      { value: 'flexible', label: 'Flexible', prefs: [] },
+    ],
+  },
+  {
+    id: 'home',
+    formField: 'home_preference',
+    prompt: 'What kind of home are you most drawn to?',
+    summaryLabel: 'Home preference',
+    type: 'single',
+    required: true,
+    options: [
+      { value: 'older_character', label: 'Older home with architectural character', prefs: [p('character', 1, 1.5)] },
+      { value: 'traditional', label: 'Established, traditional home', prefs: [p('character', 0.6, 1)] },
+      { value: 'updated', label: 'Newer or recently updated home', prefs: [p('updated', 1, 1.5)] },
+      { value: 'move_in_ready', label: 'Move-in ready with minimal projects', prefs: [p('turnkey', 1, 1)] },
+      { value: 'open', label: 'I’m open to different styles and conditions', prefs: [] },
+    ],
+  },
+  {
+    id: 'drive',
+    formField: 'drive_tradeoff',
+    prompt: 'How much are you willing to trade a shorter drive to Grand Rapids for the right setting, space, or water?',
+    summaryLabel: 'Drive to Grand Rapids',
+    type: 'single',
+    required: true,
+    options: [
+      { value: 'shortest', label: 'I prefer the shortest, easiest drive possible', prefs: [p('proximity', 1, 2.5)] },
+      { value: 'moderate', label: 'A moderate drive is fine', prefs: [p('proximity', 0.6, 1)] },
+      { value: 'farther', label: 'I’m happy to drive farther for the right property or setting', prefs: [p('proximity', 0.25, 0.75)] },
+      { value: 'not_deciding', label: 'Not a deciding factor', prefs: [] },
+    ],
+  },
+  {
+    id: 'care',
+    formField: 'property_care',
+    prompt: 'How much property care are you comfortable taking on?',
+    summaryLabel: 'Property care',
+    type: 'single',
+    required: true,
+    options: [
+      { value: 'easy', label: 'I want something easy to maintain', prefs: [p('lowCare', 1, 2)] },
+      { value: 'typical', label: 'A typical yard and normal upkeep are fine', prefs: [p('lowCare', 0.55, 0.75)] },
+      { value: 'larger_lot', label: 'I’m comfortable with a larger lot or wooded property', prefs: [p('space', 1, 0.75), p('nature', 1, 0.5)] },
       {
-        value: 'close_in',
-        label: 'Closer to Grand Rapids and everyday amenities',
-        hint: 'Convenient to the city, restaurants, shopping and daily conveniences.',
-        prefs: [p('setting_closein', 1, 2)],
-      },
-      {
-        value: 'village',
-        label: 'A village or town-center feel',
-        hint: 'A recognizable community center with dining and shops close by.',
-        prefs: [p('setting_village', 1, 2)],
-      },
-      {
-        value: 'lake',
-        label: 'Centered on a lake',
-        hint: 'Daily life organized around the water.',
-        prefs: [p('setting_lake', 1, 2)],
-      },
-      {
-        value: 'wooded',
-        label: 'Wooded and private',
-        hint: 'More space, trees and separation from neighbors.',
-        prefs: [p('setting_wooded', 1, 2)],
+        value: 'waterfront',
+        label: 'I’m comfortable with waterfront upkeep like shoreline, dock, or seawall care',
+        prefs: [p('lakeDepth', 1, 0.75)],
       },
       { value: 'flexible', label: 'Flexible', prefs: [] },
     ],
   },
   {
-    id: 'priorities',
-    formField: 'priorities',
-    prompt: 'Optional: choose up to three priorities that matter most.',
-    help: 'You can skip this one.',
-    type: 'multi',
-    max: 3,
-    required: false,
+    id: 'give_up',
+    formField: 'hardest_to_give_up',
+    prompt: 'What would be hardest for you to give up?',
+    summaryLabel: 'Hardest to give up',
+    type: 'single',
+    required: true,
     options: [
-      { value: 'waterfront', label: 'Waterfront', prefs: [p('water', 1, 1.5)] },
-      { value: 'walkability', label: 'Walkability', prefs: [p('village', 1, 1.5)] },
-      { value: 'larger_lot', label: 'A larger lot', prefs: [p('space', 1, 1.5)] },
-      { value: 'architectural_character', label: 'Architectural character', prefs: [p('character', 1, 1.5)] },
-      { value: 'newer_construction', label: 'Newer construction', prefs: [p('character', 0, 1.5)] },
-      { value: 'privacy', label: 'Privacy', prefs: [p('space', 1, 1.5), p('village', 0.1, 0.5)] },
-      { value: 'outdoor_recreation', label: 'Outdoor recreation', prefs: [p('outdoors', 1, 1.5)] },
-      { value: 'lower_maintenance', label: 'Lower maintenance', prefs: [p('upkeep', 0, 1.5)] },
-      { value: 'convenient_access', label: 'Convenient Grand Rapids access', prefs: [p('centrality', 1, 1.5)] },
+      { value: 'water', label: 'Being on or very near the water', prefs: [p('waterGeneral', 1, 1.5)], useWaterType: true, tieBreak: 'waterGeneral' },
+      { value: 'walkable', label: 'Walking to restaurants, coffee, and a town center', prefs: [p('village', 1, 1.5)], tieBreak: 'village' },
+      { value: 'privacy', label: 'Privacy and room around the home', prefs: [p('space', 1, 1.5)], tieBreak: 'space' },
+      { value: 'character', label: 'Architectural character', prefs: [p('character', 1, 1.5)], tieBreak: 'character' },
+      { value: 'short_drive', label: 'A shorter drive to Grand Rapids', prefs: [p('proximity', 1, 1.5)], tieBreak: 'proximity' },
+      { value: 'nature', label: 'Trails, woods, and natural surroundings', prefs: [p('nature', 1, 1.5)], tieBreak: 'nature' },
     ],
   },
 ];
@@ -255,82 +233,65 @@ export interface CommunityProfile {
   slug: string;
   name: string;
   values: Record<Dimension, number>;
-  /** Neutral, property- and setting-focused notes shown when a stated preference fits less well. */
-  tradeoffs: Partial<Record<Dimension, string>>;
 }
 
+/**
+ * Profiles. Rationale for the main distinctions (see docs/LOCATION_FIT_SOURCES.md):
+ *  - Rockford: several Rockford-area lakes to choose among (deep, varied lake market), a walkable
+ *    downtown on the Rogue River, the White Pine Trail, larger lots; a longer drive to the city.
+ *  - Ada: a compact walkable village where the Thornapple meets the Grand River, larger wooded lots,
+ *    township parks and preserves. Water here means rivers, not inland lakes.
+ *  - East Grand Rapids: walkable Gaslight Village, connected neighborhoods, older architecture, the
+ *    shortest drive to the city. One lake (Reeds Lake): strong for "near water", NOT a broad lake market.
+ *  - Cascade: Thornapple River, township pathways and parks, a balance of access and space; no single
+ *    village center on the scale of Ada or Gaslight Village.
+ *  - Forest Hills: larger wooded lots, natural areas and trails, space; water and walkable centers are
+ *    not defining features.
+ */
 export const communityProfiles: CommunityProfile[] = [
   {
     slug: 'rockford',
     name: 'Rockford',
     values: {
-      water: 1, village: 0.55, space: 0.75, character: 0.45, upkeep: 0.8, centrality: 0.3, outdoors: 0.9,
-      setting_closein: 0.1, setting_village: 0.55, setting_lake: 1, setting_wooded: 0.7,
-    },
-    tradeoffs: {
-      centrality: 'Day-to-day access to central Grand Rapids is less immediate than in the communities closest to the city, so it is worth testing the drives that matter to you.',
-      upkeep: 'Lake properties and larger lots usually come with more upkeep (shoreline, docks, grounds) than a compact in-town home.',
-      space: 'Lakefront and larger properties often trade some connectedness for room and privacy. If you want a tightly connected neighborhood, compare it with East Grand Rapids.',
-      character: 'Housing here varies widely, so architectural character depends on the specific property rather than the area.',
-      setting_closein: 'The feel here is lake-and-town rather than living close to the city and its everyday amenities.',
+      lakeDepth: 1, allSports: 0.9, quietLake: 0.9, river: 0.55, nearWater: 0.9, waterGeneral: 1,
+      village: 0.7, connected: 0.5, space: 0.8, nature: 0.85, character: 0.45, updated: 0.65,
+      turnkey: 0.6, lowCare: 0.4, proximity: 0.3,
     },
   },
   {
     slug: 'ada',
     name: 'Ada',
     values: {
-      water: 0.5, village: 0.8, space: 0.8, character: 0.6, upkeep: 0.7, centrality: 0.55, outdoors: 0.75,
-      setting_closein: 0.3, setting_village: 0.9, setting_lake: 0.3, setting_wooded: 0.75,
-    },
-    tradeoffs: {
-      water: 'Water here is more about rivers than the inland-lake lifestyle. If lake living is central, compare Rockford.',
-      setting_lake: 'Ada is more village-and-river than lake-centered. For a lake-centered setting, compare Rockford.',
-      upkeep: 'Larger, wooded, or river-adjacent properties can involve more care than a compact home.',
-      space: 'If you prefer a tightly connected neighborhood, compare East Grand Rapids.',
-      centrality: 'Access to central Grand Rapids is reasonable but less immediate than in the communities closest to the city.',
+      lakeDepth: 0.15, allSports: 0.1, quietLake: 0.15, river: 0.9, nearWater: 0.75, waterGeneral: 0.55,
+      village: 0.85, connected: 0.45, space: 0.85, nature: 0.85, character: 0.5, updated: 0.7,
+      turnkey: 0.65, lowCare: 0.35, proximity: 0.55,
     },
   },
   {
     slug: 'east-grand-rapids',
     name: 'East Grand Rapids',
     values: {
-      water: 0.8, village: 0.95, space: 0.2, character: 0.85, upkeep: 0.35, centrality: 0.95, outdoors: 0.55,
-      setting_closein: 1, setting_village: 0.8, setting_lake: 0.75, setting_wooded: 0.2,
-    },
-    tradeoffs: {
-      space: 'Lots are typically more modest here. If larger lots or maximum privacy become more important, you may also want to compare Ada or Forest Hills.',
-      setting_wooded: 'The setting is closer to the city and its amenities rather than wooded and private.',
-      upkeep: 'Older homes can bring their own maintenance considerations even on smaller lots.',
-      outdoors: 'Outdoor recreation here centers on the lake and nearby parks more than on large natural areas.',
-      centrality: 'East Grand Rapids is among the closest of these areas to central Grand Rapids, so if you are happy to trade proximity for more space or a different setting, other communities may offer more of that.',
+      lakeDepth: 0.2, allSports: 0.35, quietLake: 0.45, river: 0, nearWater: 0.85, waterGeneral: 0.6,
+      village: 1, connected: 0.95, space: 0.2, nature: 0.35, character: 0.9, updated: 0.45,
+      turnkey: 0.45, lowCare: 0.6, proximity: 1,
     },
   },
   {
     slug: 'cascade',
     name: 'Cascade',
     values: {
-      water: 0.3, village: 0.3, space: 0.6, character: 0.4, upkeep: 0.55, centrality: 0.65, outdoors: 0.55,
-      setting_closein: 0.5, setting_village: 0.25, setting_lake: 0.15, setting_wooded: 0.55,
-    },
-    tradeoffs: {
-      water: 'Cascade is not centered on lake living. If water access is a major priority, compare Rockford.',
-      village: 'Cascade has a less distinct walkable center than Ada or East Grand Rapids.',
-      setting_lake: 'Cascade is not centered on lake living. For a lake-centered setting, compare Rockford.',
-      character: 'Housing varies, but a strong concentration of older architectural character is not what defines the area.',
+      lakeDepth: 0.1, allSports: 0.1, quietLake: 0.1, river: 0.8, nearWater: 0.6, waterGeneral: 0.45,
+      village: 0.45, connected: 0.65, space: 0.65, nature: 0.65, character: 0.4, updated: 0.65,
+      turnkey: 0.6, lowCare: 0.55, proximity: 0.75,
     },
   },
   {
     slug: 'forest-hills',
     name: 'Forest Hills',
     values: {
-      water: 0.25, village: 0.25, space: 0.85, character: 0.45, upkeep: 0.7, centrality: 0.55, outdoors: 0.7,
-      setting_closein: 0.3, setting_village: 0.2, setting_lake: 0.1, setting_wooded: 0.95,
-    },
-    tradeoffs: {
-      water: 'Water access is not a defining feature here. If it matters a lot, compare Rockford.',
-      setting_lake: 'Forest Hills is not lake-centered. For a lake-centered setting, compare Rockford.',
-      village: 'The area spans several communities rather than a single walkable center. If walkability is key, compare East Grand Rapids or Ada.',
-      upkeep: 'Larger wooded lots usually mean more grounds work and tree care.',
+      lakeDepth: 0.05, allSports: 0.05, quietLake: 0.1, river: 0.35, nearWater: 0.4, waterGeneral: 0.3,
+      village: 0.2, connected: 0.55, space: 0.9, nature: 0.9, character: 0.35, updated: 0.75,
+      turnkey: 0.65, lowCare: 0.4, proximity: 0.55,
     },
   },
 ];

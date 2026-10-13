@@ -24,7 +24,7 @@ const counts = (unit: string) => [
   ...[1, 2, 3, 4, 5].map((n) => ({ value: `${n}+`, label: `${n}+ ${unit}` })),
 ];
 // Hidden fields that carry the Find Your Fit outcome. They are disabled (not submitted) until populated.
-const fitFields = ['search_source', 'fit_primary', 'fit_secondary', ...fitQuestions.map((q) => q.formField), 'fit_summary'];
+const fitFields = ['search_source', 'fit_primary', 'fit_secondary', 'fit_selected', ...fitQuestions.map((q) => q.formField), 'fit_summary'];
 ---
 
 <FormShell

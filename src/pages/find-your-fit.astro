@@ -6,7 +6,8 @@ import { fitQuestions } from '../data/locationFit';
 import { lakes } from '../data/lakes';
 import { breadcrumbSchema } from '../utils/schema';
 
-const total = fitQuestions.length;
+// The water-setting question is a branch, so the visible total starts at the non-branch count.
+const baseTotal = fitQuestions.filter((q) => !q.showIf).length;
 ---
 
 <BaseLayout
@@ -41,16 +42,22 @@ const total = fitQuestions.length;
         <p class="visually-hidden" id="fit-form-label">Find your fit questions</p>
 
         <div class="fit__progress" data-progress-wrap hidden>
-          <p class="small muted" data-progress aria-live="polite">Question 1 of {total}</p>
+          <p class="small muted" data-progress aria-live="polite">Question 1 of {baseTotal}</p>
           <div class="fit__bar" aria-hidden="true"><div class="fit__bar-fill" data-bar></div></div>
         </div>
 
         {
-          fitQuestions.map((q, i) => (
-            <fieldset class="fit-q" data-step={i} aria-describedby={`${q.id}-help`}>
+          fitQuestions.map((q) => (
+            <fieldset
+              class="fit-q"
+              data-step={q.id}
+              data-branch={q.showIf ? `${q.showIf.question}:${q.showIf.includes}` : undefined}
+              aria-describedby={`${q.id}-help`}
+            >
               <legend tabindex="-1">{q.prompt}</legend>
               <p class="small muted" id={`${q.id}-help`}>
-                {q.type === 'multi' ? `Choose up to ${q.max}. ${q.help ?? ''}` : 'Choose one.'}
+                {q.type === 'multi' ? `Choose up to ${q.max}.` : 'Choose one.'}
+                {q.showIf && ' Because water is one of your priorities.'}
               </p>
               <div class="fit-q__options">
                 {q.options.map((o, j) => (
@@ -83,18 +90,20 @@ const total = fitQuestions.length;
 
       <section id="fit-results" class="fit__results" tabindex="-1" aria-labelledby="fit-results-heading" hidden>
         <span class="eyebrow">Where I’d start</span>
-        <h2 id="fit-results-heading" tabindex="-1">Here’s what I’d explore first</h2>
+        <h2 id="fit-results-heading" tabindex="-1">Here are places I’d suggest exploring first</h2>
         <p class="fit__disclaimer">
-          This isn’t a ranking of communities. It’s a starting point based on the lifestyle and property
-          preferences you selected.
+          Based on what you told me. This isn’t a ranking of communities, and no community is objectively
+          better than another. It’s a starting point based on the lifestyle and property preferences you
+          selected.
         </p>
         <div class="fit__cards" data-cards></div>
 
         <aside class="fit__lakes" data-lakes hidden aria-labelledby="fit-lakes-heading">
           <h3 id="fit-lakes-heading">Explore Rockford-area lakes</h3>
           <p>
-            I’ve spent the last 15 years living on two Rockford-area lakes, and I’ve helped many clients buy and
-            sell lakefront homes in the area. If the water is a priority, these are good places to look closer.
+            Over the last 15 years, I’ve lived on both Lake Bella Vista and Silver Lake, and I’ve helped many
+            clients buy and sell lakefront homes in the area. If the water is a priority, these are good places to
+            look closer.
           </p>
           <ul class="fit__lake-links">
             {lakes.map((l) => <li><a href={`/waterfront/rockford-lakes/#${l.slug}`}>{l.name}</a></li>)}
@@ -105,8 +114,8 @@ const total = fitQuestions.length;
         <aside class="fit__cta" aria-labelledby="fit-cta-heading">
           <h3 id="fit-cta-heading">Send me homes that fit this</h3>
           <p>
-            If these areas feel right, I can turn what you’ve told me into a saved property search and send you
-            homes that match as they become available.
+            If more than one of these areas feels right, I can turn what you’ve told me into a saved property
+            search across all of them and send you homes that match as they become available.
           </p>
           <p data-water-note hidden>
             Lakefront inventory can move quickly, so getting the search set up before the right home appears can
@@ -304,6 +313,15 @@ const total = fitQuestions.length;
   }
   .fit__cta .muted {
     color: #c9d8de;
+  }
+  .fit__cta .btn--secondary {
+    color: #fff;
+    border-color: rgb(255 255 255 / 0.6);
+  }
+  .fit__cta .btn--secondary:hover {
+    background: #fff;
+    border-color: #fff;
+    color: var(--c-lake-deep);
   }
   .fit__cta p[hidden] {
     display: none;

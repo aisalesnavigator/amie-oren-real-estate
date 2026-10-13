@@ -39,7 +39,7 @@ src/
   content/
     insights/   Insights articles (Markdown)
     reviews/    client reviews (Markdown frontmatter) - see docs/REVIEW_WORKFLOW.md
-  data/         communities.ts, lakes.ts, locationFit.ts, placeImages.ts
+  data/         communities.ts, lakes.ts, locationFit.ts, fitOrientation.ts, placeImages.ts
   layouts/      BaseLayout, InsightArticle
   pages/        routes (communities/[slug].astro is the reusable community template)
   scripts/      forms.ts (progressive enhancement for forms)
@@ -95,17 +95,18 @@ Voice: the site speaks in Amie's first person ("I help my clients..."). Metadata
 
 ### Find Your West Michigan Fit (`/find-your-fit/`)
 
-A short, client-side-only guided set of questions that suggests two or three communities. Nothing is collected or sent while answering; results are not gated. Logic is deterministic and editable in `src/data/locationFit.ts`; the engine is `src/utils/fit.ts`. **Read `docs/LOCATION_FIT_GUIDELINES.md` before editing** (fair-housing boundaries).
+A short, client-side-only guided set of six or seven questions (the water-setting question appears only when water is a top priority) that suggests two or three communities. Nothing is collected or sent while answering; results are not gated. Questions and community profiles are in `src/data/locationFit.ts`; result copy and Amie's "If I were showing you the area..." orientation are in `src/data/fitOrientation.ts` (sources: `docs/LOCATION_FIT_SOURCES.md`); the engine is `src/utils/fit.ts`. **Read `docs/LOCATION_FIT_GUIDELINES.md` before editing** (fair-housing boundaries).
 
 - **Change location weights:** edit the numbers in `communityProfiles` (how strongly each community has each trait) or `fitQuestions[].options[].prefs` (target and weight of an answer).
-- **Add a community:** add it to `src/data/communities.ts`, add a full profile to `communityProfiles`, and (optionally) to `site.serviceAreas`. Tests verify the profile.
+- **Add a community:** add it to `src/data/communities.ts`, add a full profile to `communityProfiles` and an entry to `fitOrientation`, and (optionally) to `site.serviceAreas`. Tests verify both.
+- **Change Amie's local recommendations:** edit the `tour` stops in `src/data/fitOrientation.ts`.
 - **Change a question:** edit `fitQuestions`; keep `formField` names stable because they are the field names Amie sees in submissions.
 
 ### Saved search (`/home-search/`)
 
 Posts to the same Formspree endpoint as the other forms with `form_type=location_fit_search`. It is **not automated**: the request arrives by email and Amie creates the saved search by hand in her own listing system. Query parameters prefill the form (whitelisted): `community`, `lake`, or the full fit result from the Find Your Fit page.
 
-**Processing a request:** open the Formspree email. Look at name/email/phone, communities and lakes, waterfront, price range, bedrooms/bathrooms, timing and notes. When the request came from Find Your Fit it also includes `search_source`, `fit_primary`, `fit_secondary`, the raw answers (`water_priority`, `walkability`, `privacy_preference`, `home_character`, `maintenance`, `gr_access`, `recreation`, `setting`, `priorities`) and a readable `fit_summary`. Create the saved search, then reply personally.
+**Processing a request:** open the Formspree email. Look at name/email/phone, communities and lakes, waterfront, price range, bedrooms/bathrooms, timing and notes. When the request came from Find Your Fit it also includes `search_source`, `fit_primary`, `fit_secondary`, `fit_selected` (when a community's own "Send me homes that fit ..." button was used), the raw answers (`top_priorities`, `water_type`, `setting`, `home_preference`, `drive_tradeoff`, `property_care`, `hardest_to_give_up`) and a readable `fit_summary` (including "Lake interest: Rockford-area lakes" when Rockford and lake water both apply). Create the saved search, then reply personally.
 
 **Verify Formspree data:** submit a test from each of `/home-search/`, `/home-search/?community=rockford&lake=silver-lake` and a completed `/find-your-fit/` result, then confirm the email shows `form_type = location_fit_search` and the expected fields.
 

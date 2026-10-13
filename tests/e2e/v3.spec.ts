@@ -75,16 +75,15 @@ test.describe('Location Fit: plain-language setting question', () => {
     expect(html + dom).not.toMatch(/close[- ]in(?!\w)/i);
   });
 
-  test('the setting question explains itself with visible text, not a tooltip', async ({ page }) => {
+  test('the setting question explains each option with visible text, not a tooltip', async ({ page }) => {
     await page.goto('/find-your-fit/');
-    const option = page.locator('label:has(input[name="setting"][value="close_in"])');
-    await expect(option).toContainText('Closer to Grand Rapids and everyday amenities');
-    await expect(option.locator('.fit-opt__hint')).toContainText('restaurants, shopping');
-    await expect(option).not.toHaveAttribute('title', /.+/);
-    // The sibling options remain parallel and understandable.
-    for (const v of ['village', 'lake', 'wooded', 'flexible']) {
-      await expect(page.locator(`label:has(input[name="setting"][value="${v}"])`)).toHaveCount(1);
+    for (const v of ['village', 'connected', 'larger_lot', 'wooded', 'lake']) {
+      const option = page.locator(`label:has(input[name="setting"][value="${v}"])`);
+      await expect(option).toHaveCount(1);
+      await expect(option.locator('.fit-opt__hint')).not.toBeEmpty();
+      await expect(option).not.toHaveAttribute('title', /.+/);
     }
+    await expect(page.locator('label:has(input[name="setting"][value="flexible"])')).toHaveCount(1);
   });
 
   test('East Grand Rapids and Rockford copy no longer say “close-in”', async ({ page }) => {
