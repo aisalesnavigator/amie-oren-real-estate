@@ -24,6 +24,18 @@ const files = walk(DIST);
 const pages = files.filter((f) => f.endsWith('.html'));
 const toUrl = (file) => '/' + file.slice(DIST.length + 1).replace(/\\/g, '/').replace(/index\.html$/, '');
 
+// Pages that are intentionally noindex in a production build, and nothing else: the review form, the thank-you page,
+// the 404 page, and demonstration Insights articles whose frontmatter still says `noindex: true` (not yet reviewed).
+const intentionalNoindex = new Set(['/review/', '/thank-you/', '/404.html']);
+const insightsDir = 'src/content/insights';
+if (existsSync(insightsDir)) {
+  for (const f of readdirSync(insightsDir).filter((n) => /\.mdx?$/.test(n))) {
+    if (/^noindex:\s*true\s*$/m.test(readFileSync(join(insightsDir, f), 'utf8'))) {
+      intentionalNoindex.add(`/insights/${f.replace(/\.mdx?$/, '')}/`);
+    }
+  }
+}
+
 const required = [
   '/', '/selling/', '/buying/', '/communities/', '/communities/rockford/', '/communities/ada/',
   '/communities/east-grand-rapids/', '/communities/cascade/', '/communities/forest-hills/', '/waterfront/',
@@ -43,6 +55,9 @@ const resolves = (href) => {
   if (clean.endsWith('/')) return existsSync(join(target, 'index.html'));
   return existsSync(target) || existsSync(join(target, 'index.html'));
 };
+
+// All JSON-LD text of a page (used to assert that no Review / AggregateRating structured data is emitted).
+const m1 = (html) => [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => m[1]).join('\n');
 
 const titles = new Map();
 let linkCount = 0;
@@ -80,9 +95,18 @@ for (const file of pages) {
     }
   }
 
+  if (/"@type"\s*:\s*"(Review|AggregateRating|Rating)"/.test(m1(html))) fail(`${url}: Review/Rating structured data must not be generated`);
+
   const sampleVisible = /Illustrative draft|ILLUSTRATIVE SAMPLE/.test(html);
-  if (!reviewBuild && sampleVisible) fail(`${url}: illustrative sample content present in a production build`);
+  if (!reviewBuild && sampleVisible) fail(`${url}: review-only sample content present in a production build`);
   if (reviewBuild && !/name="robots" content="noindex/.test(html)) fail(`${url}: review build must be noindex`);
+
+  // Production must be public: no review banner, and noindex only on intentionally excluded pages.
+  if (!reviewBuild) {
+    if (/review-mode-banner|Design-review build/.test(html)) fail(`${url}: design-review banner present in a production build`);
+    const noindex = /<meta name="robots" content="[^"]*noindex/.test(html);
+    if (noindex && !intentionalNoindex.has(url)) fail(`${url}: unexpected noindex in a production build`);
+  }
 }
 
 // Forms must submit to the endpoint with the right hidden identifier.
@@ -100,10 +124,24 @@ for (const [url, type] of formChecks) {
   if (!/action="(https:\/\/formspree\.io\/f\/[^"]+|mailto:[^"]+)"/.test(html)) fail(`${url}: form has no working action`);
 }
 
-// Review gating: the production client-experiences page must not list any review text.
+// Review gating: every quote on the production client-experiences page must be either a verified review or a
+// clearly labeled illustrative example. Review-only samples must never appear.
 if (!reviewBuild) {
   const html = readFileSync(join(DIST, 'client-experiences', 'index.html'), 'utf8');
-  if (/<blockquote/.test(html)) fail('/client-experiences/: unexpected review content in production build');
+  const quotes = (html.match(/<blockquote/g) ?? []).length;
+  const kinds = [...html.matchAll(/data-review-kind="([a-z]+)"/g)].map((m) => m[1]);
+  if (quotes !== kinds.length) fail('/client-experiences/: a quote is missing its review kind marker');
+  if (kinds.includes('sample')) fail('/client-experiences/: review-only sample present in production build');
+  const illustrative = kinds.filter((k) => k === 'illustrative').length;
+  if (illustrative > 0) {
+    if ((html.match(/Illustrative client experience/g) ?? []).length < illustrative) fail('/client-experiences/: illustrative example without its label');
+    if (!html.includes('Illustrative examples shown while client-submitted experiences are being collected.')) {
+      fail('/client-experiences/: illustrative examples are missing their explanatory note');
+    }
+  }
+  // Illustrative examples must stay on this page only (the homepage invites real reviews).
+  const home = readFileSync(join(DIST, 'index.html'), 'utf8');
+  if (/data-review-kind="illustrative"/.test(home)) fail('/: illustrative examples must not appear on the homepage');
 }
 
 // No analytics / tracking code.

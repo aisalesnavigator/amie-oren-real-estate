@@ -3,40 +3,65 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import Testimonial from '../components/Testimonial.astro';
 import ConversationCTA from '../components/ConversationCTA.astro';
-import { getVisibleReviews } from '../utils/reviews';
+import { getIllustrativeExamples, getVisibleReviews } from '../utils/reviews';
 import { breadcrumbSchema } from '../utils/schema';
 import { site } from '../config/site';
 
-// Only verified, permitted, non-draft reviews appear in production.
-// Illustrative samples appear only in dev / explicit design-review builds (see docs/REVIEW_WORKFLOW.md).
+// Real reviews: only verified, permitted, non-draft reviews appear in production.
+// Illustrative examples (`illustrative: true`) are temporary, clearly labeled stand-ins shown on this page only,
+// never on the homepage, and never in structured data (see docs/REVIEW_WORKFLOW.md).
+// Review-only samples (`sample: true`) appear only in dev / review-mode builds.
 const reviews = await getVisibleReviews();
+const examples = await getIllustrativeExamples();
+const showExamples = examples.length > 0;
 ---
 
 <BaseLayout
   title="Client Experiences"
-  description="What it’s like to work with Amie Oren, in clients’ own words. Every review shown is verified and published with permission."
+  description={
+    showExamples
+      ? 'What it’s like to work with Amie Oren. Illustrative examples are shown while verified, client-submitted experiences are being collected.'
+      : 'What it’s like to work with Amie Oren, in clients’ own words. Every review shown is verified and published with permission.'
+  }
   path="/client-experiences/"
   jsonLd={[breadcrumbSchema([{ name: 'Home', href: '/' }, { name: 'Client Experiences' }])]}
 >
   <PageHero
     eyebrow="Client experiences"
-    title="In clients’ own words."
-    lede="Every review on this page has been verified and is published with the client’s permission."
+    title={showExamples ? 'What working together looks like.' : 'In clients’ own words.'}
+    lede={
+      showExamples
+        ? 'Client reviews are published here only after they have been verified and shared with the client’s permission.'
+        : 'Every review on this page has been verified and is published with the client’s permission.'
+    }
     breadcrumbs={[{ name: 'Client Experiences' }]}
   />
 
   <section class="section" style="padding-top:0">
     <div class="container">
       {
-        reviews.length > 0 ? (
+        reviews.length > 0 && (
           <div class="grid grid--2">
             {reviews.map((r, i) => <Testimonial review={r} large={i === 0} />)}
           </div>
-        ) : (
+        )
+      }
+      {
+        showExamples && (
+          <div class="examples" data-illustrative-examples>
+            <p class="examples__note">Illustrative examples shown while client-submitted experiences are being collected.</p>
+            <div class="grid grid--2">
+              {examples.map((r) => <Testimonial review={r} />)}
+            </div>
+          </div>
+        )
+      }
+      {
+        (reviews.length === 0 || showExamples) && (
           <div class="empty">
-            <p class="empty__text">
-              Client experiences will appear here as they are shared and approved.
-            </p>
+            {reviews.length === 0 && !showExamples && (
+              <p class="empty__text">Client experiences will appear here as they are shared and approved.</p>
+            )}
             <p class="muted">
               I publish only genuine, verified reviews that clients have given permission to share. If
               you’ve worked with me, I’d be grateful to hear from you.
@@ -69,6 +94,18 @@ const reviews = await getVisibleReviews();
     font-size: var(--step-3);
     line-height: 1.2;
     color: var(--c-charcoal);
+  }
+  .examples {
+    margin-bottom: var(--space-xl);
+  }
+  .examples__note {
+    margin: 0 0 var(--space-m);
+    font-size: var(--step--1);
+    font-style: italic;
+    color: var(--c-taupe);
+  }
+  .examples + .empty {
+    margin-top: var(--space-xl);
   }
   .ext {
     list-style: none;

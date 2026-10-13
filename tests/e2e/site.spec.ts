@@ -17,7 +17,7 @@ const pages: [string, RegExp][] = [
   ['/about/', /rarely only about real estate/i],
   ['/insights/', /Useful answers/i],
   ['/insights/before-listing-a-home-in-west-michigan/', /before listing a home/i],
-  ['/client-experiences/', /clients’ own words/i],
+  ['/client-experiences/', /clients’ own words|What working together looks like/i],
   ['/review/', /share your experience/i],
   ['/refer/', /Know someone making a move/i],
   ['/contact/', /Start a conversation/i],
@@ -207,8 +207,14 @@ test.describe('review gating', () => {
     for (const path of ['/', '/client-experiences/']) {
       await page.goto(path);
       await expect(page.getByText(/Illustrative draft/i)).toHaveCount(0);
-      await expect(page.locator('blockquote')).toHaveCount(0);
+      // Review-only samples never appear in production.
+      await expect(page.locator('[data-review-kind="sample"], [data-sample="true"]')).toHaveCount(0);
+      // Every quote is either a verified review or a clearly labeled illustrative example (never an unmarked quote).
+      expect(await page.locator('blockquote').count()).toBe(await page.locator('figure[data-review-kind] blockquote').count());
     }
+    // The homepage shows no quotes at all while there are no verified reviews.
+    await page.goto('/');
+    await expect(page.locator('blockquote')).toHaveCount(0);
   });
 });
 

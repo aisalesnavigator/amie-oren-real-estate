@@ -22,11 +22,11 @@ Other commands:
 | `npm run verify` | Checks `dist/` after a build: routes exist, internal links resolve, unique titles, JSON-LD is valid and invents nothing, forms are POST with identifiers, no sample reviews, no tracking code |
 | `npm test` | Playwright: unit tests for the fit engine and fair-housing guardrails, plus browser tests on desktop, tablet and mobile (needs a build first; first run: `npx playwright install chromium`) |
 | `npm run check` | Everything above in order |
-| `npm run build:review` | Design-review build **with** illustrative sample reviews (noindex). Never publish this. |
+| `npm run build:review` | Local design-review build (`astro build --mode review`): review-only sample reviews, a "Design-review build" banner, and `noindex` on every page. Never publish this; it refuses to run on Netlify. |
 
 ## Static deployment
 
-Build with `npm run build` and publish the `dist/` directory. Set `PUBLIC_SITE_URL` in the host's build environment (for example `https://amieorenrealestate.com`). No server, adapter, or host-specific configuration is required. Redirect `404` handling: `dist/404.html` is generated, and most static hosts use it automatically.
+Build with `npm run build` and publish the `dist/` directory. Set `PUBLIC_SITE_URL` in the host's build environment (for example `https://amieorenrealestate.com`). No server or adapter is required. `netlify.toml` pins Netlify's build command to `npm run build` so a hosted build can never run the review build. Redirect `404` handling: `dist/404.html` is generated, and most static hosts use it automatically.
 
 ## Where things live
 

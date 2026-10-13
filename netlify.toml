@@ -1,0 +1,6 @@
+# Production, branch deploys and deploy previews all run the normal public build.
+# `npm run build:review` (noindex + review banner + sample reviews) is for local design review only and must never
+# be used by a host. This file takes precedence over the build command in the Netlify dashboard.
+[build]
+  command = "npm run build"
+  publish = "dist"

@@ -9,15 +9,28 @@ interface Props {
 const { review, large = false } = Astro.props;
 const d = review.data;
 const isSample = d.sample;
+const isIllustrative = d.illustrative && !d.sample;
+// 'verified' = a real, permitted client review; 'illustrative' = a labeled temporary example; 'sample' = review-mode only.
+const kind = isSample ? 'sample' : isIllustrative ? 'illustrative' : 'verified';
 ---
 
-<figure class={`testimonial ${large ? 'testimonial--large' : ''}`} data-sample={isSample ? 'true' : undefined}>
+<figure
+  class={`testimonial ${large ? 'testimonial--large' : ''}`}
+  data-sample={isSample ? 'true' : undefined}
+  data-review-kind={kind}
+>
   {isSample && <p class="testimonial__flag" role="note">Illustrative draft — replace with verified client review.</p>}
   <blockquote>
     <p>{d.reviewText}</p>
   </blockquote>
   <figcaption>
-    <span class="testimonial__name">{d.displayName}</span>
+    {
+      isIllustrative ? (
+        <span class="testimonial__label">Illustrative client experience</span>
+      ) : (
+        <span class="testimonial__name">{d.displayName}</span>
+      )
+    }
     <span class="testimonial__meta">
       {experienceLabels[d.experienceType]}{d.community ? ` · ${d.community}` : ''}
     </span>
@@ -53,6 +66,11 @@ const isSample = d.sample;
   }
   .testimonial__meta {
     color: var(--c-taupe);
+  }
+  /* Discreet but clear: small, muted, sentence case, not a badge. */
+  .testimonial__label {
+    color: var(--c-taupe);
+    font-style: italic;
   }
   .testimonial__flag {
     display: inline-block;

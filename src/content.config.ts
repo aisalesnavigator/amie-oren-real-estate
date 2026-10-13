@@ -38,24 +38,34 @@ const insights = defineCollection({
 
 const reviews = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx,json}', base: './src/content/reviews' }),
-  schema: z.object({
-    clientName: z.string(),
-    displayName: z.string(),
-    community: z.string().optional(),
-    experienceType: z.enum(['seller', 'buyer', 'waterfront', 'move-up', 'downsizing', 'referral', 'other']),
-    reviewText: z.string(),
-    source: z.string().default('Direct client submission'),
-    submittedDate: z.coerce.date(),
-    publishedDate: z.coerce.date().optional(),
-    /** Amie has confirmed this is a genuine client who really wrote this. */
-    verified: z.boolean().default(false),
-    /** The client has given explicit permission to publish. */
-    permissionToPublish: z.boolean().default(false),
-    featured: z.boolean().default(false),
-    draft: z.boolean().default(true),
-    /** Illustrative design-review content. NEVER shown on a normal production build. */
-    sample: z.boolean().default(false),
-  }),
+  schema: z
+    .object({
+      clientName: z.string(),
+      displayName: z.string(),
+      community: z.string().optional(),
+      experienceType: z.enum(['seller', 'buyer', 'waterfront', 'move-up', 'downsizing', 'referral', 'other']),
+      reviewText: z.string(),
+      source: z.string().default('Direct client submission'),
+      submittedDate: z.coerce.date(),
+      publishedDate: z.coerce.date().optional(),
+      /** Amie has confirmed this is a genuine client who really wrote this. */
+      verified: z.boolean().default(false),
+      /** The client has given explicit permission to publish. */
+      permissionToPublish: z.boolean().default(false),
+      featured: z.boolean().default(false),
+      draft: z.boolean().default(true),
+      /** Illustrative design-review content. NEVER shown on a normal production build. */
+      sample: z.boolean().default(false),
+      /**
+       * A temporary, clearly labeled example for the Client Experiences page (not a real client). Allowed in
+       * production. It can never also be a verified review: `illustrative` entries must have verified and
+       * permissionToPublish false. Delete the file (or set draft: true) to remove one.
+       */
+      illustrative: z.boolean().default(false),
+    })
+    .refine((d) => !d.illustrative || (!d.verified && !d.permissionToPublish && !d.sample), {
+      message: 'An illustrative example must not be marked verified, permitted or sample.',
+    }),
 });
 
 export const collections = { insights, reviews };

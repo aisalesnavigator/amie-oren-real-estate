@@ -60,3 +60,8 @@ Items that need real-world input or verification before the site is public. Anal
 - [ ] Photography: four owner-supplied photos are embedded in the Silver Lake and Lake Bella Vista sections, captioned "<Lake> Sunrise" / "<Lake> Sunset" with a small "Photo: Amie Oren Real Estate" credit (confirm the placement, captions and credit wording). The other eight places in `docs/COMMUNITY_IMAGE_BRIEF.md` are still placeholders. Target: one sunrise and one sunset photo per featured lake (Bostwick, Myers and Brower are next).
 - [ ] Overall `/waterfront/` gallery: Silver Lake Sunrise is the first photo, followed by designed placeholders. Decide which other photos to add (`src/data/waterfrontGallery.ts`); it has no maximum.
 - [ ] Strip EXIF/GPS metadata from any new photo before adding it (a unit test fails otherwise).
+
+## Production indexing and Client Experiences (October 2026)
+- [ ] Confirm the live site now has no "Design-review build" banner and no `noindex` on the homepage (view source, or Search Console URL Inspection), then use Search Console to validate the fix and request indexing of the homepage.
+- [ ] Confirm Netlify builds with `npm run build` (the repo's `netlify.toml` now enforces this; the dashboard build command no longer matters).
+- [ ] As real, verified reviews arrive, delete the three `src/content/reviews/illustrative-*.md` examples (individually, or all at once). Delete the `sample-*.md` files too if they are no longer wanted.

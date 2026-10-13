@@ -8,7 +8,7 @@ const env = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), 'PUBLIC
 const site = resolveSiteUrl(process.env.PUBLIC_SITE_URL ?? env.PUBLIC_SITE_URL);
 
 // Pages that should never appear in the sitemap.
-const excluded = ['/thank-you/', '/404/'];
+const excluded = ['/thank-you/', '/404/', '/review/'];
 
 // Insights marked `noindex: true` in frontmatter are kept out of the sitemap.
 function noindexInsightPaths(): string[] {
