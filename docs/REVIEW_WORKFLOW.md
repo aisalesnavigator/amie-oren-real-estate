@@ -37,19 +37,19 @@ A review renders in production only if `verified: true`, `permissionToPublish: t
 
 Aggregate ratings, star counts, and review-count structured data are intentionally not output. Do not add them unless a legitimate rating system exists.
 
-## Illustrative client experiences (temporary, public, labeled)
+## Published reviews and how they display
 
-While real client-submitted experiences are being collected, `/client-experiences/` shows three **temporary illustrative examples** so the page has substance. They are **not real testimonials**:
+Three approved client reviews were published in October 2026 (`src/content/reviews/client-*.md`). They replaced the temporary illustrative examples, which were deleted along with the review-only `sample-*.md` files. The `illustrative` flag no longer exists in the schema.
 
-- They live in the same collection as real reviews: `src/content/reviews/illustrative-*.md`, with `illustrative: true`. The schema refuses an illustrative entry that is also marked `verified`, `permissionToPublish` or `sample`, so one can never be mistaken for a real review.
-- They carry no name, initials, address, rating or claim of a verified client. Each card shows the quiet label "Illustrative client experience", and the page carries the note "Illustrative examples shown while client-submitted experiences are being collected."
-- They appear **only** on `/client-experiences/` (never on the homepage, whose section is for real reviews) and are **never** used in structured data. No Review, AggregateRating or rating markup is generated, and `npm run verify` fails if any appears.
-- **To remove one**, delete its file (or set `draft: true`). Delete all three once enough real reviews are published. When real reviews exist they are listed first, and the page text adapts automatically.
-- Real reviews are unchanged: the form posts to Formspree, nothing publishes itself, and a review renders only when `verified: true`, `permissionToPublish: true`, `draft: false` (and it is not `sample` or `illustrative`).
+- **Attribution:** add an `attribution` field with the exact label the client approved (e.g. `'Seller · West Michigan'`). When it is set, the card shows only that label: no name, initials, rating or other detail. Without it, the card falls back to `displayName` plus the experience type and community.
+- **`clientName`** is internal and never shown. Use the client's name only if they approved it; otherwise `'Withheld (on file with Amie Oren)'`.
+- **Homepage:** the homepage shows up to two reviews marked `featured: true`, with a link to `/client-experiences/`. If none is featured, it shows the most recent approved reviews.
+- **Client Experiences page:** every approved review, newest first (reviews published together keep file order). The first is shown as a full-width lead quote.
+- No Review, AggregateRating or rating structured data is generated. `npm run verify` fails if any appears, or if any quote in production is not a verified review.
 
 ## Review-only sample reviews and review mode
 
-Files named `sample-*.md` are design-review content marked `sample: true`. They:
+Review mode still supports design-review content marked `sample: true` (none exists today; the old `sample-*.md` files were deleted when real reviews were published). Such entries:
 
 - render only in the dev server or in a deliberate `npm run build:review` build;
 - carry the visible label "Illustrative draft - replace with verified client review";

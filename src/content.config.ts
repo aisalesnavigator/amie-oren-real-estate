@@ -38,8 +38,7 @@ const insights = defineCollection({
 
 const reviews = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx,json}', base: './src/content/reviews' }),
-  schema: z
-    .object({
+  schema: z.object({
       clientName: z.string(),
       displayName: z.string(),
       community: z.string().optional(),
@@ -57,14 +56,10 @@ const reviews = defineCollection({
       /** Illustrative design-review content. NEVER shown on a normal production build. */
       sample: z.boolean().default(false),
       /**
-       * A temporary, clearly labeled example for the Client Experiences page (not a real client). Allowed in
-       * production. It can never also be a verified review: `illustrative` entries must have verified and
-       * permissionToPublish false. Delete the file (or set draft: true) to remove one.
+       * Exact public attribution label approved with the review (e.g. "Seller · West Michigan").
+       * When set, the card shows only this label: no name, initials, rating or other client detail.
        */
-      illustrative: z.boolean().default(false),
-    })
-    .refine((d) => !d.illustrative || (!d.verified && !d.permissionToPublish && !d.sample), {
-      message: 'An illustrative example must not be marked verified, permitted or sample.',
+      attribution: z.string().optional(),
     }),
 });
 

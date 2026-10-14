@@ -64,51 +64,40 @@ test.describe('production has no development or review messaging', () => {
   }
 });
 
-test.describe('Client Experiences: temporary illustrative examples', () => {
-  test('three examples are shown, each clearly labeled, with the explanatory note', async ({ page }) => {
+const APPROVED = [
+  { attribution: 'Repeat buyer · West Michigan', start: 'Amie has helped me purchase two homes over the last 15 years' },
+  { attribution: 'Seller · West Michigan', start: 'Selling the home we had lived in for years was an emotional decision' },
+  { attribution: 'Buyer & Seller · Greater Grand Rapids', start: 'We were balancing a sale and a purchase across the Grand Rapids area' },
+];
+
+test.describe('Client Experiences: approved real client reviews', () => {
+  test('all three approved reviews are shown with their exact attributions, and nothing illustrative remains', async ({ page }) => {
     await page.goto('/client-experiences/');
     const cards = page.locator('figure.testimonial');
     await expect(cards).toHaveCount(3);
     for (let i = 0; i < 3; i++) {
       const card = cards.nth(i);
-      await expect(card).toHaveAttribute('data-review-kind', 'illustrative');
-      await expect(card.locator('.testimonial__label')).toHaveText('Illustrative client experience');
-      await expect(card.locator('blockquote')).toBeVisible();
+      await expect(card).toHaveAttribute('data-review-kind', 'verified');
+      await expect(card.locator('blockquote')).toContainText(APPROVED[i].start);
+      await expect(card.locator('figcaption')).toHaveText(APPROVED[i].attribution);
     }
-    await expect(page.getByText('Illustrative examples shown while client-submitted experiences are being collected.')).toBeVisible();
-    await expect(page.locator('h1')).toHaveText('What working together looks like.');
-    // Never presented as verified reviews.
-    await expect(page.locator('[data-review-kind="verified"]')).toHaveCount(0);
-    await expect(page.locator('[data-review-kind="sample"]')).toHaveCount(0);
-    await expect(page.locator('main')).not.toContainText('every review on this page has been verified');
+    await expect(page.locator('h1')).toHaveText('In clients’ own words.');
+    await expect(page.locator('main')).toContainText('These are real experiences from clients I’ve worked with.');
+    const text = await page.locator('main').innerText();
+    expect(text).not.toMatch(/Illustrative client experience|Illustrative examples shown|illustrative/i);
+    await expect(page.locator('[data-review-kind="illustrative"], [data-review-kind="sample"], .testimonial__label')).toHaveCount(0);
   });
 
-  test('the label is discreet: small, muted, sentence case, not a badge', async ({ page }) => {
-    await page.goto('/client-experiences/');
-    const label = page.locator('.testimonial__label').first();
-    const m = await label.evaluate((el) => {
-      const c = getComputedStyle(el);
-      return { px: parseFloat(c.fontSize), transform: c.textTransform, bg: c.backgroundColor, border: c.borderTopWidth };
-    });
-    expect(m.px).toBeLessThanOrEqual(15);
-    expect(m.transform).toBe('none');
-    expect(m.bg).toBe('rgba(0, 0, 0, 0)');
-    expect(m.border).toBe('0px');
-  });
-
-  test('the examples carry no names, initials, ratings or addresses', async ({ page }) => {
+  test('cards carry no names, initials, ratings or addresses beyond the approved attribution', async ({ page }) => {
     await page.goto('/client-experiences/');
     const cards = page.locator('figure.testimonial');
     for (let i = 0; i < 3; i++) {
+      const caption = (await cards.nth(i).locator('figcaption').innerText()).trim();
+      expect(caption).toBe(APPROVED[i].attribution);
       const text = (await cards.nth(i).innerText()).replace(/\s+/g, ' ');
-      expect(text).toContain('Illustrative client experience');
       expect(text).not.toMatch(/\b[A-Z]\.\s?[A-Z]?\.?(?=\s|$)/); // initials such as "J. D."
       expect(text).not.toMatch(/[★☆]|\bstars?\b|\b\d(\.\d)?\s?\/\s?5\b|rated/i);
-      expect(text).not.toMatch(/\b(best|perfect|guaranteed)\b/i);
       expect(text).not.toMatch(/\d{2,}\s+[A-Z][a-z]+\s+(St|Ave|Rd|Dr|Ln)\b/);
-      const words = (await cards.nth(i).locator('blockquote').innerText()).split(/\s+/).filter(Boolean).length;
-      expect(words).toBeGreaterThanOrEqual(45);
-      expect(words).toBeLessThanOrEqual(80);
     }
   });
 
@@ -120,11 +109,18 @@ test.describe('Client Experiences: temporary illustrative examples', () => {
     await expect(page.getByText(/I publish only genuine, verified reviews/)).toBeVisible();
   });
 
-  test('the homepage still shows only real reviews (the empty invitation), never the illustrative examples', async ({ page }) => {
+  test('the homepage shows a restrained set of real reviews and links to the full page', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('[data-review-kind]')).toHaveCount(0);
-    await expect(page.locator('[data-reviews-empty]')).toBeVisible();
-    await expect(page.locator('main')).not.toContainText('Illustrative client experience');
+    const section = page.locator('section[aria-labelledby="reviews-heading"]');
+    await expect(section).toContainText('Real clients, in their own words.');
+    const cards = section.locator('figure.testimonial');
+    await expect(cards).toHaveCount(2);
+    for (let i = 0; i < 2; i++) await expect(cards.nth(i)).toHaveAttribute('data-review-kind', 'verified');
+    await expect(cards.nth(0).locator('figcaption')).toHaveText('Seller · West Michigan');
+    await expect(cards.nth(1).locator('figcaption')).toHaveText('Buyer & Seller · Greater Grand Rapids');
+    await expect(section.locator('[data-reviews-empty]')).toHaveCount(0);
+    await expect(section.getByRole('link', { name: 'Read more client experiences' })).toHaveAttribute('href', '/client-experiences/');
+    await expect(page.locator('main')).not.toContainText(/Illustrative/i);
   });
 
   test('no Review, AggregateRating or rating structured data is generated anywhere', async ({ page }) => {

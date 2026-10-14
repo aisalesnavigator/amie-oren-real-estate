@@ -1,4 +1,4 @@
-// Design-review build: includes clearly-marked ILLUSTRATIVE sample reviews, shows the review banner and forces noindex.
+// Design-review build: includes any review-only (`sample: true`) content, shows the review banner and forces noindex.
 // Review mode is a build MODE (`astro build --mode review`), not an environment variable, so it cannot be switched
 // on by a host setting or a stray PUBLIC_* variable. Never deploy the output of this script. Use `npm run build`
 // for anything public.
@@ -14,5 +14,5 @@ const run = (args) => spawnSync(process.execPath, args, { stdio: 'inherit', env:
 
 const status =
   run(['node_modules/astro/bin/astro.mjs', 'build', '--mode', 'review']) || run(['scripts/verify-dist.mjs', '--review']);
-console.log('\n[build:review] This build contains illustrative sample reviews. Do NOT publish it.');
+console.log('\n[build:review] This is a design-review build. Do NOT publish it.');
 process.exit(status);

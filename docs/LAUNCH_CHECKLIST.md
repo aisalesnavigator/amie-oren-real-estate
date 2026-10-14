@@ -24,7 +24,7 @@ Items that need real-world input or verification before the site is public. Anal
 - [ ] Verify the factual geography statements on the five community pages (Rockford, Ada, East Grand Rapids, Cascade, Forest Hills), especially the Forest Hills description.
 - [x] About page: the “Background” placeholder blocks were removed in V3 at Amie’s request. Add credentials or career history later only if Amie supplies verified content.
 - [ ] Review the three demonstration Insights articles; add `reviewedBy`/`reviewedDate` and remove `noindex` when approved, or replace them. The Forest Hills Public Schools source was removed because it could not be verified; add vetted sources where useful. The remaining sources (michigan.gov/egle, legislature.mi.gov) were reachable but are general landing pages; replace with specific pages if desired.
-- [ ] Collect real client reviews; delete or leave out the `sample-*.md` files.
+- [x] Collect real client reviews: three approved reviews published October 2026; the `sample-*.md` files were deleted.
 - [ ] Decide the final wording of any "Properties" content.
 
 ## V2 additions
@@ -64,4 +64,4 @@ Items that need real-world input or verification before the site is public. Anal
 ## Production indexing and Client Experiences (October 2026)
 - [ ] Confirm the live site now has no "Design-review build" banner and no `noindex` on the homepage (view source, or Search Console URL Inspection), then use Search Console to validate the fix and request indexing of the homepage.
 - [ ] Confirm Netlify builds with `npm run build` (the repo's `netlify.toml` now enforces this; the dashboard build command no longer matters).
-- [ ] As real, verified reviews arrive, delete the three `src/content/reviews/illustrative-*.md` examples (individually, or all at once). Delete the `sample-*.md` files too if they are no longer wanted.
+- [x] Real, verified reviews published; the three `illustrative-*.md` examples and the `sample-*.md` files were deleted (October 2026).

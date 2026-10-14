@@ -9,9 +9,8 @@ interface Props {
 const { review, large = false } = Astro.props;
 const d = review.data;
 const isSample = d.sample;
-const isIllustrative = d.illustrative && !d.sample;
-// 'verified' = a real, permitted client review; 'illustrative' = a labeled temporary example; 'sample' = review-mode only.
-const kind = isSample ? 'sample' : isIllustrative ? 'illustrative' : 'verified';
+// 'verified' = a real, permitted client review; 'sample' = review-mode only.
+const kind = isSample ? 'sample' : 'verified';
 ---
 
 <figure
@@ -25,15 +24,17 @@ const kind = isSample ? 'sample' : isIllustrative ? 'illustrative' : 'verified';
   </blockquote>
   <figcaption>
     {
-      isIllustrative ? (
-        <span class="testimonial__label">Illustrative client experience</span>
+      d.attribution ? (
+        <span class="testimonial__attribution">{d.attribution}</span>
       ) : (
-        <span class="testimonial__name">{d.displayName}</span>
+        <>
+          <span class="testimonial__name">{d.displayName}</span>
+          <span class="testimonial__meta">
+            {experienceLabels[d.experienceType]}{d.community ? ` · ${d.community}` : ''}
+          </span>
+        </>
       )
     }
-    <span class="testimonial__meta">
-      {experienceLabels[d.experienceType]}{d.community ? ` · ${d.community}` : ''}
-    </span>
   </figcaption>
 </figure>
 
@@ -67,10 +68,10 @@ const kind = isSample ? 'sample' : isIllustrative ? 'illustrative' : 'verified';
   .testimonial__meta {
     color: var(--c-taupe);
   }
-  /* Discreet but clear: small, muted, sentence case, not a badge. */
-  .testimonial__label {
+  .testimonial__attribution {
+    font-weight: 500;
+    letter-spacing: 0.04em;
     color: var(--c-taupe);
-    font-style: italic;
   }
   .testimonial__flag {
     display: inline-block;

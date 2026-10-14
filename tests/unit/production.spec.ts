@@ -52,45 +52,49 @@ test.describe('review mode can only be a build mode', () => {
   });
 });
 
-test.describe('illustrative client experiences (content)', () => {
+test.describe('approved client reviews (content)', () => {
   const dir = join(root, 'src', 'content', 'reviews');
-  const files = existsSync(dir) ? readdirSync(dir).filter((f) => f.startsWith('illustrative-') && f.endsWith('.md')) : [];
+  const all = existsSync(dir) ? readdirSync(dir).filter((f) => /\.(md|mdx|json)$/.test(f)) : [];
   const field = (text: string, key: string) => text.match(new RegExp(`^${key}:\\s*(.*)$`, 'm'))?.[1]?.trim() ?? '';
   const unquote = (v: string) => v.replace(/^'(.*)'$/s, '$1').replace(/''/g, "'");
 
-  test('there are three, each clearly flagged as illustrative and never as a verified review', () => {
-    expect(files).toHaveLength(3);
-    for (const f of files) {
+  test('exactly the three approved reviews exist; the illustrative and sample files are gone', () => {
+    expect(all.sort()).toEqual(['client-1-repeat-buyer.md', 'client-2-seller.md', 'client-3-buyer-seller.md']);
+  });
+
+  test('each is verified, permitted, published and never flagged illustrative or sample', () => {
+    for (const f of all) {
       const t = readFileSync(join(dir, f), 'utf8');
-      expect(field(t, 'illustrative'), f).toBe('true');
-      expect(field(t, 'verified'), f).toBe('false');
-      expect(field(t, 'permissionToPublish'), f).toBe('false');
-      expect(field(t, 'sample'), f).toBe('false');
-      expect(unquote(field(t, 'displayName'))).toBe('Illustrative client experience');
-      expect(unquote(field(t, 'clientName'))).toMatch(/not a real client/i);
-      expect(t).toMatch(/NOT a real client/);
+      expect(field(t, 'verified'), f).toBe('true');
+      expect(field(t, 'permissionToPublish'), f).toBe('true');
+      expect(field(t, 'draft'), f).toBe('false');
+      expect(t, f).not.toMatch(/^illustrative:/m);
+      expect(t, f).not.toMatch(/^sample:\s*true/m);
     }
   });
 
-  test('quotes are concise (45-80 words), unnamed, and free of overclaiming, ratings and addresses', () => {
-    for (const f of files) {
-      const text = unquote(field(readFileSync(join(dir, f), 'utf8'), 'reviewText'));
-      const words = text.split(/\s+/).filter(Boolean).length;
-      expect(words, `${f} word count`).toBeGreaterThanOrEqual(45);
-      expect(words, `${f} word count`).toBeLessThanOrEqual(80);
-      expect(text, f).not.toMatch(/\b(best|perfect|guarantee[sd]?|#1|number one|top[- ]rated|five[- ]star|5[- ]star|flawless|unparalleled|world-class)\b/i);
-      expect(text, f).not.toMatch(/[★☆]|\bstars?\b|\d\s*\/\s*5/i);
-      expect(text, f).not.toMatch(/\d{2,}\s+[A-Z][a-z]+\s+(St|Street|Ave|Avenue|Rd|Road|Dr|Drive|Ln|Lane)\b/);
-      expect(text, f).not.toMatch(/\$\s?\d|\b\d+\s?(days|%)\b/i);
+  test('attributions are exactly the approved labels, with no invented names or ratings', () => {
+    const attribution = Object.fromEntries(all.map((f) => [f, unquote(field(readFileSync(join(dir, f), 'utf8'), 'attribution'))]));
+    expect(attribution).toEqual({
+      'client-1-repeat-buyer.md': 'Repeat buyer · West Michigan',
+      'client-2-seller.md': 'Seller · West Michigan',
+      'client-3-buyer-seller.md': 'Buyer & Seller · Greater Grand Rapids',
+    });
+    for (const f of all) {
+      const t = readFileSync(join(dir, f), 'utf8');
+      expect(unquote(field(t, 'clientName'))).toMatch(/withheld/i);
+      expect(t).not.toMatch(/rating|stars?:|[★☆]/i);
     }
   });
 
-  test('they cover the three requested themes', () => {
-    const by = Object.fromEntries(files.map((f) => [f, unquote(field(readFileSync(join(dir, f), 'utf8'), 'reviewText'))]));
-    expect(by['illustrative-1-family-seller.md']).toMatch(/emotional|important change/i);
-    expect(by['illustrative-2-waterfront-buyer.md']).toMatch(/Rockford-area lakes/);
-    expect(by['illustrative-2-waterfront-buyer.md']).toMatch(/shoreline/i);
-    expect(by['illustrative-3-west-michigan-move.md']).toMatch(/Grand Rapids/);
-    expect(by['illustrative-3-west-michigan-move.md']).toMatch(/personal/i);
+  test('no review text is duplicated anywhere else in the source tree', () => {
+    const texts = all.map((f) => unquote(field(readFileSync(join(dir, f), 'utf8'), 'reviewText')).slice(0, 60));
+    const walk = (d: string): string[] =>
+      readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(join(d, e.name)) : [join(d, e.name)]));
+    const others = walk(join(root, 'src')).filter((f) => !f.startsWith(dir) && /\.(astro|ts|md|mdx|json)$/.test(f));
+    for (const f of others) {
+      const t = readFileSync(f, 'utf8');
+      for (const text of texts) expect(t.includes(text), `${f} duplicates a review`).toBe(false);
+    }
   });
 });

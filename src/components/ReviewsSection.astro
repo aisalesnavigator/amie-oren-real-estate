@@ -10,6 +10,10 @@ interface Props {
   intro?: string;
   /** Show the review-invitation panel when there are no approved reviews (default true). */
   showEmpty?: boolean;
+  /** Show only reviews marked `featured` (the homepage uses this to stay restrained). */
+  featuredOnly?: boolean;
+  /** Link through to the full Client Experiences page. */
+  moreLink?: boolean;
 }
 const {
   limit = 3,
@@ -17,8 +21,13 @@ const {
   eyebrow = 'In their words',
   intro,
   showEmpty = true,
+  featuredOnly = false,
+  moreLink = false,
 } = Astro.props;
-const reviews = (await getVisibleReviews()).slice(0, limit);
+const all = await getVisibleReviews();
+const featured = all.filter((r) => r.data.featured);
+// Featured first; fall back to any approved review if none is featured.
+const reviews = (featuredOnly && featured.length > 0 ? featured : all).slice(0, limit);
 ---
 
 <section class="section section--limestone" aria-labelledby="reviews-heading">
@@ -31,7 +40,7 @@ const reviews = (await getVisibleReviews()).slice(0, limit);
 
     {
       reviews.length > 0 ? (
-        <div class="grid grid--3">
+        <div class={`grid ${reviews.length >= 3 ? 'grid--3' : 'grid--2'}`} data-reviews-list>
           {reviews.map((r) => <Testimonial review={r} />)}
         </div>
       ) : (
@@ -47,10 +56,20 @@ const reviews = (await getVisibleReviews()).slice(0, limit);
         )
       )
     }
+    {
+      moreLink && reviews.length > 0 && (
+        <p class="reviews-more">
+          <a class="text-link" href="/client-experiences/">Read more client experiences</a>
+        </p>
+      )
+    }
   </div>
 </section>
 
 <style>
+  .reviews-more {
+    margin-top: var(--space-xl);
+  }
   .reviews-empty {
     max-width: 40rem;
     padding-top: var(--space-m);

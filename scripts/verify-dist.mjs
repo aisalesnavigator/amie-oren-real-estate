@@ -124,24 +124,23 @@ for (const [url, type] of formChecks) {
   if (!/action="(https:\/\/formspree\.io\/f\/[^"]+|mailto:[^"]+)"/.test(html)) fail(`${url}: form has no working action`);
 }
 
-// Review gating: every quote on the production client-experiences page must be either a verified review or a
-// clearly labeled illustrative example. Review-only samples must never appear.
+// Review gating: every quote on the production site must be a verified client review. Review-only samples
+// and the retired "illustrative" examples must never appear.
 if (!reviewBuild) {
-  const html = readFileSync(join(DIST, 'client-experiences', 'index.html'), 'utf8');
-  const quotes = (html.match(/<blockquote/g) ?? []).length;
-  const kinds = [...html.matchAll(/data-review-kind="([a-z]+)"/g)].map((m) => m[1]);
-  if (quotes !== kinds.length) fail('/client-experiences/: a quote is missing its review kind marker');
-  if (kinds.includes('sample')) fail('/client-experiences/: review-only sample present in production build');
-  const illustrative = kinds.filter((k) => k === 'illustrative').length;
-  if (illustrative > 0) {
-    if ((html.match(/Illustrative client experience/g) ?? []).length < illustrative) fail('/client-experiences/: illustrative example without its label');
-    if (!html.includes('Illustrative examples shown while client-submitted experiences are being collected.')) {
-      fail('/client-experiences/: illustrative examples are missing their explanatory note');
+  for (const page of ['client-experiences/index.html', 'index.html']) {
+    const html = readFileSync(join(DIST, page), 'utf8');
+    const quotes = (html.match(/<blockquote/g) ?? []).length;
+    const kinds = [...html.matchAll(/data-review-kind="([a-z]+)"/g)].map((m) => m[1]);
+    if (quotes !== kinds.length) fail(`/${page}: a quote is missing its review kind marker`);
+    if (kinds.some((k) => k !== 'verified')) fail(`/${page}: non-verified review content in a production build`);
+  }
+  const ce = readFileSync(join(DIST, 'client-experiences', 'index.html'), 'utf8');
+  if (!/data-review-kind="verified"/.test(ce)) fail('/client-experiences/: no approved reviews rendered');
+  for (const file of pages) {
+    if (/Illustrative client experience|Illustrative examples shown/.test(readFileSync(file, 'utf8'))) {
+      fail(`${toUrl(file)}: retired illustrative-example content present`);
     }
   }
-  // Illustrative examples must stay on this page only (the homepage invites real reviews).
-  const home = readFileSync(join(DIST, 'index.html'), 'utf8');
-  if (/data-review-kind="illustrative"/.test(home)) fail('/: illustrative examples must not appear on the homepage');
 }
 
 // No analytics / tracking code.

@@ -203,18 +203,14 @@ test.describe('forms', () => {
 });
 
 test.describe('review gating', () => {
-  test('production build never shows illustrative sample reviews', async ({ page }) => {
+  test('production shows only verified reviews: no samples, no illustrative examples, no unmarked quotes', async ({ page }) => {
     for (const path of ['/', '/client-experiences/']) {
       await page.goto(path);
-      await expect(page.getByText(/Illustrative draft/i)).toHaveCount(0);
-      // Review-only samples never appear in production.
-      await expect(page.locator('[data-review-kind="sample"], [data-sample="true"]')).toHaveCount(0);
-      // Every quote is either a verified review or a clearly labeled illustrative example (never an unmarked quote).
-      expect(await page.locator('blockquote').count()).toBe(await page.locator('figure[data-review-kind] blockquote').count());
+      await expect(page.getByText(/Illustrative draft|Illustrative client experience/i)).toHaveCount(0);
+      await expect(page.locator('[data-review-kind="sample"], [data-sample="true"], [data-review-kind="illustrative"]')).toHaveCount(0);
+      // Every quote is a verified review (never an unmarked quote).
+      expect(await page.locator('blockquote').count()).toBe(await page.locator('figure[data-review-kind="verified"] blockquote').count());
     }
-    // The homepage shows no quotes at all while there are no verified reviews.
-    await page.goto('/');
-    await expect(page.locator('blockquote')).toHaveCount(0);
   });
 });
 

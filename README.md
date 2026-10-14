@@ -8,7 +8,7 @@ Requires Node 22.12+ (developed on Node 24).
 
 ```bash
 npm install
-npm run dev        # http://localhost:4321 (illustrative sample reviews are visible in dev only)
+npm run dev        # http://localhost:4321 (dev runs in review mode: banner + noindex)
 npm run build      # production build into dist/
 npm run preview    # serve dist/ locally at http://localhost:4321
 ```
@@ -81,7 +81,7 @@ Add a Markdown file to `src/content/insights/`. Required frontmatter: `title`, `
 
 ## Adding approved reviews
 
-See `docs/REVIEW_WORKFLOW.md`. In short: add a Markdown file to `src/content/reviews/` with `verified: true`, `permissionToPublish: true`, `draft: false` (and no `sample`). Only reviews meeting all three conditions render in production. The `sample-*.md` files are illustrative; they render only under `npm run dev` or `npm run build:review`, are labeled on-page, and can never appear in `npm run build`.
+See `docs/REVIEW_WORKFLOW.md`. In short: add a Markdown file to `src/content/reviews/` with `verified: true`, `permissionToPublish: true`, `draft: false` (and no `sample`). Only reviews meeting all three conditions render in production. Use `attribution` for the exact approved label shown on the card, and `featured: true` for the (up to two) reviews shown on the homepage. Review-only content (`sample: true`) renders only under `npm run dev` or `npm run build:review` and can never appear in `npm run build`.
 
 ## Content architecture and SEO/AEO
 

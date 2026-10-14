@@ -6,7 +6,15 @@ test.describe('first-person voice and experience', () => {
   for (const path of ['/', '/selling/', '/buying/', '/waterfront/', '/waterfront/rockford-lakes/', '/about/', '/contact/', '/refer/', '/find-your-fit/', '/home-search/', '/communities/']) {
     test(`main copy speaks in first person: ${path}`, async ({ page }) => {
       await page.goto(path);
-      const text = await page.locator('main').innerText();
+      // Client testimonials are the clients' own words (third person by nature), so they are excluded here.
+      const text = await page.locator('main').evaluate((el) => {
+        const copy = el.cloneNode(true) as HTMLElement;
+        copy.querySelectorAll('figure.testimonial').forEach((f) => f.remove());
+        document.body.appendChild(copy);
+        const t = copy.innerText;
+        copy.remove();
+        return t;
+      });
       expect(text.match(thirdPerson), `third-person phrasing on ${path}`).toBeNull();
       expect(text).toMatch(/\b(I|I’ve|I’m|I’ll|my|me)\b/);
     });
