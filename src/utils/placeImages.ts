@@ -13,6 +13,8 @@ export interface PlaceImage {
   caption: string;
 }
 
+const momentOrder = { sunrise: 0, sunset: 1, other: 2 } as const;
+
 const stemOf = (path: string) => path.replace(/^.*\//, '').replace(/\.(jpe?g|png|webp)$/i, '');
 
 /** Every registered photo as { stem -> image file }, for code that references the register by key. */
@@ -31,8 +33,12 @@ export function getPlaceImages(slug: string): PlaceImage[] {
       found.push({ stem, src, credit, caption });
     }
   }
+  // Primary first, then the sunrise/sunset pair, then any other photos, then by file name.
   return found.sort(
-    (a, b) => Number(b.credit.role === 'primary') - Number(a.credit.role === 'primary') || a.stem.localeCompare(b.stem),
+    (a, b) =>
+      Number(b.credit.role === 'primary') - Number(a.credit.role === 'primary') ||
+      momentOrder[a.credit.moment] - momentOrder[b.credit.moment] ||
+      a.stem.localeCompare(b.stem),
   );
 }
 

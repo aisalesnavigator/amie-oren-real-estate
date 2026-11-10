@@ -144,10 +144,11 @@ test.describe('community resource links', () => {
 });
 
 test.describe('placeholders stay designed until imagery is approved', () => {
-  test('no undocumented place photo is embedded; placeholders still render', async ({ page }) => {
+  test('only approved community photography is embedded; other communities keep their placeholders', async ({ page }) => {
     for (const slug of communitySlugs) {
       await page.goto(`/communities/${slug}/`);
-      await expect(page.locator('img.place__img')).toHaveCount(0);
+      // East Grand Rapids has approved Reeds Lake photography (Nov 2026); the rest are still placeholders.
+      await expect(page.locator('.chero__media img.place__img')).toHaveCount(slug === 'east-grand-rapids' ? 1 : 0);
       await expect(page.locator('.chero__media')).toBeVisible();
     }
   });

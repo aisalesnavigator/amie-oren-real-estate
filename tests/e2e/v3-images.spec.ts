@@ -1,6 +1,12 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
 
-const LAKE_PHOTO = /(silver-lake|lake-bella-vista)-(rainbow|sunset|sunrise)-reflection/;
+// Any Rockford-lake photo file (lake slugs), however it is named.
+const LAKE_PHOTO = /(silver-lake|lake-bella-vista|bostwick-lake|myers-lake|brower-lake)-[a-z-]+\.[a-z0-9_]+/;
+// East Grand Rapids' own community photography (Reeds Lake). Allowed on its hero and community cards only.
+const EGR_PHOTO = 'east-grand-rapids-reeds-lake-aerial';
+// Pages that render the East Grand Rapids hero or its community card (the homepage and communities grids, and
+// the Forest Hills page, whose related communities include East Grand Rapids).
+const egrCardPages = new Set(['/', '/communities/', '/communities/east-grand-rapids/', '/communities/forest-hills/']);
 const otherPages = [
   '/', '/about/', '/buying/', '/selling/', '/communities/', '/communities/rockford/', '/communities/ada/',
   '/communities/east-grand-rapids/', '/communities/cascade/', '/communities/forest-hills/',
@@ -39,16 +45,32 @@ async function lakePhotos(page: Page, id: string) {
 }
 
 test.describe('Rockford lake drill-down photography', () => {
-  test('Silver Lake shows a primary and a secondary photo, Bella Vista shows its pair', async ({ page }) => {
+  test('each lake shows its sunrise/sunset pair first, then its other approved photos', async ({ page }) => {
     await page.goto('/waterfront/rockford-lakes/');
     const silver = await lakePhotos(page, 'silver-lake');
-    await expect(silver).toHaveCount(2);
-    await expect(silver.nth(0)).toHaveAttribute('data-place-image', 'silver-lake-rainbow-reflection');
-    await expect(silver.nth(1)).toHaveAttribute('data-place-image', 'silver-lake-sunset-reflection');
+    const silverOrder = ['silver-lake-rainbow-reflection', 'silver-lake-sunset-reflection', 'silver-lake-aerial-autumn', 'silver-lake-docks-golden-hour'];
+    await expect(silver).toHaveCount(silverOrder.length);
+    for (let i = 0; i < silverOrder.length; i++) await expect(silver.nth(i)).toHaveAttribute('data-place-image', silverOrder[i]);
     const bella = await lakePhotos(page, 'lake-bella-vista');
-    await expect(bella).toHaveCount(2);
-    await expect(bella.nth(0)).toHaveAttribute('data-place-image', 'lake-bella-vista-sunrise-reflection');
-    await expect(bella.nth(1)).toHaveAttribute('data-place-image', 'lake-bella-vista-sunset-reflection');
+    const bellaOrder = ['lake-bella-vista-sunrise-reflection', 'lake-bella-vista-sunset-reflection', 'lake-bella-vista-aerial'];
+    await expect(bella).toHaveCount(bellaOrder.length);
+    for (let i = 0; i < bellaOrder.length; i++) await expect(bella.nth(i)).toHaveAttribute('data-place-image', bellaOrder[i]);
+  });
+
+  test('photos keep their own shape: never stretched, and wide aerials use a wide frame', async ({ page }) => {
+    await page.goto('/waterfront/rockford-lakes/');
+    for (const id of ['silver-lake', 'lake-bella-vista']) {
+      const imgs = page.locator(`#${id} img.place__img`);
+      for (let i = 0; i < (await imgs.count()); i++) {
+        const img = imgs.nth(i);
+        await img.scrollIntoViewIfNeeded();
+        await expect.poll(() => img.evaluate((e: HTMLImageElement) => e.complete && e.naturalWidth > 0)).toBe(true);
+        expect(await img.evaluate((e) => getComputedStyle(e).objectFit)).toBe('cover');
+      }
+    }
+    const aerial = page.locator('#silver-lake figure[data-place-image="silver-lake-aerial-autumn"] .place__frame');
+    const box = (await aerial.boundingBox())!;
+    expect(box.width / box.height).toBeGreaterThan(2.3);
   });
 
   test('photos have scene-describing alt text, a caption, a credit line and optimized responsive sources', async ({ page }) => {
@@ -71,16 +93,16 @@ test.describe('Rockford lake drill-down photography', () => {
     }
   });
 
-  test('captions: Sunrise and Sunset for each lake, with the credit as a quiet secondary line', async ({ page }) => {
+  test('captions: Sunrise and Sunset for each lake, then descriptive captions, each with a quiet credit line', async ({ page }) => {
     await page.goto('/waterfront/rockford-lakes/');
     const expected: Record<string, string[]> = {
-      'silver-lake': ['Silver Lake Sunrise', 'Silver Lake Sunset'],
-      'lake-bella-vista': ['Lake Bella Vista Sunrise', 'Lake Bella Vista Sunset'],
+      'silver-lake': ['Silver Lake Sunrise', 'Silver Lake Sunset', 'Silver Lake from above', 'Silver Lake at golden hour'],
+      'lake-bella-vista': ['Lake Bella Vista Sunrise', 'Lake Bella Vista Sunset', 'Lake Bella Vista from above'],
     };
     for (const [id, captions] of Object.entries(expected)) {
       const figures = await lakePhotos(page, id);
-      await expect(figures).toHaveCount(2);
-      for (let i = 0; i < 2; i++) {
+      await expect(figures).toHaveCount(captions.length);
+      for (let i = 0; i < captions.length; i++) {
         const fig = figures.nth(i);
         await expect(fig.locator('.photo-caption__text')).toHaveText(captions[i]);
         await expect(fig.locator('.photo-caption__credit')).toHaveText('Photo: Amie Oren Real Estate');
@@ -116,7 +138,9 @@ test.describe('lake photos are not reused elsewhere', () => {
   for (const path of otherPages) {
     test(`no lake-section photo on ${path}`, async ({ page }) => {
       await page.goto(path);
-      await expect(page.locator('[data-place-image]')).toHaveCount(0);
+      // Only East Grand Rapids' own Reeds Lake photo may appear, and only on its hero and community cards.
+      const shown = await page.locator('[data-place-image]').evaluateAll((els) => els.map((e) => e.getAttribute('data-place-image')));
+      expect(shown).toEqual(egrCardPages.has(path) ? [EGR_PHOTO] : []);
       const srcs = await page.locator('img').evaluateAll((els) => els.map((e) => `${(e as HTMLImageElement).currentSrc} ${e.getAttribute('src')} ${e.getAttribute('srcset') ?? ''}`));
       for (const s of srcs) expect(s).not.toMatch(LAKE_PHOTO);
     });
@@ -128,7 +152,7 @@ test.describe('lake photos are not reused elsewhere', () => {
     expect(srcs.length).toBeGreaterThan(0);
     for (const s of srcs) {
       expect(s).toMatch(/silver-lake-rainbow-reflection/);
-      expect(s).not.toMatch(/silver-lake-sunset|lake-bella-vista/);
+      expect(s).not.toMatch(/silver-lake-sunset|silver-lake-aerial|silver-lake-docks|lake-bella-vista|east-grand-rapids/);
     }
   });
 
@@ -228,5 +252,31 @@ test.describe('/waterfront/ gallery', () => {
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       expect(overflow).toBeLessThanOrEqual(0);
     }
+  });
+});
+
+test.describe('East Grand Rapids community photography', () => {
+  test('the hero leads with the clean Reeds Lake aerial, captioned and credited; the titled image is not shown', async ({ page }) => {
+    await page.goto('/communities/east-grand-rapids/');
+    const fig = page.locator('.chero__media figure.place');
+    await expect(fig).toHaveAttribute('data-place-image', EGR_PHOTO);
+    await expect(fig.locator('.photo-caption__text')).toHaveText('Reeds Lake, East Grand Rapids');
+    await expect(fig.locator('.photo-caption__credit')).toHaveText('Photo: Amie Oren Real Estate');
+    await expectQuietCredit(fig);
+    const img = fig.locator('img');
+    expect(((await img.getAttribute('alt')) ?? '').length).toBeGreaterThan(40);
+    await expect.poll(() => img.evaluate((e: HTMLImageElement) => e.complete && e.naturalWidth > 0)).toBe(true);
+    const html = await page.content();
+    expect(html).not.toMatch(/east-grand-rapids-reeds-lake-titled-aerial/);
+  });
+
+  test('community cards show the photo without a caption, so card titles stay aligned', async ({ page }) => {
+    await page.goto('/communities/');
+    const card = page.locator('a.community-card[href="/communities/east-grand-rapids/"]');
+    await expect(card.locator('figure.place')).toHaveAttribute('data-place-image', EGR_PHOTO);
+    await expect(card.locator('.photo-caption__text')).toHaveCount(0);
+    const tops = await page.locator('.community-card h3').evaluateAll((hs) => hs.map((h) => Math.round(h.getBoundingClientRect().top)));
+    const firstRow = tops.filter((t) => Math.abs(t - tops[0]) < 200);
+    expect(Math.max(...firstRow) - Math.min(...firstRow)).toBeLessThanOrEqual(2);
   });
 });
