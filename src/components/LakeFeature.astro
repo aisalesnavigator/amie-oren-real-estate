@@ -179,6 +179,11 @@ const searchHref = `/home-search/?community=rockford&lake=${lake.slug}`;
     .lake__media--multi {
       position: static;
     }
+    /* With several photos the photo column is the tall one, so keep the lake's text in view beside it. */
+    .lake:has(.lake__media--multi) .lake__body {
+      position: sticky;
+      top: calc(var(--header-h) + var(--space-l));
+    }
   }
 </style>
 

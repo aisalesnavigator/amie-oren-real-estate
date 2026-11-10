@@ -1,15 +1,26 @@
 # Community & Lake Image Brief
 
-## Current status (V3 refinement pass)
+## Current status (November 2026)
 
-**Four owner-supplied photos are embedded, in the Rockford lake drill-down only** (`/waterfront/rockford-lakes/`):
+**Nine owner-supplied photos are registered** in `src/data/placeImages.ts` (all `owned-approved`, credit "Photo: Amie Oren Real Estate").
 
-| File (`src/assets/places/`) | Displayed caption | Lake section | Role |
-|---|---|---|---|
-| `silver-lake-rainbow-reflection.jpg` | **Silver Lake Sunrise** | Silver Lake | Primary (5:4 frame) |
-| `silver-lake-sunset-reflection.jpg` | **Silver Lake Sunset** | Silver Lake | Secondary (16:10) |
-| `lake-bella-vista-sunrise-reflection.jpg` | **Lake Bella Vista Sunrise** | Lake Bella Vista | Primary (16:10) |
-| `lake-bella-vista-sunset-reflection.jpg` | **Lake Bella Vista Sunset** | Lake Bella Vista | Secondary (16:10) |
+| File (`src/assets/places/`) | Displayed caption | Where it appears | Role / frame | Approved |
+|---|---|---|---|---|
+| `silver-lake-rainbow-reflection.jpg` | **Silver Lake Sunrise** | Silver Lake section; first `/waterfront/` gallery photo | Primary (5:4) | 2026-10-06 |
+| `silver-lake-sunset-reflection.jpg` | **Silver Lake Sunset** | Silver Lake section | Secondary (16:10) | 2026-10-06 |
+| `silver-lake-aerial-autumn.jpg` | **Silver Lake from above** | Silver Lake section | Secondary, `other` (5:2, keeps the whole panorama) | 2026-11-09 |
+| `silver-lake-docks-golden-hour.jpg` | **Silver Lake at golden hour** | Silver Lake section | Secondary, `other` (4:3) | 2026-11-09 |
+| `lake-bella-vista-sunrise-reflection.jpg` | **Lake Bella Vista Sunrise** | Lake Bella Vista section | Primary (16:10) | 2026-10-06 |
+| `lake-bella-vista-sunset-reflection.jpg` | **Lake Bella Vista Sunset** | Lake Bella Vista section | Secondary (16:10) | 2026-10-06 |
+| `lake-bella-vista-aerial.jpg` | **Lake Bella Vista from above** | Lake Bella Vista section | Secondary, `other` (16:10) | 2026-11-09 |
+| `east-grand-rapids-reeds-lake-aerial.jpg` | **Reeds Lake, East Grand Rapids** | East Grand Rapids hero (5:4); East Grand Rapids community card (no caption) on the homepage, `/communities/` and Forest Hills' related communities | Community primary | 2026-11-09 |
+| `east-grand-rapids-reeds-lake-titled-aerial.jpg` | Reeds Lake | **Not displayed.** It has "REEDS LAKE" set into the image, so it is kept registered for possible future use | Community secondary | 2026-11-09 |
+
+**November 2026 package (Amie, "Lake photos" email):** six files mapped by Amie's note ("First 2 are Reeds lake. Third is Bella Vista. Last 3 Silver."). `silver-lake-01.jpg` turned out to be the **same photograph** as the existing `silver-lake-rainbow-reflection.jpg` (a lower-resolution re-crop), so it was not added; the existing, higher-resolution file remains the one canonical copy. A unit test now fails if any two registered photos are the same underlying photograph (perceptual hash).
+
+**Captions:** new lake photos use `moment: 'other'` with a descriptive caption. None is labeled sunrise or sunset, because the sunrise/sunset pair per lake is already filled and the time of day of these photos is not known. "Golden hour" describes the visible low sun without claiming morning or evening. Within a lake section the order is: primary, sunrise, sunset, then other photos.
+
+**Resolution note:** the Reeds Lake aerial is 1129×549. In the 5:4 hero it is crisp on desktop and phones, but slightly soft full-width on tablets. A higher-resolution original would sharpen it.
 
 The Silver Lake rainbow photo is treated as the Silver Lake Sunrise image for now. Files are never renamed or duplicated to get a caption: the visible caption is derived from the place and the `moment` field in the register.
 
@@ -23,7 +34,7 @@ Every photo is shown as `<figure>` with the image first and a caption beneath it
 
 - **Rights basis:** supplied by the site owner on 2026-10-06 as owned and approved for use on this website. Registered in `src/data/placeImages.ts` (`approval: 'owned-approved'`). The credit reads "Photo: Amie Oren Real Estate"; change `credit` in the register if a different line is preferred (for example the photographer's name).
 - **Where they appear:** in their lake drill-down section and, for Silver Lake Sunrise only, as the first photo of the overall `/waterfront/` gallery (owner-approved; it references the same file, no copy). They never appear in the `/waterfront/` hero, the homepage, or community heroes and cards. Tests enforce this. Do not reuse them elsewhere without the owner's approval.
-- **Not yet photographed:** Rockford (community), Bostwick Lake, Myers Lake, Brower Lake, Ada, East Grand Rapids, Cascade and Forest Hills still show the designed placeholder.
+- **Not yet photographed:** Rockford (community), Bostwick Lake, Myers Lake, Brower Lake, Ada, Cascade and Forest Hills still show the designed placeholder.
 - **Privacy:** the files carry no EXIF/GPS metadata, and a unit test fails if any image in `src/assets/places/` or `src/assets/waterfront/` has any. Before adding a new photo, strip metadata (for example `sharp(input).rotate().toFile(output)`, which also applies the camera orientation). Astro generates the responsive WebP sizes; the originals are not shipped to visitors.
 
 The remaining candidate research below is unchanged: its URLs came from web search only and **their licenses are unverified**. The build environment could not open Commons, Unsplash, Pexels or the municipal and lake-association sites, so nothing from them is embedded.
@@ -74,7 +85,7 @@ Placement intent (keep the site restrained, never reuse the same photo): communi
 
 ## Unresolved image approvals
 
-Silver Lake and Lake Bella Vista are resolved by the owner-supplied photos. The other eight places (Rockford community, Bostwick Lake, Myers Lake, Brower Lake, Ada, East Grand Rapids, Cascade, Forest Hills) are unresolved; nothing else has been approved for publication.
+Silver Lake, Lake Bella Vista and East Grand Rapids (Reeds Lake) are resolved by owner-supplied photos. The other seven places (Rockford community, Bostwick Lake, Myers Lake, Brower Lake, Ada, Cascade, Forest Hills) are unresolved; nothing else has been approved for publication.
 
 ## Overall `/waterfront/` gallery
 

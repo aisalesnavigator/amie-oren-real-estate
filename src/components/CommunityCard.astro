@@ -10,7 +10,7 @@ const { community, tone = 'sand' } = Astro.props;
 ---
 
 <a class="community-card" href={`/communities/${community.slug}/`}>
-  <CommunityImage slug={community.slug} ratio="4 / 3" tone={tone} label={false} caption={community.setting} sizes="(min-width: 64em) 22vw, 90vw" />
+  <CommunityImage slug={community.slug} ratio="4 / 3" tone={tone} label={false} caption={community.setting} sizes="(min-width: 64em) 22vw, 90vw" showCaption={false} />
   <div class="community-card__body">
     <h3>{community.name}</h3>
     <p>{community.blurb}</p>

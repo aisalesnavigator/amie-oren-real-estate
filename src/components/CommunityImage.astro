@@ -19,6 +19,8 @@ interface Props {
   image?: PlaceImage;
   /** Use the photo's own registered aspect ratio instead of `ratio` (lake drill-down only). */
   useImageRatio?: boolean;
+  /** Show the caption and credit beneath a real photo (default). Small card thumbnails turn this off. */
+  showCaption?: boolean;
 }
 const motifBySlug: Record<string, NonNullable<Props['motif']>> = {
   rockford: 'lake',
@@ -45,6 +47,7 @@ const {
   eager = false,
   image: given,
   useImageRatio = false,
+  showCaption = true,
 } = Astro.props;
 const image = given ?? getPlaceImage(slug);
 const frameRatio = useImageRatio && image?.credit.ratio ? image.credit.ratio : ratio;
@@ -67,7 +70,7 @@ const [w, h] = frameRatio.split('/').map((n) => parseFloat(n));
           height={Math.round((h || 3) * 100)}
         />
       </div>
-      <PhotoCaption caption={image.caption} credit={image.credit.credit} />
+      {showCaption && <PhotoCaption caption={image.caption} credit={image.credit.credit} />}
     </figure>
   ) : (
     <ImageSlot ratio={ratio} tone={tone} motif={motif} caption={caption} label={label} />

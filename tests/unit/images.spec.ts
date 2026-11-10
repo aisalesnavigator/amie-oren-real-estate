@@ -74,13 +74,44 @@ test.describe('place image rights register', () => {
     expect(caption('lake-bella-vista-sunset-reflection')).toBe('Lake Bella Vista Sunset');
     // Files were not renamed to achieve the captions.
     expect(listImages(placesDir).sort()).toEqual([
+      'east-grand-rapids-reeds-lake-aerial.jpg',
+      'east-grand-rapids-reeds-lake-titled-aerial.jpg',
+      'lake-bella-vista-aerial.jpg',
       'lake-bella-vista-sunrise-reflection.jpg',
       'lake-bella-vista-sunset-reflection.jpg',
+      'silver-lake-aerial-autumn.jpg',
+      'silver-lake-docks-golden-hour.jpg',
       'silver-lake-rainbow-reflection.jpg',
       'silver-lake-sunset-reflection.jpg',
     ]);
-    // Lake photos are never registered against a community (so heroes, cards and the homepage cannot use them).
-    for (const c of Object.values(placeImageCredits)) expect(communities.map((x) => x.slug)).not.toContain(c.slug);
+    // Rockford-lake photos are only ever registered to their lake, never to a community, so community heroes,
+    // cards and the homepage cannot pick them up. The only community-registered photos are East Grand Rapids'
+    // own Reeds Lake photography.
+    const community = Object.entries(placeImageCredits).filter(([, c]) => communities.some((x) => x.slug === c.slug));
+    expect(community.map(([stem, c]) => `${c.slug}:${stem}:${c.role}`).sort()).toEqual([
+      'east-grand-rapids:east-grand-rapids-reeds-lake-aerial:primary',
+      'east-grand-rapids:east-grand-rapids-reeds-lake-titled-aerial:secondary',
+    ]);
+  });
+
+  test('November 2026 additions: captions, moments and approval date', () => {
+    const cap = (stem: string) => {
+      const c = placeImageCredits[stem];
+      return photoCaption({ place: placeName(c.slug)!, moment: c.moment, caption: c.caption });
+    };
+    expect(cap('silver-lake-aerial-autumn')).toBe('Silver Lake from above');
+    expect(cap('silver-lake-docks-golden-hour')).toBe('Silver Lake at golden hour');
+    expect(cap('lake-bella-vista-aerial')).toBe('Lake Bella Vista from above');
+    expect(cap('east-grand-rapids-reeds-lake-aerial')).toBe('Reeds Lake, East Grand Rapids');
+    for (const stem of ['silver-lake-aerial-autumn', 'silver-lake-docks-golden-hour', 'lake-bella-vista-aerial', 'east-grand-rapids-reeds-lake-aerial', 'east-grand-rapids-reeds-lake-titled-aerial']) {
+      const c = placeImageCredits[stem];
+      // New lake photos never claim sunrise/sunset: the existing pair keeps that convention.
+      expect(c.moment, stem).toBe('other');
+      expect(c.approvedOn, stem).toBe('2026-11-09');
+      expect(c.approval, stem).toBe('owned-approved');
+      expect(c.credit, stem).toBe('Amie Oren Real Estate');
+      expect(c.sourceUrl, stem).toBeUndefined();
+    }
   });
 
   test('captions derive from place and moment; the credit is a separate, quiet line', () => {
@@ -92,6 +123,27 @@ test.describe('place image rights register', () => {
   });
 });
 
+test.describe('no duplicate photographs', () => {
+  /** 256-bit difference hash: near-identical photos (re-crops, re-encodes) land within a few bits. */
+  async function dhash(file: string): Promise<string> {
+    const { data } = await sharp(file).greyscale().resize(17, 16, { fit: 'fill' }).raw().toBuffer({ resolveWithObject: true });
+    let bits = '';
+    for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) bits += data[y * 17 + x] > data[y * 17 + x + 1] ? '1' : '0';
+    return bits;
+  }
+
+  test('no two registered place photos are the same underlying photograph', async () => {
+    const files = [...listImages(placesDir).map((f) => join(placesDir, f)), ...listImages(galleryDir).map((f) => join(galleryDir, f))];
+    const hashes = await Promise.all(files.map(async (f) => [f, await dhash(f)] as const));
+    for (let i = 0; i < hashes.length; i++) {
+      for (let j = i + 1; j < hashes.length; j++) {
+        const d = [...hashes[i][1]].filter((c, k) => c !== hashes[j][1][k]).length;
+        expect(d, `${hashes[i][0]} and ${hashes[j][0]} look like the same photo`).toBeGreaterThan(40);
+      }
+    }
+  });
+});
+
 test.describe('photo privacy', () => {
   test('image files carry no EXIF/GPS metadata', async () => {
     const all = [...listImages(placesDir).map((f) => join(placesDir, f)), ...listImages(galleryDir).map((f) => join(galleryDir, f))];
@@ -99,6 +151,15 @@ test.describe('photo privacy', () => {
     for (const file of all) {
       const meta = await sharp(file).metadata();
       expect(meta.exif, `${file} has EXIF data; strip it (sharp(input).rotate().toFile(output)) before adding`).toBeUndefined();
+    }
+  });
+
+  test('the November 2026 photos carry no EXIF, GPS, XMP or IPTC metadata at all', async () => {
+    for (const f of ['east-grand-rapids-reeds-lake-aerial.jpg', 'east-grand-rapids-reeds-lake-titled-aerial.jpg', 'lake-bella-vista-aerial.jpg', 'silver-lake-aerial-autumn.jpg', 'silver-lake-docks-golden-hour.jpg']) {
+      const meta = await sharp(join(placesDir, f)).metadata();
+      expect(meta.exif, `${f} EXIF`).toBeUndefined();
+      expect(meta.xmp, `${f} XMP`).toBeUndefined();
+      expect(meta.iptc, `${f} IPTC`).toBeUndefined();
     }
   });
 });
